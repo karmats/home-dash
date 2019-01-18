@@ -1,0 +1,24 @@
+.WeatherWidget-desc {
+    font-size: 1.5rem;
+    margin-top: -3rem;
+}
+.WeatherWidget-svg {
+    margin-top: -5rem;
+    width: 15rem;
+}
+
+.WeaterWidget-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    justify-items: center;
+}
+.WeaterWidget-footer > div > img {
+    width: 6rem;
+}
+.WeaterWidget-footer > div > p {
+    font-size: 1rem;
+    margin-top: -1rem;
+}
+.WeaterWidget-footer > div:first-child {
+    grid-column-start: 2;
+}
