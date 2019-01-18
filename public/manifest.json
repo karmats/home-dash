@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Home dashboard",
+  "name": "Dashboard for your home",
   "icons": [
     {
       "src": "favicon.ico",
