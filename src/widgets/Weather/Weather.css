@@ -1,24 +1,24 @@
-.WeatherWidget-desc {
+.Weather-main-desc {
     font-size: 1.5rem;
     margin-top: -3rem;
 }
-.WeatherWidget-svg {
+.Weather-main-svg {
     margin-top: -5rem;
     width: 15rem;
 }
 
-.WeaterWidget-footer {
+.Weather-footer {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     justify-items: center;
 }
-.WeaterWidget-footer > div > img {
+.Weather-footer > div > img {
     width: 6rem;
 }
-.WeaterWidget-footer > div > p {
+.Weather-footer > div > p {
     font-size: 1rem;
     margin-top: -1rem;
 }
-.WeaterWidget-footer > div:first-child {
+.Weather-footer > div:first-child {
     grid-column-start: 2;
 }

@@ -1,14 +1,14 @@
 import React from 'react';
-import WeatherWidget from './widgets/WeatherWidget';
-import NextTripWidget from './widgets/NextTripWidget';
+import Weather from './widgets/Weather';
+import NextTrip from './widgets/NextTrip';
 import './App.css';
 
 class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <WeatherWidget />
-        <NextTripWidget />
+        <Weather />
+        <NextTrip />
       </div>
     );
   }
