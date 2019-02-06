@@ -1,4 +1,4 @@
-export enum WeatherType {
+export enum WeatherSymbol {
   SUNNY = 'day',
   SNOWY = 'snowy-1'
 }
@@ -14,8 +14,8 @@ export enum WindDirection {
   NW
 }
 
-export interface WeatherData {
-  type: WeatherType;
+export interface Forecast {
+  symbol: WeatherSymbol;
   degrees: number;
   precipitation: number;
   windSpeed: number;

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import * as api from './apis/SmhiApi';
 import './Weather.css';
-import { WeatherData, WeatherType, WindDirection } from './Weather.models';
+import { WeatherSymbol, Forecast } from './Weather.models';
 
 export type WeatherProps = {
-  type: WeatherType;
+  type: WeatherSymbol;
   degrees: number;
 };
 
@@ -27,22 +28,21 @@ const CommingWeather = ({ type, degrees }: WeatherProps) => {
 };
 
 export default () => {
-  const currentWeather: WeatherData = {
-    type: WeatherType.SUNNY,
-    degrees: 5,
-    precipitation: 20,
-    windDirection: WindDirection.E,
-    windSpeed: 12,
-    time: new Date()
-  };
+  const [currentWeather, setCurrentWeather] = useState<Forecast | null>(null);
+
+  useEffect(() => {
+    api.getForecast().then(forecast => setCurrentWeather(forecast));
+  });
   return (
-    <div>
-      <MainWeather type={currentWeather.type} degrees={currentWeather.degrees} />
-      <div className="Weather-footer">
-        <CommingWeather type={WeatherType.SUNNY} degrees={3} />
-        <CommingWeather type={WeatherType.SNOWY} degrees={12} />
-        <CommingWeather type={WeatherType.SUNNY} degrees={-1} />
+    currentWeather && (
+      <div>
+        <MainWeather type={currentWeather.symbol} degrees={currentWeather.degrees} />
+        <div className="Weather-footer">
+          <CommingWeather type={WeatherSymbol.SUNNY} degrees={3} />
+          <CommingWeather type={WeatherSymbol.SNOWY} degrees={12} />
+          <CommingWeather type={WeatherSymbol.SUNNY} degrees={-1} />
+        </div>
       </div>
-    </div>
+    )
   );
 };
