@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { User } from '../../models';
+import { getUser } from '../../UserService';
 import * as api from './apis/SmhiApi';
 import './Weather.css';
 import { WeatherSymbol, Forecast } from './Weather.models';
 
-export type WeatherProps = {
+// Every 5 minute
+const POLLING_INTERVAL = 5 * 60 * 60 * 1000;
+
+type WeatherProps = {
   type: WeatherSymbol;
   degrees: number;
 };
@@ -28,19 +33,26 @@ const CommingWeather = ({ type, degrees }: WeatherProps) => {
 };
 
 export default () => {
-  const [currentWeather, setCurrentWeather] = useState<Forecast | null>(null);
+  const [currentForecast, setCurrentForecast] = useState<Forecast | null>(null);
 
   useEffect(() => {
-    api.getForecast().then(forecast => setCurrentWeather(forecast));
-  });
+    const fetchForecast = () => {
+      const user = getUser();
+      if (user) {
+        api.getForecast(user.lat, user.lon).then(forecast => setCurrentForecast(forecast));
+      }
+    };
+    window.setInterval(fetchForecast, POLLING_INTERVAL);
+    fetchForecast();
+  }, []);
   return (
-    currentWeather && (
+    currentForecast && (
       <div>
-        <MainWeather type={currentWeather.symbol} degrees={currentWeather.degrees} />
+        <MainWeather type={currentForecast.symbol} degrees={currentForecast.degrees} />
         <div className="Weather-footer">
-          <CommingWeather type={WeatherSymbol.SUNNY} degrees={3} />
-          <CommingWeather type={WeatherSymbol.SNOWY} degrees={12} />
-          <CommingWeather type={WeatherSymbol.SUNNY} degrees={-1} />
+          <CommingWeather type={WeatherSymbol.CLEAR_SKY} degrees={3} />
+          <CommingWeather type={WeatherSymbol.HEAVY_SNOWFALL} degrees={12} />
+          <CommingWeather type={WeatherSymbol.HEAVY_SNOWFALL} degrees={-1} />
         </div>
       </div>
     )
