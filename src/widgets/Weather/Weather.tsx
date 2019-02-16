@@ -36,10 +36,11 @@ export default () => {
   const [currentForecast, setCurrentForecast] = useState<Forecast | null>(null);
 
   useEffect(() => {
-    const fetchForecast = () => {
+    const fetchForecast = async () => {
       const user = getUser();
       if (user) {
-        api.getForecast(user.lat, user.lon).then(forecast => setCurrentForecast(forecast));
+        const forecast = await api.getForecast(user.lat, user.lon);
+        setCurrentForecast(forecast);
       }
     };
     window.setInterval(fetchForecast, POLLING_INTERVAL);
