@@ -18,7 +18,7 @@ const MainWeather = ({ type, degrees }: WeatherProps) => {
   return (
     <div>
       <img className="Weather-main-svg" src={imgSrc} />
-      <p className="Weather-main-desc">{degrees}°</p>
+      <p className="Weather-main-desc">{degrees.toFixed(0)}°</p>
     </div>
   );
 };
@@ -27,7 +27,7 @@ const CommingWeather = ({ type, degrees }: WeatherProps) => {
   return (
     <div>
       <img src={imgSrc} />
-      <p>{degrees}°</p>
+      <p>{degrees.toFixed(0)}°</p>
     </div>
   );
 };
@@ -39,7 +39,7 @@ export default () => {
     const fetchForecast = async () => {
       const user = getUser();
       if (user) {
-        const forecast = await api.getForecast(user.lat, user.lon);
+        const forecast = await api.getForecasts(user.lat, user.lon);
         setCurrentForecasts(forecast);
       }
     };
@@ -52,9 +52,9 @@ export default () => {
         <div>
           <MainWeather type={currentForecasts[0].symbol} degrees={currentForecasts[0].degrees} />
           <div className="Weather-footer">
-            <CommingWeather type={currentForecasts[1].symbol} degrees={currentForecasts[1].degrees} />
-            <CommingWeather type={currentForecasts[2].symbol} degrees={currentForecasts[2].degrees} />
             <CommingWeather type={currentForecasts[3].symbol} degrees={currentForecasts[3].degrees} />
+            <CommingWeather type={currentForecasts[6].symbol} degrees={currentForecasts[6].degrees} />
+            <CommingWeather type={currentForecasts[9].symbol} degrees={currentForecasts[9].degrees} />
           </div>
         </div>
       )}

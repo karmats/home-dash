@@ -79,14 +79,14 @@ const smhiTimeSerieToForecast = (timeSerie: SmhiDataTimeSerie): Forecast => {
   return {
     time: new Date(timeSerie.validTime),
     degrees: getParameterValue('t'),
-    precipitation: getParameterValue('spp'),
+    precipitation: getParameterValue('pmean'),
     symbol: smhiWsymb2ToWeatherSymbol(getParameterValue('Wsymb2')),
     windSpeed: getParameterValue('ws'),
     windDirection: getParameterValue('wd')
   };
 };
 
-export const getForecast = async (lat: number, lon: number): Promise<Forecast[]> => {
+export const getForecasts = async (lat: number, lon: number): Promise<Forecast[]> => {
   return fetch(
     `https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${lon.toFixed(
       4
