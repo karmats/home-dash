@@ -86,7 +86,7 @@ const smhiTimeSerieToForecast = (timeSerie: SmhiDataTimeSerie): Forecast => {
   };
 };
 
-export const getForecast = async (lat: number, lon: number): Promise<Forecast> => {
+export const getForecast = async (lat: number, lon: number): Promise<Forecast[]> => {
   return fetch(
     `https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${lon.toFixed(
       4
@@ -94,9 +94,7 @@ export const getForecast = async (lat: number, lon: number): Promise<Forecast> =
   )
     .then(response => response.json())
     .then((data: SmhiData) => {
-      const forecast = smhiTimeSerieToForecast(data.timeSeries[0]);
-      console.log(data, forecast);
-      return forecast;
+      return data.timeSeries.map(smhiTimeSerieToForecast);
     })
     .catch(e => {
       // FIXME Return cache?

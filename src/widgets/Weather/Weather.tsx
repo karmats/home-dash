@@ -33,29 +33,31 @@ const CommingWeather = ({ type, degrees }: WeatherProps) => {
 };
 
 export default () => {
-  const [currentForecast, setCurrentForecast] = useState<Forecast | null>(null);
+  const [currentForecasts, setCurrentForecasts] = useState<Forecast[]>([]);
 
   useEffect(() => {
     const fetchForecast = async () => {
       const user = getUser();
       if (user) {
         const forecast = await api.getForecast(user.lat, user.lon);
-        setCurrentForecast(forecast);
+        setCurrentForecasts(forecast);
       }
     };
     window.setInterval(fetchForecast, POLLING_INTERVAL);
     fetchForecast();
   }, []);
   return (
-    currentForecast && (
-      <div>
-        <MainWeather type={currentForecast.symbol} degrees={currentForecast.degrees} />
-        <div className="Weather-footer">
-          <CommingWeather type={WeatherSymbol.CLEAR_SKY} degrees={3} />
-          <CommingWeather type={WeatherSymbol.HEAVY_SNOWFALL} degrees={12} />
-          <CommingWeather type={WeatherSymbol.HEAVY_SNOWFALL} degrees={-1} />
+    <>
+      {currentForecasts.length && (
+        <div>
+          <MainWeather type={currentForecasts[0].symbol} degrees={currentForecasts[0].degrees} />
+          <div className="Weather-footer">
+            <CommingWeather type={currentForecasts[1].symbol} degrees={currentForecasts[1].degrees} />
+            <CommingWeather type={currentForecasts[2].symbol} degrees={currentForecasts[2].degrees} />
+            <CommingWeather type={currentForecasts[3].symbol} degrees={currentForecasts[3].degrees} />
+          </div>
         </div>
-      </div>
-    )
+      )}
+    </>
   );
 };
