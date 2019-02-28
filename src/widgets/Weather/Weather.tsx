@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { User } from '../../models';
 import { getUser } from '../../UserService';
 import * as api from './apis/SmhiApi';
+import * as util from './Weather.utils';
 import './Weather.css';
 import { WeatherSymbol, Forecast } from './Weather.models';
 
@@ -9,25 +9,24 @@ import { WeatherSymbol, Forecast } from './Weather.models';
 const POLLING_INTERVAL = 5 * 60 * 60 * 1000;
 
 type WeatherProps = {
-  type: WeatherSymbol;
-  degrees: number;
+  forecast: Forecast;
 };
 
-const MainWeather = ({ type, degrees }: WeatherProps) => {
-  const imgSrc = require(`./svgs/animated/${type}.svg`);
+const MainWeather = ({ forecast }: WeatherProps) => {
+  const imgSrc = require(`./svgs/animated/${forecast.symbol}.svg`);
   return (
     <div>
       <img className="Weather-main-svg" src={imgSrc} />
-      <p className="Weather-main-desc">{degrees.toFixed(0)}°</p>
+      <p className="Weather-main-desc">{`${forecast.degrees.toFixed(0)}° (${util.dateToTime(forecast.time)})`}</p>
     </div>
   );
 };
-const CommingWeather = ({ type, degrees }: WeatherProps) => {
-  const imgSrc = require(`./svgs/static/${type}.svg`);
+const CommingWeather = ({ forecast }: WeatherProps) => {
+  const imgSrc = require(`./svgs/static/${forecast.symbol}.svg`);
   return (
     <div>
       <img src={imgSrc} />
-      <p>{degrees.toFixed(0)}°</p>
+      <p>{`${forecast.degrees.toFixed(0)}° (${util.dateToTime(forecast.time)})`}</p>
     </div>
   );
 };
@@ -50,11 +49,11 @@ export default () => {
     <>
       {currentForecasts.length && (
         <div>
-          <MainWeather type={currentForecasts[0].symbol} degrees={currentForecasts[0].degrees} />
+          <MainWeather forecast={currentForecasts[0]} />
           <div className="Weather-footer">
-            <CommingWeather type={currentForecasts[3].symbol} degrees={currentForecasts[3].degrees} />
-            <CommingWeather type={currentForecasts[6].symbol} degrees={currentForecasts[6].degrees} />
-            <CommingWeather type={currentForecasts[9].symbol} degrees={currentForecasts[9].degrees} />
+            <CommingWeather forecast={currentForecasts[3]} />
+            <CommingWeather forecast={currentForecasts[6]} />
+            <CommingWeather forecast={currentForecasts[9]} />
           </div>
         </div>
       )}

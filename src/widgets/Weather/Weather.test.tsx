@@ -1,6 +1,7 @@
 import 'jest';
 import { WeatherSymbol } from './Weather.models';
 import * as api from './apis/SmhiApi';
+import * as util from './Weather.utils';
 
 let fetchResponse: Promise<any> = Promise.resolve();
 const mockFetch = jest.fn().mockImplementation(() => fetchResponse);
@@ -14,6 +15,17 @@ describe('Weather', () => {
         expect(require(`./svgs/animated/${fileName}`)).toBeDefined();
         expect(require(`./svgs/static/${fileName}`)).toBeDefined();
       });
+    });
+  });
+  describe('Utils', () => {
+    it('converts date to hours and minutes', () => {
+      const d = new Date();
+      d.setHours(2);
+      d.setMinutes(5);
+      expect(util.dateToTime(d)).toBe('02:05');
+      d.setHours(15);
+      d.setMinutes(32);
+      expect(util.dateToTime(d)).toBe('15:32');
     });
   });
   describe('Apis', () => {
@@ -67,7 +79,7 @@ describe('Weather', () => {
       it('throws error if something goes wrong', async () => {
         fetchResponse = Promise.reject('Failz');
         try {
-          await api.getForecasts(11.930191, 57.740614);
+          api.getForecasts(11.930191, 57.740614);
         } catch (e) {
           expect(e).toEqual('Failz');
         }
