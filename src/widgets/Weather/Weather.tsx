@@ -1,35 +1,44 @@
 import React, { useEffect, useState } from 'react';
+import ReactSVG from 'react-svg';
 import { getUser } from '../../UserService';
 import * as api from './apis/SmhiApi';
 import * as util from './Weather.utils';
 import './Weather.css';
-import { WeatherSymbol, Forecast } from './Weather.models';
+import { Forecast } from './Weather.models';
 
 // Every 5 minute
-const POLLING_INTERVAL = 5 * 60 * 60 * 1000;
+const FETCH_FORECAST_POLLING_INTERVAL = 5 * 60 * 60 * 1000;
+// Every 10 second
+const UPDATE_TIME_POLLING_INTERVAL = 10 * 1000;
 
 type WeatherProps = {
   forecast: Forecast;
 };
 
 const MainWeather = ({ forecast }: WeatherProps) => {
-  const imgSrc = require(`./svgs/animated/${forecast.symbol}.svg`);
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const updateNow = () => setNow(new Date());
+    const timeInterval = window.setInterval(updateNow, UPDATE_TIME_POLLING_INTERVAL);
+    return () => {
+      clearInterval(timeInterval);
+    }
+  }, [now]);
   return (
-    <div>
-      <img className="Weather-main-svg" src={imgSrc} />
-      <p className="Weather-main-desc">{`${forecast.degrees.toFixed(0)}° (${util.dateToTime(forecast.time)})`}</p>
+    <div className="Weather-main">
+      <p className="Weather-main-desc">{util.dateToTime(now)}</p>
+      <ReactSVG src={require(`./svgs/animated/${forecast.symbol}.svg`)} />
+      <p className="Weather-main-desc">{forecast.degrees.toFixed(0)}°</p>
     </div>
   );
 };
-const CommingWeather = ({ forecast }: WeatherProps) => {
-  const imgSrc = require(`./svgs/static/${forecast.symbol}.svg`);
-  return (
-    <div>
-      <img src={imgSrc} />
-      <p>{`${forecast.degrees.toFixed(0)}° (${util.dateToTime(forecast.time)})`}</p>
-    </div>
-  );
-};
+const CommingWeather = ({ forecast }: WeatherProps) => (
+  <div className="Weather-comming">
+    <ReactSVG src={require(`./svgs/static/${forecast.symbol}.svg`)} />
+    <p>{util.dateToTime(forecast.time)}</p>
+    <p>{forecast.degrees.toFixed(0)}°</p>
+  </div>
+);
 
 export default () => {
   const [currentForecasts, setCurrentForecasts] = useState<Forecast[]>([]);
@@ -42,8 +51,11 @@ export default () => {
         setCurrentForecasts(forecast);
       }
     };
-    window.setInterval(fetchForecast, POLLING_INTERVAL);
+    const fetchInterval = window.setInterval(fetchForecast, FETCH_FORECAST_POLLING_INTERVAL);
     fetchForecast();
+    return () => {
+      window.clearInterval(fetchInterval);
+    };
   }, []);
   return (
     <>
@@ -54,6 +66,7 @@ export default () => {
             <CommingWeather forecast={currentForecasts[3]} />
             <CommingWeather forecast={currentForecasts[6]} />
             <CommingWeather forecast={currentForecasts[9]} />
+            <CommingWeather forecast={currentForecasts[12]} />
           </div>
         </div>
       )}

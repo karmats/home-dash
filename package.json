@@ -12,6 +12,7 @@
   "dependencies": {
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
+    "react-svg": "^7.2.8",
     "typescript": "^3.2.2"
   },
   "scripts": {
