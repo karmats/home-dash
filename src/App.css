@@ -2,7 +2,7 @@
   font-size: 16px;
   display: grid;
   grid-column-gap: 1rem;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: auto auto;
   padding: 1rem;
 }

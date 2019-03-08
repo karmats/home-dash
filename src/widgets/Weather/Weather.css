@@ -1,24 +1,26 @@
+p {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.Weather-main {
+    display: flex;
+    flex-flow: column nowrap;
+}
+
 .Weather-main-desc {
     font-size: 1.5rem;
-    margin-top: -3rem;
-}
-.Weather-main-svg {
-    margin-top: -5rem;
-    width: 15rem;
+    margin-top: 0.5rem;
 }
 
 .Weather-footer {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     justify-items: center;
+    margin-top: 1.5rem;
 }
-.Weather-footer > div > img {
-    width: 6rem;
-}
-.Weather-footer > div > p {
-    font-size: 1rem;
-    margin-top: -1rem;
-}
-.Weather-footer > div:first-child {
-    grid-column-start: 2;
+
+.Weather-comming {
+    display: flex;
+    flex-flow: column nowrap;
 }
