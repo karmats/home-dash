@@ -8,9 +8,18 @@ p {
     flex-flow: column nowrap;
 }
 
-.Weather-main-desc {
+.Weather-main--strong {
     font-size: 1.5rem;
     margin-top: 0.5rem;
+}
+
+.Weather-main--weak {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+.Weather-main--weak svg {
+    width: 1rem;
+    height: 1rem;
 }
 
 .Weather-footer {
@@ -23,4 +32,13 @@ p {
 .Weather-comming {
     display: flex;
     flex-flow: column nowrap;
+}
+
+.Weather-comming--weak {
+    font-size: 0.75rem;
+    opacity: 0.8;
+}
+.Weather-comming--weak svg {
+    width: 0.75rem;
+    height: 0.75rem;
 }

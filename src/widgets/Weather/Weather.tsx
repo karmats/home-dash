@@ -8,8 +8,8 @@ import { Forecast } from './Weather.models';
 
 // Every 5 minute
 const FETCH_FORECAST_POLLING_INTERVAL = 5 * 60 * 60 * 1000;
-// Every 10 second
-const UPDATE_TIME_POLLING_INTERVAL = 10 * 1000;
+// Every 30 second
+const UPDATE_TIME_POLLING_INTERVAL = 30 * 1000;
 
 type WeatherProps = {
   forecast: Forecast;
@@ -22,13 +22,25 @@ const MainWeather = ({ forecast }: WeatherProps) => {
     const timeInterval = window.setInterval(updateNow, UPDATE_TIME_POLLING_INTERVAL);
     return () => {
       clearInterval(timeInterval);
-    }
+    };
   }, [now]);
   return (
     <div className="Weather-main">
-      <p className="Weather-main-desc">{util.dateToTime(now)}</p>
+      <p className="Weather-main--strong">{util.dateToTime(now)}</p>
       <ReactSVG src={require(`./svgs/animated/${forecast.symbol}.svg`)} />
-      <p className="Weather-main-desc">{forecast.degrees.toFixed(0)}°</p>
+      <div>
+        <p className="Weather-main--strong">{forecast.degrees.toFixed(0)}°</p>
+        <div className="Weather-main--weak">
+          <ReactSVG
+            svgStyle={{ transform: `rotate(${forecast.windDirection}deg)` }}
+            src={require('./svgs/static/wind.svg')}
+            wrapper="span"
+          />
+          <span>{`${forecast.windSpeed.toFixed(0)} m/s`}</span>
+          <ReactSVG src={require('./svgs/static/precipitation.svg')} wrapper="span" />
+          <span>{`${forecast.precipitation} mm/h`}</span>
+        </div>
+      </div>
     </div>
   );
 };
@@ -37,6 +49,16 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
     <ReactSVG src={require(`./svgs/static/${forecast.symbol}.svg`)} />
     <p>{util.dateToTime(forecast.time)}</p>
     <p>{forecast.degrees.toFixed(0)}°</p>
+    <div className="Weather-comming--weak">
+      <ReactSVG
+        svgStyle={{ transform: `rotate(${forecast.windDirection}deg)` }}
+        src={require('./svgs/static/wind.svg')}
+        wrapper="span"
+      />
+      <span>{`${forecast.windSpeed.toFixed(0)} m/s`}</span><br />
+      <ReactSVG src={require('./svgs/static/precipitation.svg')} wrapper="span" />
+      <span>{`${forecast.precipitation} mm/h`}</span>
+    </div>
   </div>
 );
 
