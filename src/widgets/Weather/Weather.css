@@ -8,6 +8,11 @@ p {
     flex-flow: column nowrap;
 }
 
+.Weather-main__svg {
+    height: 6rem;
+    width: 7rem;
+}
+
 .Weather-main--strong {
     font-size: 1.5rem;
     margin-top: 0.5rem;

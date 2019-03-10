@@ -27,7 +27,7 @@ const MainWeather = ({ forecast }: WeatherProps) => {
   return (
     <div className="Weather-main">
       <p className="Weather-main--strong">{util.dateToTime(now)}</p>
-      <ReactSVG src={require(`./svgs/animated/${forecast.symbol}.svg`)} />
+      <ReactSVG svgClassName="Weather-main__svg" src={require(`./svgs/animated/${forecast.symbol}.svg`)} />
       <div>
         <p className="Weather-main--strong">{forecast.degrees.toFixed(0)}°</p>
         <div className="Weather-main--weak">
