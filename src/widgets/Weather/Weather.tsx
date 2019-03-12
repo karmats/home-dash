@@ -55,7 +55,8 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
         src={require('./svgs/static/wind.svg')}
         wrapper="span"
       />
-      <span>{`${forecast.windSpeed.toFixed(0)} m/s`}</span><br />
+      <span>{`${forecast.windSpeed.toFixed(0)} m/s`}</span>
+      <br />
       <ReactSVG src={require('./svgs/static/precipitation.svg')} wrapper="span" />
       <span>{`${forecast.precipitation} mm/h`}</span>
     </div>
@@ -67,7 +68,7 @@ export default () => {
 
   useEffect(() => {
     const fetchForecast = async () => {
-      const user = getUser();
+      const user = await getUser();
       if (user) {
         const forecast = await api.getForecasts(user.lat, user.lon);
         setCurrentForecasts(forecast);
@@ -80,18 +81,20 @@ export default () => {
     };
   }, []);
   return (
-    <>
-      {currentForecasts.length && (
-        <div>
+    <div>
+      {currentForecasts.length ? (
+        <>
           <MainWeather forecast={currentForecasts[0]} />
           <div className="Weather-footer">
-            <CommingWeather forecast={currentForecasts[3]} />
+            <CommingWeather forecast={currentForecasts[2]} />
+            <CommingWeather forecast={currentForecasts[4]} />
             <CommingWeather forecast={currentForecasts[6]} />
-            <CommingWeather forecast={currentForecasts[9]} />
-            <CommingWeather forecast={currentForecasts[12]} />
+            <CommingWeather forecast={currentForecasts[8]} />
           </div>
-        </div>
+        </>
+      ) : (
+        <span>Fetching weather data..</span>
       )}
-    </>
+    </div>
   );
 };
