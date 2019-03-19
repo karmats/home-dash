@@ -2,7 +2,7 @@
   "name": "home-dash",
   "version": "0.1.0",
   "private": true,
-  "homepage" : "http://roshauw.se/dash",
+  "homepage" : "https://roshauw.se/dash",
   "devDependencies": {
     "@types/jest": "^23.3.12",
     "@types/node": "^10.12.18",

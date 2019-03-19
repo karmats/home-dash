@@ -35,6 +35,36 @@ describe('Weather', () => {
         referenceTime: '2019-02-18T07:00:00Z',
         timeSeries: [
           {
+            validTime: '2019-02-18T07:00:00Z',
+            parameters: [
+              {
+                name: 'pmean',
+                unit: 'kg/m2/h',
+                values: [0]
+              },
+              {
+                name: 't',
+                unit: 'Cel',
+                values: [2.5]
+              },
+              {
+                name: 'wd',
+                unit: 'degree',
+                values: [185]
+              },
+              {
+                name: 'ws',
+                unit: 'm/s',
+                values: [3.2]
+              },
+              {
+                name: 'Wsymb2',
+                unit: 'category',
+                values: [5]
+              }
+            ]
+          },
+          {
             validTime: '2019-02-18T08:00:00Z',
             parameters: [
               {
@@ -66,15 +96,25 @@ describe('Weather', () => {
           }
         ]
       };
-      it('fetches data and converts to forecast', async () => {
+      it('fetches data and converts to daily forecast', async () => {
         fetchResponse = Promise.resolve({ json: () => Promise.resolve(smhiData) });
         const forecasts = await api.getForecasts(11.930191, 57.740614);
-        const forecast = forecasts[0];
+        const forecast = forecasts[1];
         expect(forecast.degrees).toBe(3.9);
         expect(forecast.precipitation).toBe(1.2);
         expect(forecast.symbol).toBe(WeatherSymbol.OVERCAST);
         expect(forecast.windSpeed).toBe(5.1);
         expect(forecast.windDirection).toBe(183);
+      });
+      it('fetches data and converts to nightly forecast', async () => {
+        fetchResponse = Promise.resolve({ json: () => Promise.resolve(smhiData) });
+        const forecasts = await api.getForecasts(11.930191, 57.740614);
+        const forecast = forecasts[0];
+        expect(forecast.degrees).toBe(2.5);
+        expect(forecast.precipitation).toBe(0);
+        expect(forecast.symbol).toBe(WeatherSymbol.CLOUDY_SKY_NIGHT);
+        expect(forecast.windSpeed).toBe(3.2);
+        expect(forecast.windDirection).toBe(185);
       });
       it('throws error if something goes wrong', async () => {
         fetchResponse = Promise.reject('Failz');

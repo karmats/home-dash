@@ -1,8 +1,12 @@
 export enum WeatherSymbol {
-  CLEAR_SKY = 'clear_sky',
+  CLEAR_SKY = 'clear-sky',
+  CLEAR_SKY_NIGHT = 'clear-sky-night',
   NEARLY_CLEAR_SKY = 'nearly-clear-sky',
+  NEARLY_CLEAR_SKY_NIGHT = 'nearly-clear-sky-night',
   HALFCLEAR_SKY = 'halfclear-sky',
+  HALFCLEAR_SKY_NIGHT = 'halfclear-sky-night',
   CLOUDY_SKY = 'cloudy-sky',
+  CLOUDY_SKY_NIGHT = 'cloudy-sky-night',
   OVERCAST = 'overcast',
   LIGHT_RAIN_SHOWERS = 'light-rain-showers',
   MODERATE_RAIN_SHOWERS = 'moderate-rain-showers',
@@ -16,7 +20,7 @@ export enum WeatherSymbol {
   THUNDER = 'thunder',
   LIGHT_SNOWFALL = 'light-snowfall',
   MODERATE_SNOWFALL = 'moderate-snowfall',
-  HEAVY_SNOWFALL = 'heavy_snowfall'
+  HEAVY_SNOWFALL = 'heavy-snowfall'
 }
 
 export interface Forecast {

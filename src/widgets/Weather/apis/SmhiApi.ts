@@ -20,17 +20,18 @@ type SmhiDataParameter = {
   values: number[];
 };
 
-const smhiWsymb2ToWeatherSymbol = (wsymb: number): WeatherSymbol => {
+const smhiWsymb2ToWeatherSymbol = (wsymb: number, time: Date): WeatherSymbol => {
+  const night = time.getHours() >= 20 || time.getHours() < 8;
   switch (wsymb) {
     case 1: // Clear sky
-      return WeatherSymbol.CLEAR_SKY;
+      return night ? WeatherSymbol.CLEAR_SKY_NIGHT : WeatherSymbol.CLEAR_SKY;
     case 2: // Nearly clear sky
-      return WeatherSymbol.NEARLY_CLEAR_SKY;
+      return night ? WeatherSymbol.NEARLY_CLEAR_SKY_NIGHT : WeatherSymbol.NEARLY_CLEAR_SKY;
     case 3: // Variable cloudiness
     case 4: // Halfclear sky
-      return WeatherSymbol.HALFCLEAR_SKY;
+      return night ? WeatherSymbol.HALFCLEAR_SKY_NIGHT : WeatherSymbol.HALFCLEAR_SKY;
     case 5: // Cloudy sky
-      return WeatherSymbol.CLOUDY_SKY;
+      return night ? WeatherSymbol.CLOUDY_SKY_NIGHT : WeatherSymbol.CLOUDY_SKY_NIGHT;
     case 6: // Overcast
     case 7: // Fog
       return WeatherSymbol.OVERCAST;
@@ -76,11 +77,12 @@ const smhiWsymb2ToWeatherSymbol = (wsymb: number): WeatherSymbol => {
 const smhiTimeSerieToForecast = (timeSerie: SmhiDataTimeSerie): Forecast => {
   const getParameterValue = (name: string): number =>
     (timeSerie.parameters.find(p => p.name === name) || { values: [] }).values[0];
+  const time = new Date(timeSerie.validTime);
   return {
-    time: new Date(timeSerie.validTime),
+    time,
     degrees: getParameterValue('t'),
     precipitation: getParameterValue('pmean'),
-    symbol: smhiWsymb2ToWeatherSymbol(getParameterValue('Wsymb2')),
+    symbol: smhiWsymb2ToWeatherSymbol(getParameterValue('Wsymb2'), time),
     windSpeed: getParameterValue('ws'),
     windDirection: getParameterValue('wd')
   };
