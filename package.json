@@ -2,7 +2,7 @@
   "name": "home-dash",
   "version": "0.1.0",
   "private": true,
-  "homepage" : "https://roshauw.se/dash",
+  "homepage": "https://roshauw.se/dash",
   "devDependencies": {
     "@types/jest": "^23.3.12",
     "@types/node": "^10.12.18",
@@ -11,10 +11,10 @@
     "react-scripts": "^2.1.8"
   },
   "dependencies": {
-    "react": "^16.8.1",
-    "react-dom": "^16.8.1",
-    "react-svg": "^7.2.8",
-    "typescript": "^3.2.2"
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "react-svg": "^8.0.0",
+    "typescript": "^3.3.3"
   },
   "scripts": {
     "start": "react-scripts start",

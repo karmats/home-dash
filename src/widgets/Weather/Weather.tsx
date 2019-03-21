@@ -86,10 +86,10 @@ export default () => {
         <>
           <MainWeather forecast={currentForecasts[0]} />
           <div className="Weather-footer">
-            <CommingWeather forecast={currentForecasts[3]} />
+            <CommingWeather forecast={currentForecasts[2]} />
+            <CommingWeather forecast={currentForecasts[4]} />
             <CommingWeather forecast={currentForecasts[6]} />
-            <CommingWeather forecast={currentForecasts[9]} />
-            <CommingWeather forecast={currentForecasts[12]} />
+            <CommingWeather forecast={currentForecasts[8]} />
           </div>
         </>
       ) : (
