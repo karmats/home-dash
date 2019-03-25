@@ -6,11 +6,15 @@ List of all different widgets currently available:
 
 ### Weather
 
-Shows todays weather. Data retrieved from yr.no.
+Shows todays weather. Data retrieved from SMHI (Swedish Meteorological and Hydrological Institute).
 
-### Next trip
+### Calendar (WIP)
 
-Next bus/subway/tram/train closest from you. Data retrieved from vasttrafik.se.
+A weekly calendar retrieved from your google calendar.
+
+### Next trip (WIP)
+
+Next bus/subway/tram/train closest from you.
 
 ## Available Scripts
 
