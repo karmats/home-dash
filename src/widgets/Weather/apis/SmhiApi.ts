@@ -95,9 +95,7 @@ export const getForecasts = async (lat: number, lon: number): Promise<Forecast[]
     )}/lat/${lat.toFixed(4)}/data.json`
   )
     .then(response => response.json())
-    .then((data: SmhiData) => {
-      return data.timeSeries.map(smhiTimeSerieToForecast);
-    })
+    .then((data: SmhiData) => data.timeSeries.map(smhiTimeSerieToForecast))
     .catch(e => {
       // FIXME Return cache?
       throw e;

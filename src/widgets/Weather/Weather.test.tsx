@@ -1,12 +1,23 @@
 import 'jest';
-import { WeatherSymbol } from './Weather.models';
+import React from 'react';
+import { render, cleanup, waitForElement, act } from 'react-testing-library';
 import * as api from './apis/SmhiApi';
+import { WeatherSymbol } from './Weather.models';
 import * as util from './Weather.utils';
+import Weather from './Weather';
+import { generateSmhiData } from './Weather.test.data';
 
+// Mock user object and fetch smhi response
+jest.mock('../../UserService', () => ({
+  getUser: () => Promise.resolve({ lat: 57.740614, lon: 11.930191 })
+}));
 let fetchResponse: Promise<any> = Promise.resolve();
 const mockFetch = jest.fn().mockImplementation(() => fetchResponse);
 (global as any).fetch = mockFetch;
 
+const defaultSmhiData = generateSmhiData();
+
+jest.useFakeTimers();
 describe('Weather', () => {
   describe('Models', () => {
     it('has all weather symbol files', () => {
@@ -28,76 +39,39 @@ describe('Weather', () => {
       expect(util.dateToTime(d)).toBe('15:32');
     });
   });
+
+  describe('Component', () => {
+    afterEach(cleanup);
+    it('renders', () => {
+      render(<Weather />);
+    });
+    it('renders indication that weather is fetching', async () => {
+      const { getByText } = render(<Weather />);
+      const indicator = getByText('Fetching weather data...');
+      expect(indicator).toBeDefined();
+      expect(indicator.tagName).toBe('SPAN');
+    });
+    xit('renders main weather and comming weather', async () => {
+      const data = {
+        mainTemp: 3
+      };
+      fetchResponse = Promise.resolve({ json: () => Promise.resolve(generateSmhiData(data.mainTemp)) });
+      const component = render(<Weather />);
+      act(() => {
+        jest.runOnlyPendingTimers();
+      });
+      const gief = await waitForElement(() => {
+        component.getByText(`${data.mainTemp}°`);
+      });
+      console.log(gief);
+    });
+  });
   describe('Apis', () => {
     describe('SMHI', () => {
-      const smhiData = {
-        approvedTime: '2019-02-18T07:03:55Z',
-        referenceTime: '2019-02-18T07:00:00Z',
-        timeSeries: [
-          {
-            validTime: '2019-02-18T07:00:00Z',
-            parameters: [
-              {
-                name: 'pmean',
-                unit: 'kg/m2/h',
-                values: [0]
-              },
-              {
-                name: 't',
-                unit: 'Cel',
-                values: [2.5]
-              },
-              {
-                name: 'wd',
-                unit: 'degree',
-                values: [185]
-              },
-              {
-                name: 'ws',
-                unit: 'm/s',
-                values: [3.2]
-              },
-              {
-                name: 'Wsymb2',
-                unit: 'category',
-                values: [5]
-              }
-            ]
-          },
-          {
-            validTime: '2019-02-18T08:00:00Z',
-            parameters: [
-              {
-                name: 'pmean',
-                unit: 'kg/m2/h',
-                values: [1.2]
-              },
-              {
-                name: 't',
-                unit: 'Cel',
-                values: [3.9]
-              },
-              {
-                name: 'wd',
-                unit: 'degree',
-                values: [183]
-              },
-              {
-                name: 'ws',
-                unit: 'm/s',
-                values: [5.1]
-              },
-              {
-                name: 'Wsymb2',
-                unit: 'category',
-                values: [6]
-              }
-            ]
-          }
-        ]
-      };
+      beforeEach(() => {
+        fetchResponse = Promise.resolve({ json: () => Promise.resolve(defaultSmhiData) });
+      });
       it('fetches data and converts to daily forecast', async () => {
-        fetchResponse = Promise.resolve({ json: () => Promise.resolve(smhiData) });
         const forecasts = await api.getForecasts(11.930191, 57.740614);
         const forecast = forecasts[1];
         expect(forecast.degrees).toBe(3.9);
@@ -107,7 +81,6 @@ describe('Weather', () => {
         expect(forecast.windDirection).toBe(183);
       });
       it('fetches data and converts to nightly forecast', async () => {
-        fetchResponse = Promise.resolve({ json: () => Promise.resolve(smhiData) });
         const forecasts = await api.getForecasts(11.930191, 57.740614);
         const forecast = forecasts[0];
         expect(forecast.degrees).toBe(2.5);

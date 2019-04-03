@@ -63,7 +63,7 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
   </div>
 );
 
-export default () => {
+export default function() {
   const [currentForecasts, setCurrentForecasts] = useState<Forecast[]>([]);
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export default () => {
           </div>
         </>
       ) : (
-        <span>Fetching weather data..</span>
+        <span>Fetching weather data...</span>
       )}
     </div>
   );
