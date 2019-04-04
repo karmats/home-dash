@@ -8,8 +8,8 @@
     "@types/node": "^10.12.18",
     "@types/react": "^16.7.18",
     "@types/react-dom": "^16.0.11",
-    "react-hooks-testing-library": "^0.4.0",
-    "react-scripts": "^2.1.8"
+    "react-scripts": "^2.1.8",
+    "react-testing-library": "^6.0.4"
   },
   "dependencies": {
     "react": "^16.8.4",

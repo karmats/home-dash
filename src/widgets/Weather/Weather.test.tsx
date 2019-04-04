@@ -11,6 +11,7 @@ import { generateSmhiData } from './Weather.test.data';
 jest.mock('../../UserService', () => ({
   getUser: () => Promise.resolve({ lat: 57.740614, lon: 11.930191 })
 }));
+jest.mock('react-svg');
 let fetchResponse: Promise<any> = Promise.resolve();
 const mockFetch = jest.fn().mockImplementation(() => fetchResponse);
 (global as any).fetch = mockFetch;
@@ -18,6 +19,7 @@ const mockFetch = jest.fn().mockImplementation(() => fetchResponse);
 const defaultSmhiData = generateSmhiData();
 
 jest.useFakeTimers();
+
 describe('Weather', () => {
   describe('Models', () => {
     it('has all weather symbol files', () => {
@@ -41,29 +43,26 @@ describe('Weather', () => {
   });
 
   describe('Component', () => {
+    const smhiData = {
+      mainTemp: 3
+    };
+    beforeEach(() => {
+      fetchResponse = Promise.resolve({ json: () => Promise.resolve(generateSmhiData(smhiData.mainTemp)) });
+    });
     afterEach(cleanup);
     it('renders', () => {
       render(<Weather />);
     });
-    it('renders indication that weather is fetching', async () => {
+    it('renders indication that weather is fetching', () => {
       const { getByText } = render(<Weather />);
       const indicator = getByText('Fetching weather data...');
       expect(indicator).toBeDefined();
       expect(indicator.tagName).toBe('SPAN');
     });
+    // FIXME
     xit('renders main weather and comming weather', async () => {
-      const data = {
-        mainTemp: 3
-      };
-      fetchResponse = Promise.resolve({ json: () => Promise.resolve(generateSmhiData(data.mainTemp)) });
-      const component = render(<Weather />);
-      act(() => {
-        jest.runOnlyPendingTimers();
-      });
-      const gief = await waitForElement(() => {
-        component.getByText(`${data.mainTemp}°`);
-      });
-      console.log(gief);
+      const { getByText } = render(<Weather />);
+      await waitForElement(() => getByText(`${smhiData.mainTemp}°`));
     });
   });
   describe('Apis', () => {
