@@ -1,6 +1,6 @@
 import 'jest';
 import React from 'react';
-import { render, cleanup, waitForElement, act } from 'react-testing-library';
+import { render, cleanup, waitForElement } from 'react-testing-library';
 import * as api from './apis/SmhiApi';
 import { WeatherSymbol } from './Weather.models';
 import * as util from './Weather.utils';
@@ -8,12 +8,12 @@ import Weather from './Weather';
 import { generateSmhiData } from './Weather.test.data';
 
 // Mock user object and fetch smhi response
-jest.mock('../../UserService', () => ({
-  getUser: () => Promise.resolve({ lat: 57.740614, lon: 11.930191 })
+jest.mock('../../App.service', () => ({
+  getLocation: () => Promise.resolve({ lat: 57.740614, lon: 11.930191 })
 }));
 jest.mock('react-svg');
 let fetchResponse: Promise<any> = Promise.resolve();
-const mockFetch = jest.fn().mockImplementation(() => fetchResponse);
+const mockFetch = jest.fn(() => fetchResponse);
 (global as any).fetch = mockFetch;
 
 const defaultSmhiData = generateSmhiData();
@@ -70,6 +70,7 @@ describe('Weather', () => {
       beforeEach(() => {
         fetchResponse = Promise.resolve({ json: () => Promise.resolve(defaultSmhiData) });
       });
+    
       it('fetches data and converts to daily forecast', async () => {
         const forecasts = await api.getForecasts(11.930191, 57.740614);
         const forecast = forecasts[1];

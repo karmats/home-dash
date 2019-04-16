@@ -1,11 +1,11 @@
-import { User } from './models';
+import { Location } from './models';
 
-const DEFAULT_USER = {
+const DEFAULT_LOCATION = {
   lat: 57.740614,
   lon: 11.930191
 };
 
-export const getUser = async (): Promise<User> => {
+export const getLocation = async (): Promise<Location> => {
   return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
       position =>
@@ -15,7 +15,7 @@ export const getUser = async (): Promise<User> => {
         }),
       error => {
         console.error('Failed to get position', error);
-        resolve(DEFAULT_USER);
+        resolve(DEFAULT_LOCATION);
       }
     );
   });

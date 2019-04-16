@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactSVG from 'react-svg';
-import { getUser } from '../../UserService';
+import { getLocation } from '../../App.service';
 import * as api from './apis/SmhiApi';
 import * as util from './Weather.utils';
 import './Weather.css';
@@ -68,9 +68,9 @@ export default function() {
 
   useEffect(() => {
     const fetchForecast = async () => {
-      const user = await getUser();
-      if (user) {
-        const forecast = await api.getForecasts(user.lat, user.lon);
+      const location = await getLocation();
+      if (location) {
+        const forecast = await api.getForecasts(location.lat, location.lon);
         setCurrentForecasts(forecast);
       }
     };
