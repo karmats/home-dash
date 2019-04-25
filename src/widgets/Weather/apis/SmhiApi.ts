@@ -1,5 +1,4 @@
 import { Forecast, WeatherSymbol } from '../Weather.models';
-import Weather from '../Weather';
 
 type SmhiData = {
   approvedTime: string;
