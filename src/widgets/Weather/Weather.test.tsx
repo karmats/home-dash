@@ -1,11 +1,12 @@
 import 'jest';
 import React from 'react';
 import { render, cleanup, waitForElement } from 'react-testing-library';
-import * as api from './apis/SmhiApi';
+import * as smhiApi from './apis/SmhiApi';
+import * as sunriseSunsetApi from './apis/SunriseSunsetApi';
 import { WeatherSymbol } from './Weather.models';
 import * as util from './Weather.utils';
 import Weather from './Weather';
-import { generateSmhiData } from './Weather.test.data';
+import { generateSmhiData, genereateSunriseSunsetData } from './Weather.test.data';
 
 // Mock user object and fetch smhi response
 jest.mock('../../App.service', () => ({
@@ -17,6 +18,7 @@ const mockFetch = jest.fn(() => fetchResponse);
 (global as any).fetch = mockFetch;
 
 const defaultSmhiData = generateSmhiData();
+const defaultSunriseSunsetData = genereateSunriseSunsetData();
 
 jest.useFakeTimers();
 
@@ -66,13 +68,42 @@ describe('Weather', () => {
     });
   });
   describe('Apis', () => {
+    describe('sunrise-sunset', () => {
+      beforeEach(() => {
+        fetchResponse = Promise.resolve({ json: () => Promise.resolve(defaultSunriseSunsetData) });
+      });
+
+      it('fetches date an converts to sunrise sunset dates', async () => {
+        const sunriseSunset = await sunriseSunsetApi.getSunriseSunset(11.930191, 57.740614);
+        expect(sunriseSunset.sunrise).toBeInstanceOf(Date);
+        expect(sunriseSunset.sunset).toBeInstanceOf(Date);
+      });
+
+      it('throws data if status is not OK', async () => {
+        fetchResponse = Promise.resolve({ json: () => Promise.resolve(genereateSunriseSunsetData('INVALID_REQUEST')) });
+        try {
+          await sunriseSunsetApi.getSunriseSunset(11.930191, 57.740614);
+        } catch (e) {
+          expect(e).toBeInstanceOf(Object);
+        }
+      });
+
+      it('throws error if something goes wrong', async () => {
+        fetchResponse = Promise.reject('Failz');
+        try {
+          await sunriseSunsetApi.getSunriseSunset(11.930191, 57.740614);
+        } catch (e) {
+          expect(e).toEqual('Failz');
+        }
+      });
+    });
     describe('SMHI', () => {
       beforeEach(() => {
         fetchResponse = Promise.resolve({ json: () => Promise.resolve(defaultSmhiData) });
       });
-    
+
       it('fetches data and converts to daily forecast', async () => {
-        const forecasts = await api.getForecasts(11.930191, 57.740614);
+        const forecasts = await smhiApi.getForecasts(11.930191, 57.740614);
         const forecast = forecasts[1];
         expect(forecast.degrees).toBe(3.9);
         expect(forecast.precipitation).toBe(1.2);
@@ -81,7 +112,7 @@ describe('Weather', () => {
         expect(forecast.windDirection).toBe(183);
       });
       it('fetches data and converts to nightly forecast', async () => {
-        const forecasts = await api.getForecasts(11.930191, 57.740614);
+        const forecasts = await smhiApi.getForecasts(11.930191, 57.740614);
         const forecast = forecasts[0];
         expect(forecast.degrees).toBe(2.5);
         expect(forecast.precipitation).toBe(0);
@@ -92,7 +123,7 @@ describe('Weather', () => {
       it('throws error if something goes wrong', async () => {
         fetchResponse = Promise.reject('Failz');
         try {
-          api.getForecasts(11.930191, 57.740614);
+          await smhiApi.getForecasts(11.930191, 57.740614);
         } catch (e) {
           expect(e).toEqual('Failz');
         }

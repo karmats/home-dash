@@ -394,3 +394,19 @@ export const generateSmhiData = (mainTemp = 2.5) => ({
     }
   ]
 });
+
+export const genereateSunriseSunsetData = (status = 'OK') => ({
+  results: {
+    sunrise: '2019-05-20T02:38:54+00:00',
+    sunset: '2019-05-20T19:38:44+00:00',
+    solar_noon: '2019-05-20T11:08:49+00:00',
+    day_length: 61190,
+    civil_twilight_begin: '2019-05-20T01:41:01+00:00',
+    civil_twilight_end: '2019-05-20T20:36:38+00:00',
+    nautical_twilight_begin: '2019-05-19T23:34:31+00:00',
+    nautical_twilight_end: '2019-05-20T22:43:08+00:00',
+    astronomical_twilight_begin: '1970-01-01T00:00:01+00:00',
+    astronomical_twilight_end: '1970-01-01T00:00:01+00:00'
+  },
+  status
+});
