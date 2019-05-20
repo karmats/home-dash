@@ -31,3 +31,8 @@ export interface Forecast {
   windDirection: number;
   time: Date;
 }
+
+export interface SunriseSunset {
+  sunrise: Date;
+  sunset: Date;
+}

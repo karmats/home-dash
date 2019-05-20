@@ -87,8 +87,8 @@ const smhiTimeSerieToForecast = (timeSerie: SmhiDataTimeSerie): Forecast => {
   };
 };
 
-export const getForecasts = async (lat: number, lon: number): Promise<Forecast[]> => {
-  return fetch(
+export const getForecasts = async (lat: number, lon: number): Promise<Forecast[]> =>
+  fetch(
     `https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${lon.toFixed(
       4
     )}/lat/${lat.toFixed(4)}/data.json`
@@ -99,4 +99,3 @@ export const getForecasts = async (lat: number, lon: number): Promise<Forecast[]
       // FIXME Return cache?
       throw e;
     });
-};
