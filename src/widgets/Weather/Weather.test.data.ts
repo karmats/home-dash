@@ -58,7 +58,7 @@ export const generateSmhiData = (mainTemp = 2.5) => ({
         {
           name: 'Wsymb2',
           unit: 'category',
-          values: [6]
+          values: [5]
         }
       ]
     },

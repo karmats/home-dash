@@ -1,4 +1,4 @@
-import { Forecast, WeatherSymbol } from '../Weather.models';
+import { Forecast, WeatherSymbol, SunriseSunset } from '../Weather.models';
 
 type SmhiData = {
   approvedTime: string;
@@ -19,8 +19,8 @@ type SmhiDataParameter = {
   values: number[];
 };
 
-const smhiWsymb2ToWeatherSymbol = (wsymb: number, time: Date): WeatherSymbol => {
-  const night = time.getHours() >= 20 || time.getHours() < 8;
+const smhiWsymb2ToWeatherSymbol = (wsymb: number, time: Date, sunriseSunset: SunriseSunset): WeatherSymbol => {
+  const night = time.getHours() > sunriseSunset.sunset.getHours() || time.getHours() < sunriseSunset.sunrise.getHours();
   switch (wsymb) {
     case 1: // Clear sky
       return night ? WeatherSymbol.CLEAR_SKY_NIGHT : WeatherSymbol.CLEAR_SKY;
@@ -30,7 +30,7 @@ const smhiWsymb2ToWeatherSymbol = (wsymb: number, time: Date): WeatherSymbol => 
     case 4: // Halfclear sky
       return night ? WeatherSymbol.HALFCLEAR_SKY_NIGHT : WeatherSymbol.HALFCLEAR_SKY;
     case 5: // Cloudy sky
-      return night ? WeatherSymbol.CLOUDY_SKY_NIGHT : WeatherSymbol.CLOUDY_SKY_NIGHT;
+      return night ? WeatherSymbol.CLOUDY_SKY_NIGHT : WeatherSymbol.CLOUDY_SKY;
     case 6: // Overcast
     case 7: // Fog
       return WeatherSymbol.OVERCAST;
@@ -73,7 +73,7 @@ const smhiWsymb2ToWeatherSymbol = (wsymb: number, time: Date): WeatherSymbol => 
   }
 };
 
-const smhiTimeSerieToForecast = (timeSerie: SmhiDataTimeSerie): Forecast => {
+const smhiTimeSerieToForecast = (timeSerie: SmhiDataTimeSerie, sunriseSunset: SunriseSunset): Forecast => {
   const getParameterValue = (name: string): number =>
     (timeSerie.parameters.find(p => p.name === name) || { values: [] }).values[0];
   const time = new Date(timeSerie.validTime);
@@ -81,20 +81,20 @@ const smhiTimeSerieToForecast = (timeSerie: SmhiDataTimeSerie): Forecast => {
     time,
     degrees: getParameterValue('t'),
     precipitation: getParameterValue('pmean'),
-    symbol: smhiWsymb2ToWeatherSymbol(getParameterValue('Wsymb2'), time),
+    symbol: smhiWsymb2ToWeatherSymbol(getParameterValue('Wsymb2'), time, sunriseSunset),
     windSpeed: getParameterValue('ws'),
     windDirection: getParameterValue('wd')
   };
 };
 
-export const getForecasts = async (lat: number, lon: number): Promise<Forecast[]> =>
+export const getForecasts = async (lat: number, lon: number, sunriseSunset: SunriseSunset): Promise<Forecast[]> =>
   fetch(
     `https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${lon.toFixed(
       4
     )}/lat/${lat.toFixed(4)}/data.json`
   )
     .then(response => response.json())
-    .then((data: SmhiData) => data.timeSeries.map(smhiTimeSerieToForecast))
+    .then((data: SmhiData) => data.timeSeries.map(t => smhiTimeSerieToForecast(t, sunriseSunset)))
     .catch(e => {
       // FIXME Return cache?
       throw e;

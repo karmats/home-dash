@@ -8,11 +8,14 @@ import * as util from './Weather.utils';
 import Weather from './Weather';
 import { generateSmhiData, genereateSunriseSunsetData } from './Weather.test.data';
 
-// Mock user object and fetch smhi response
-jest.mock('../../App.service', () => ({
-  getLocation: () => Promise.resolve({ lat: 57.740614, lon: 11.930191 })
-}));
+// Mocks
 jest.mock('react-svg');
+
+const mockGeolocation = {
+  getCurrentPosition: jest.fn()
+};
+(global as any).navigator.geolocation = mockGeolocation;
+
 let fetchResponse: Promise<any> = Promise.resolve();
 const mockFetch = jest.fn(() => fetchResponse);
 (global as any).fetch = mockFetch;
@@ -98,21 +101,25 @@ describe('Weather', () => {
       });
     });
     describe('SMHI', () => {
+      const sunriseSunset = {
+        sunrise: new Date('2019-02-18T08:00:00Z'),
+        sunset: new Date('2019-02-18T20:00:00Z')
+      };
       beforeEach(() => {
         fetchResponse = Promise.resolve({ json: () => Promise.resolve(defaultSmhiData) });
       });
 
       it('fetches data and converts to daily forecast', async () => {
-        const forecasts = await smhiApi.getForecasts(11.930191, 57.740614);
+        const forecasts = await smhiApi.getForecasts(11.930191, 57.740614, sunriseSunset);
         const forecast = forecasts[1];
         expect(forecast.degrees).toBe(3.9);
         expect(forecast.precipitation).toBe(1.2);
-        expect(forecast.symbol).toBe(WeatherSymbol.OVERCAST);
+        expect(forecast.symbol).toBe(WeatherSymbol.CLOUDY_SKY);
         expect(forecast.windSpeed).toBe(5.1);
         expect(forecast.windDirection).toBe(183);
       });
       it('fetches data and converts to nightly forecast', async () => {
-        const forecasts = await smhiApi.getForecasts(11.930191, 57.740614);
+        const forecasts = await smhiApi.getForecasts(11.930191, 57.740614, sunriseSunset);
         const forecast = forecasts[0];
         expect(forecast.degrees).toBe(2.5);
         expect(forecast.precipitation).toBe(0);
@@ -123,7 +130,7 @@ describe('Weather', () => {
       it('throws error if something goes wrong', async () => {
         fetchResponse = Promise.reject('Failz');
         try {
-          await smhiApi.getForecasts(11.930191, 57.740614);
+          await smhiApi.getForecasts(11.930191, 57.740614, sunriseSunset);
         } catch (e) {
           expect(e).toEqual('Failz');
         }

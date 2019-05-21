@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import ReactSVG from 'react-svg';
 import { getLocation } from '../../App.service';
-import * as api from './apis/SmhiApi';
+import { Location } from '../../models';
+import * as forecastApi from './apis/SmhiApi';
+import * as sunriseSunsetApi from './apis/SunriseSunsetApi';
 import * as util from './Weather.utils';
 import './Weather.css';
-import { Forecast } from './Weather.models';
+import { Forecast, SunriseSunset } from './Weather.models';
 
 // Every 5 minute
-const FETCH_FORECAST_POLLING_INTERVAL = 5 * 60 * 60 * 1000;
+const FORECAST_REFRESH_INTERVAL = 5 * 60 * 60 * 1000;
+// Once a day
+const SUNRISE_SUNSET_REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
 // Every 30 second
-const UPDATE_TIME_POLLING_INTERVAL = 30 * 1000;
+const TIME_REFRESH_INTERVAL = 30 * 1000;
 
 type WeatherProps = {
   forecast: Forecast;
@@ -19,7 +23,7 @@ const MainWeather = ({ forecast }: WeatherProps) => {
   const [now, setNow] = useState(new Date());
   useEffect(() => {
     const updateNow = () => setNow(new Date());
-    const timeInterval = window.setInterval(updateNow, UPDATE_TIME_POLLING_INTERVAL);
+    const timeInterval = window.setInterval(updateNow, TIME_REFRESH_INTERVAL);
     return () => {
       clearInterval(timeInterval);
     };
@@ -63,33 +67,82 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
   </div>
 );
 
+type WeatherState = {
+  forecasts: Forecast[];
+  sunriseSunset: SunriseSunset | null;
+  sunriseSunsetLastUpdated: Date;
+};
+
+type ForecastAction = {
+  type: 'FORECASTS_UPDATE';
+  data: Forecast[];
+};
+
+type SunriseSunsetAction = {
+  type: 'SUNRISE_SUNSET_UPDATE';
+  data: SunriseSunset;
+};
+
+const weatherReducer: React.Reducer<WeatherState, ForecastAction | SunriseSunsetAction> = (
+  state = initialState,
+  action
+) => {
+  switch (action.type) {
+    case 'FORECASTS_UPDATE':
+      return { ...state, forecasts: action.data };
+    case 'SUNRISE_SUNSET_UPDATE':
+      return { ...state, sunriseSunset: action.data, sunriseSunsetLastUpdated: new Date() };
+    default:
+      return state;
+  }
+};
+
+const initialState: WeatherState = {
+  forecasts: [],
+  sunriseSunset: null,
+  sunriseSunsetLastUpdated: new Date(0)
+};
+
 export default function() {
-  const [currentForecasts, setCurrentForecasts] = useState<Forecast[]>([]);
+  const [state, dispatch] = useReducer<React.Reducer<WeatherState, ForecastAction | SunriseSunsetAction>>(
+    weatherReducer,
+    initialState
+  );
 
   useEffect(() => {
+    const fetchSunriseSunset = async (location: Location) => {
+      const sunriseSunset = await sunriseSunsetApi.getSunriseSunset(location.lat, location.lon);
+      dispatch({ type: 'SUNRISE_SUNSET_UPDATE', data: sunriseSunset });
+      return sunriseSunset;
+    };
     const fetchForecast = async () => {
       const location = await getLocation();
-      if (location) {
-        const forecast = await api.getForecasts(location.lat, location.lon);
-        setCurrentForecasts(forecast);
+      let currentSunriseSunset = state.sunriseSunset;
+      if (
+        !currentSunriseSunset ||
+        new Date().getTime() - state.sunriseSunsetLastUpdated.getTime() > SUNRISE_SUNSET_REFRESH_INTERVAL
+      ) {
+        currentSunriseSunset = await fetchSunriseSunset(location);
       }
+      const forecasts = await forecastApi.getForecasts(location.lat, location.lon, currentSunriseSunset);
+      dispatch({ type: 'FORECASTS_UPDATE', data: forecasts });
     };
-    const fetchInterval = window.setInterval(fetchForecast, FETCH_FORECAST_POLLING_INTERVAL);
+    const fetchForecastInterval = window.setInterval(fetchForecast, FORECAST_REFRESH_INTERVAL);
     fetchForecast();
     return () => {
-      window.clearInterval(fetchInterval);
+      window.clearInterval(fetchForecastInterval);
     };
-  }, []);
+  }, [state.sunriseSunset, state.sunriseSunsetLastUpdated]);
   return (
     <div>
-      {currentForecasts.length ? (
+      {state.forecasts.length ? (
         <>
-          <MainWeather forecast={currentForecasts[0]} />
+          <MainWeather forecast={state.forecasts[0]} />
           <div className="Weather-footer">
-            <CommingWeather forecast={currentForecasts[2]} />
-            <CommingWeather forecast={currentForecasts[4]} />
-            <CommingWeather forecast={currentForecasts[6]} />
-            <CommingWeather forecast={currentForecasts[8]} />
+            <CommingWeather forecast={state.forecasts[2]} />
+            <CommingWeather forecast={state.forecasts[4]} />
+            <CommingWeather forecast={state.forecasts[6]} />
+            <CommingWeather forecast={state.forecasts[8]} />
           </div>
         </>
       ) : (
@@ -97,4 +150,4 @@ export default function() {
       )}
     </div>
   );
-};
+}
