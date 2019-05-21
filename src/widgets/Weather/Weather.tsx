@@ -31,12 +31,19 @@ const MainWeather = ({ forecast }: WeatherProps) => {
   return (
     <div className="Weather-main">
       <p className="Weather-main--strong">{util.dateToTime(now)}</p>
-      <ReactSVG svgClassName="Weather-main__svg" src={require(`./svgs/animated/${forecast.symbol}.svg`)} />
+      <ReactSVG
+        beforeInjection={svg => {
+          svg.classList.add('Weather-main__svg');
+        }}
+        src={require(`./svgs/animated/${forecast.symbol}.svg`)}
+      />
       <div>
         <p className="Weather-main--strong">{forecast.degrees.toFixed(0)}°</p>
         <div className="Weather-main--weak">
           <ReactSVG
-            svgStyle={{ transform: `rotate(${forecast.windDirection}deg)` }}
+            beforeInjection={svg => {
+              svg.setAttribute('style', `transform:rotate(${forecast.windDirection}deg)`);
+            }}
             src={require('./svgs/static/wind.svg')}
             wrapper="span"
           />
@@ -55,7 +62,9 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
     <p>{forecast.degrees.toFixed(0)}°</p>
     <div className="Weather-comming--weak">
       <ReactSVG
-        svgStyle={{ transform: `rotate(${forecast.windDirection}deg)` }}
+        beforeInjection={svg => {
+          svg.setAttribute('style', `transform:rotate(${forecast.windDirection}deg)`);
+        }}
         src={require('./svgs/static/wind.svg')}
         wrapper="span"
       />
