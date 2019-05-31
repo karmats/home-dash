@@ -9,8 +9,10 @@ type SunriseSunsetData = {
   status: 'OK' | 'INVALID_REQUEST';
 };
 
+export const BASE_URL = 'https://api.sunrise-sunset.org';
+
 export const getSunriseSunset = (lat: number, lon: number): Promise<SunriseSunset> =>
-  fetch(`https://api.sunrise-sunset.org/json?lat=${lat}&lng=${lon}&formatted=0`)
+  fetch(`${BASE_URL}/json?lat=${lat}&lng=${lon}&formatted=0`)
     .then(response => response.json())
     .then((data: SunriseSunsetData) => {
       if (data.status === 'OK') {

@@ -1,6 +1,6 @@
 import 'jest';
 import React from 'react';
-import { render, cleanup, waitForElement } from 'react-testing-library';
+import { render, cleanup, waitForElement, act } from 'react-testing-library';
 import * as smhiApi from './apis/SmhiApi';
 import * as sunriseSunsetApi from './apis/SunriseSunsetApi';
 import { WeatherSymbol } from './Weather.models';
@@ -12,12 +12,22 @@ import { generateSmhiData, genereateSunriseSunsetData } from './Weather.test.dat
 jest.mock('react-svg');
 
 const mockGeolocation = {
-  getCurrentPosition: jest.fn()
+  getCurrentPosition: jest.fn(success =>
+    success({ coords: { latitude: 57.740614, longitude: 11.930191 }, timestamp: new Date().getTime() })
+  )
 };
 (global as any).navigator.geolocation = mockGeolocation;
 
-let fetchResponse: Promise<any> = Promise.resolve();
-const mockFetch = jest.fn(() => fetchResponse);
+let smhiResponse: Promise<any> = Promise.resolve();
+let sunriseSunsetResponse: Promise<any> = Promise.resolve();
+const mockFetch = jest.fn((url: string) => {
+  if (url.startsWith(smhiApi.BASE_URL)) {
+    return smhiResponse;
+  } else if (url.startsWith(sunriseSunsetApi.BASE_URL)) {
+    return sunriseSunsetResponse;
+  }
+  console.error(`No response found for url '${url}'`);
+});
 (global as any).fetch = mockFetch;
 
 const defaultSmhiData = generateSmhiData();
@@ -52,7 +62,8 @@ describe('Weather', () => {
       mainTemp: 3
     };
     beforeEach(() => {
-      fetchResponse = Promise.resolve({ json: () => Promise.resolve(generateSmhiData(smhiData.mainTemp)) });
+      smhiResponse = Promise.resolve({ json: () => Promise.resolve(generateSmhiData(smhiData.mainTemp)) });
+      sunriseSunsetResponse = Promise.resolve({ json: () => Promise.resolve(defaultSunriseSunsetData) });
     });
     afterEach(cleanup);
     it('renders', () => {
@@ -73,7 +84,7 @@ describe('Weather', () => {
   describe('Apis', () => {
     describe('sunrise-sunset', () => {
       beforeEach(() => {
-        fetchResponse = Promise.resolve({ json: () => Promise.resolve(defaultSunriseSunsetData) });
+        sunriseSunsetResponse = Promise.resolve({ json: () => Promise.resolve(defaultSunriseSunsetData) });
       });
 
       it('fetches date an converts to sunrise sunset dates', async () => {
@@ -83,7 +94,7 @@ describe('Weather', () => {
       });
 
       it('throws data if status is not OK', async () => {
-        fetchResponse = Promise.resolve({ json: () => Promise.resolve(genereateSunriseSunsetData('INVALID_REQUEST')) });
+        sunriseSunsetResponse = Promise.resolve({ json: () => Promise.resolve(genereateSunriseSunsetData('INVALID_REQUEST')) });
         try {
           await sunriseSunsetApi.getSunriseSunset(11.930191, 57.740614);
         } catch (e) {
@@ -92,7 +103,7 @@ describe('Weather', () => {
       });
 
       it('throws error if something goes wrong', async () => {
-        fetchResponse = Promise.reject('Failz');
+        sunriseSunsetResponse = Promise.reject('Failz');
         try {
           await sunriseSunsetApi.getSunriseSunset(11.930191, 57.740614);
         } catch (e) {
@@ -106,7 +117,7 @@ describe('Weather', () => {
         sunset: new Date('2019-02-18T20:00:00Z')
       };
       beforeEach(() => {
-        fetchResponse = Promise.resolve({ json: () => Promise.resolve(defaultSmhiData) });
+        smhiResponse = Promise.resolve({ json: () => Promise.resolve(defaultSmhiData) });
       });
 
       it('fetches data and converts to daily forecast', async () => {
@@ -128,7 +139,7 @@ describe('Weather', () => {
         expect(forecast.windDirection).toBe(185);
       });
       it('throws error if something goes wrong', async () => {
-        fetchResponse = Promise.reject('Failz');
+        smhiResponse = Promise.reject('Failz');
         try {
           await smhiApi.getForecasts(11.930191, 57.740614, sunriseSunset);
         } catch (e) {

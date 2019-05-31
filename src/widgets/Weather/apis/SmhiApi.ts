@@ -19,6 +19,8 @@ type SmhiDataParameter = {
   values: number[];
 };
 
+export const BASE_URL = 'https://opendata-download-metfcst.smhi.se';
+
 const smhiWsymb2ToWeatherSymbol = (wsymb: number, time: Date, sunriseSunset: SunriseSunset): WeatherSymbol => {
   const night = time.getHours() > sunriseSunset.sunset.getHours() || time.getHours() < sunriseSunset.sunrise.getHours();
   switch (wsymb) {
@@ -88,11 +90,7 @@ const smhiTimeSerieToForecast = (timeSerie: SmhiDataTimeSerie, sunriseSunset: Su
 };
 
 export const getForecasts = async (lat: number, lon: number, sunriseSunset: SunriseSunset): Promise<Forecast[]> =>
-  fetch(
-    `https://opendata-download-metfcst.smhi.se/api/category/pmp3g/version/2/geotype/point/lon/${lon.toFixed(
-      4
-    )}/lat/${lat.toFixed(4)}/data.json`
-  )
+  fetch(`${BASE_URL}/api/category/pmp3g/version/2/geotype/point/lon/${lon.toFixed(4)}/lat/${lat.toFixed(4)}/data.json`)
     .then(response => response.json())
     .then((data: SmhiData) => data.timeSeries.map(t => smhiTimeSerieToForecast(t, sunriseSunset)))
     .catch(e => {
