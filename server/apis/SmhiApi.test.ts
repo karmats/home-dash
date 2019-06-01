@@ -1,5 +1,5 @@
 import 'jest';
-import { WeatherSymbol } from '../../shared/types/Weather.models';
+import { WeatherSymbol } from '../../shared/types';
 import { generateSmhiData } from './test.data';
 import * as api from './SmhiApi';
 
@@ -10,7 +10,7 @@ jest.mock('node-fetch', () => ({
 }));
 const defaultSmhiData = generateSmhiData();
 
-describe('SMHI', () => {
+describe('SmhiApi', () => {
   const sunriseSunset = {
     sunrise: new Date('2019-02-18T08:00:00Z'),
     sunset: new Date('2019-02-18T20:00:00Z')

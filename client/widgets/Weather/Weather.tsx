@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactSVG from 'react-svg';
 import { Forecast } from '../../../shared/types/Weather.models';
 import api from '../../apis';
@@ -72,36 +72,14 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
   </div>
 );
 
-type WeatherState = {
-  forecasts: Forecast[];
-};
-
-type ForecastAction = {
-  type: 'FORECASTS_UPDATE';
-  data: Forecast[];
-};
-
-const weatherReducer: React.Reducer<WeatherState, ForecastAction> = (state = initialState, action) => {
-  switch (action.type) {
-    case 'FORECASTS_UPDATE':
-      return { ...state, forecasts: action.data };
-    default:
-      return state;
-  }
-};
-
-const initialState: WeatherState = {
-  forecasts: []
-};
-
 export default function() {
-  const [state, dispatch] = useReducer<React.Reducer<WeatherState, ForecastAction>>(weatherReducer, initialState);
+  const [forecasts, setForecasts] = useState<Forecast[]>([]);
 
   useEffect(() => {
     const fetchForecast = async () => {
       const location = await getLocation();
       const forecasts = await api.getForecasts(location.lat, location.lon);
-      dispatch({ type: 'FORECASTS_UPDATE', data: forecasts });
+      setForecasts(forecasts);
     };
     const fetchForecastInterval = window.setInterval(fetchForecast, FORECAST_REFRESH_INTERVAL);
     fetchForecast();
@@ -111,14 +89,14 @@ export default function() {
   }, []);
   return (
     <div>
-      {state.forecasts.length ? (
+      {forecasts.length ? (
         <>
-          <MainWeather forecast={state.forecasts[0]} />
+          <MainWeather forecast={forecasts[0]} />
           <div className="Weather-footer">
-            <CommingWeather forecast={state.forecasts[2]} />
-            <CommingWeather forecast={state.forecasts[4]} />
-            <CommingWeather forecast={state.forecasts[6]} />
-            <CommingWeather forecast={state.forecasts[8]} />
+            <CommingWeather forecast={forecasts[2]} />
+            <CommingWeather forecast={forecasts[4]} />
+            <CommingWeather forecast={forecasts[6]} />
+            <CommingWeather forecast={forecasts[8]} />
           </div>
         </>
       ) : (

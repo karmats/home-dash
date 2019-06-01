@@ -1,4 +1,4 @@
-import { Forecast } from '../../shared/types/Weather.models';
+import { Forecast } from '../../shared/types';
 
 const API_PORT = 4000;
 

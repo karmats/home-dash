@@ -21,7 +21,7 @@ export const getForecastsFromRequest = function(req: express.Request, res: expre
         res.end();
       })
       .catch(e => {
-        console.log(e);
+        console.error(e);
         res.writeHead(500);
         res.write(JSON.stringify(e));
         res.end();

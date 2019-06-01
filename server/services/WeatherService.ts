@@ -1,4 +1,4 @@
-import { Forecast, SunriseSunset } from '../../shared/types/Weather.models';
+import { Forecast, SunriseSunset } from '../../shared/types';
 import { getForecasts, getSunriseSunset } from '../apis';
 
 // Once a day
