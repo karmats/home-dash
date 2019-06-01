@@ -1,17 +1,13 @@
 import React, { useEffect, useState, useReducer } from 'react';
 import ReactSVG from 'react-svg';
+import { Forecast } from '../../../shared/types/Weather.models';
+import api from '../../apis';
 import { getLocation } from '../../App.service';
-import { Location } from '../../models';
-import * as forecastApi from './apis/SmhiApi';
-import * as sunriseSunsetApi from './apis/SunriseSunsetApi';
 import * as util from './Weather.utils';
 import './Weather.css';
-import { Forecast, SunriseSunset } from './Weather.models';
 
 // Every 5 minute
 const FORECAST_REFRESH_INTERVAL = 5 * 60 * 60 * 1000;
-// Once a day
-const SUNRISE_SUNSET_REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
 // Every 30 second
 const TIME_REFRESH_INTERVAL = 30 * 1000;
 
@@ -58,7 +54,7 @@ const MainWeather = ({ forecast }: WeatherProps) => {
 const CommingWeather = ({ forecast }: WeatherProps) => (
   <div className="Weather-comming">
     <ReactSVG src={require(`./svgs/static/${forecast.symbol}.svg`)} />
-    <p>{util.dateToTime(forecast.time)}</p>
+    {<p>{util.dateToTime(new Date(forecast.time))}</p>}
     <p>{forecast.degrees.toFixed(0)}°</p>
     <div className="Weather-comming--weak">
       <ReactSVG
@@ -78,8 +74,6 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
 
 type WeatherState = {
   forecasts: Forecast[];
-  sunriseSunset: SunriseSunset | null;
-  sunriseSunsetLastUpdated: Date;
 };
 
 type ForecastAction = {
@@ -87,53 +81,26 @@ type ForecastAction = {
   data: Forecast[];
 };
 
-type SunriseSunsetAction = {
-  type: 'SUNRISE_SUNSET_UPDATE';
-  data: SunriseSunset;
-};
-
-const weatherReducer: React.Reducer<WeatherState, ForecastAction | SunriseSunsetAction> = (
-  state = initialState,
-  action
-) => {
+const weatherReducer: React.Reducer<WeatherState, ForecastAction> = (state = initialState, action) => {
   switch (action.type) {
     case 'FORECASTS_UPDATE':
       return { ...state, forecasts: action.data };
-    case 'SUNRISE_SUNSET_UPDATE':
-      return { ...state, sunriseSunset: action.data, sunriseSunsetLastUpdated: new Date() };
     default:
       return state;
   }
 };
 
 const initialState: WeatherState = {
-  forecasts: [],
-  sunriseSunset: null,
-  sunriseSunsetLastUpdated: new Date(0)
+  forecasts: []
 };
 
 export default function() {
-  const [state, dispatch] = useReducer<React.Reducer<WeatherState, ForecastAction | SunriseSunsetAction>>(
-    weatherReducer,
-    initialState
-  );
+  const [state, dispatch] = useReducer<React.Reducer<WeatherState, ForecastAction>>(weatherReducer, initialState);
 
   useEffect(() => {
-    const fetchSunriseSunset = async (location: Location) => {
-      const sunriseSunset = await sunriseSunsetApi.getSunriseSunset(location.lat, location.lon);
-      dispatch({ type: 'SUNRISE_SUNSET_UPDATE', data: sunriseSunset });
-      return sunriseSunset;
-    };
     const fetchForecast = async () => {
       const location = await getLocation();
-      let currentSunriseSunset = state.sunriseSunset;
-      if (
-        !currentSunriseSunset ||
-        new Date().getTime() - state.sunriseSunsetLastUpdated.getTime() > SUNRISE_SUNSET_REFRESH_INTERVAL
-      ) {
-        currentSunriseSunset = await fetchSunriseSunset(location);
-      }
-      const forecasts = await forecastApi.getForecasts(location.lat, location.lon, currentSunriseSunset);
+      const forecasts = await api.getForecasts(location.lat, location.lon);
       dispatch({ type: 'FORECASTS_UPDATE', data: forecasts });
     };
     const fetchForecastInterval = window.setInterval(fetchForecast, FORECAST_REFRESH_INTERVAL);
@@ -141,7 +108,7 @@ export default function() {
     return () => {
       window.clearInterval(fetchForecastInterval);
     };
-  }, [state.sunriseSunset, state.sunriseSunsetLastUpdated]);
+  }, []);
   return (
     <div>
       {state.forecasts.length ? (
