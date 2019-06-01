@@ -1,6 +1,6 @@
 import 'jest';
 import React from 'react';
-import { render, cleanup, waitForElement } from 'react-testing-library';
+import { render, cleanup, waitForElement } from '@testing-library/react';
 import { WeatherSymbol } from '../../../shared/types';
 import * as util from './Weather.utils';
 import Weather from './Weather';
