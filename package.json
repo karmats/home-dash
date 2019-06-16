@@ -69,7 +69,8 @@
   },
   "scripts": {
     "start": "node scripts/start.js & npm run server",
-    "server": "tsc -w -p tsconfig.server.json & nodemon build/server/server.js",
+    "server": "npm run build:server -- -w & nodemon build/server/server.js",
+    "build:server" : "tsc -p tsconfig.server.json",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
   },
