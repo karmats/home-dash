@@ -10,6 +10,10 @@ const getBaseUrl = () => {
 const getForecasts = (lat: number, lon: number): Promise<Forecast[]> =>
   fetch(`${getBaseUrl()}/weather?lat=${lat}&lon=${lon}`).then(response => response.json());
 
+const getForecastEventSource = (lat: number, lon: number): EventSource =>
+  new EventSource(`${getBaseUrl()}/weather?lat=${lat}&lon=${lon}&sse=true`);
+
 export default {
-  getForecasts
+  getForecasts,
+  getForecastEventSource
 };

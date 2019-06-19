@@ -81,7 +81,7 @@ const smhiTimeSerieToForecast = (timeSerie: SmhiDataTimeSerie, sunriseSunset: Su
     (timeSerie.parameters.find(p => p.name === name) || { values: [] }).values[0];
   const time = new Date(timeSerie.validTime);
   return {
-    time: time.getDate(),
+    time: time.getTime(),
     degrees: getParameterValue('t'),
     precipitation: getParameterValue('pmean'),
     symbol: smhiWsymb2ToWeatherSymbol(getParameterValue('Wsymb2'), time, sunriseSunset),

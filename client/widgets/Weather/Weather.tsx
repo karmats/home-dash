@@ -6,8 +6,6 @@ import { getLocation } from '../../App.service';
 import * as util from './Weather.utils';
 import './Weather.css';
 
-// Every 5 minute
-const FORECAST_REFRESH_INTERVAL = 5 * 60 * 60 * 1000;
 // Every 30 second
 const TIME_REFRESH_INTERVAL = 30 * 1000;
 
@@ -74,19 +72,27 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
 
 export default function() {
   const [forecasts, setForecasts] = useState<Forecast[]>([]);
+  const [eventSource, setEventSource] = useState<EventSource>();
 
   useEffect(() => {
-    const fetchForecast = async () => {
-      const location = await getLocation();
-      const forecasts = await api.getForecasts(location.lat, location.lon);
-      setForecasts(forecasts);
-    };
-    const fetchForecastInterval = window.setInterval(fetchForecast, FORECAST_REFRESH_INTERVAL);
-    fetchForecast();
-    return () => {
-      window.clearInterval(fetchForecastInterval);
-    };
+    getLocation().then(location => {
+      setEventSource(api.getForecastEventSource(location.lat, location.lon));
+    });
   }, []);
+  useEffect(() => {
+    if (eventSource) {
+      eventSource.onmessage = e => {
+        if (e.data) {
+          setForecasts(JSON.parse(e.data));
+        }
+      };
+    }
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
+  }, [eventSource]);
   return (
     <div>
       {forecasts.length ? (

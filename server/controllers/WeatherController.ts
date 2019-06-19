@@ -37,7 +37,7 @@ export const getForecastsFromRequest = function(req: express.Request, res: expre
   }
 };
 
-let timer = -1;
+let timer: any;
 export const pollForecasts = (lat: number, lon: number, res: express.Response) => {
   const pollFn = (lat: number, lon: number, res: express.Response) => {
     getWeatherForecasts(+lat, +lon).then(forecasts => {
@@ -45,6 +45,7 @@ export const pollForecasts = (lat: number, lon: number, res: express.Response) =
     });
   };
   timer = setInterval(pollFn, FORECAST_REFRESH_INTERVAL, lat, lon, res);
+  pollFn(lat, lon, res);
 };
 
 export const stopPollForecast = () => clearInterval(timer);
