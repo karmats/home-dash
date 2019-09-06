@@ -13,7 +13,12 @@ const mockGeolocation = {
     success({ coords: { latitude: 57.740614, longitude: 11.930191 }, timestamp: new Date().getTime() })
   )
 };
+class EventSourceMock {
+  constructor() {}
+  close() {}
+}
 (global as any).navigator.geolocation = mockGeolocation;
+(global as any).EventSource = EventSourceMock;
 
 jest.useFakeTimers();
 
@@ -21,7 +26,7 @@ describe('Weather', () => {
   describe('Models', () => {
     it('has all weather symbol files', () => {
       Object.keys(WeatherSymbol).forEach(symbol => {
-        const fileName = `${WeatherSymbol[symbol as any]}.svg`;
+        const fileName = `${WeatherSymbol[symbol]}.svg`;
         expect(require(`./svgs/animated/${fileName}`)).toBeDefined();
         expect(require(`./svgs/static/${fileName}`)).toBeDefined();
       });
