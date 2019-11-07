@@ -2,14 +2,14 @@ import React from 'react';
 import './App.css';
 import Weather from './widgets/Weather';
 import Calendar from './widgets/Calendar';
-import Number from './widgets/Number';
+import SavingsGoal from './widgets/SavingsGoal';
 
 export default () => {
   return (
     <div className="App">
       <Weather />
       <Calendar />
-      <Number />
+      <SavingsGoal />
     </div>
   );
 };
