@@ -1,11 +1,11 @@
-import { Location } from './models';
+import { Location } from '../models';
 
 const DEFAULT_LOCATION = {
   lat: 57.740614,
   lon: 11.930191
 };
 
-export const getLocation = async (): Promise<Location> => {
+const getLocation = async (): Promise<Location> => {
   return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
       position =>
@@ -20,3 +20,5 @@ export const getLocation = async (): Promise<Location> => {
     );
   });
 };
+
+export default { getLocation }

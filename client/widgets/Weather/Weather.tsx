@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactSVG from 'react-svg';
 import { Forecast } from '../../../shared/types/Weather.models';
 import api from '../../apis';
-import { getLocation } from '../../App.service';
+import UserService from '../../services/UserService';
 import * as util from './Weather.utils';
 import './Weather.css';
 
@@ -75,7 +75,7 @@ export default function() {
   const [eventSource, setEventSource] = useState<EventSource>();
 
   useEffect(() => {
-    getLocation().then(location => {
+    UserService.getLocation().then(location => {
       setEventSource(api.getForecastEventSource(location.lat, location.lon));
     });
   }, []);

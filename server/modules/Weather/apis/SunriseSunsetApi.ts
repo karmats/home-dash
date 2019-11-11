@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { SunriseSunset } from '../../shared/types';
+import { SunriseSunset } from '../../../../shared/types';
 
 type SunriseSunsetData = {
   results: {

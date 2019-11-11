@@ -1,4 +1,4 @@
-import { Forecast, SunriseSunset } from '../../shared/types';
+import { Forecast, SunriseSunset } from '../../../../shared/types';
 import { getForecasts, getSunriseSunset } from '../apis';
 
 // Once a day
@@ -10,7 +10,7 @@ let sunriseSunsetLastUpdated = new Date(0);
 const shouldRefreshSunriseSunset = () =>
   !sunriseSunset || Date.now() - sunriseSunsetLastUpdated.getTime() > SUNRISE_SUNSET_REFRESH_INTERVAL;
 
-export const getWeatherForecasts = async (lat: number, lon: number): Promise<Forecast[]> => {
+const getWeatherForecasts = async (lat: number, lon: number): Promise<Forecast[]> => {
   if (shouldRefreshSunriseSunset()) {
     return getSunriseSunset(lat, lon)
       .then(result => (sunriseSunset = result))
@@ -18,3 +18,5 @@ export const getWeatherForecasts = async (lat: number, lon: number): Promise<For
   }
   return getForecasts(lat, lon, sunriseSunset);
 };
+
+export default { getWeatherForecasts };

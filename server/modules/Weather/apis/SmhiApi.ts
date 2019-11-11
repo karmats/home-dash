@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { Forecast, WeatherSymbol, SunriseSunset } from '../../shared/types';
+import { Forecast, WeatherSymbol, SunriseSunset } from '../../../../shared/types';
 
 type SmhiData = {
   approvedTime: string;

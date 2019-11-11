@@ -1,5 +1,5 @@
 import 'jest';
-import { genereateSunriseSunsetData } from './test.data';
+import { genereateSunriseSunsetData } from './test/test.data';
 import * as api from './SunriseSunsetApi';
 
 let mockResponse: Promise<any> = Promise.resolve();

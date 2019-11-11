@@ -1,11 +1,11 @@
 import express from 'express';
-import { getWeatherForecasts } from '../services';
-import { defaultHeaders } from '../utils';
+import WeatherService from '../services/WeatherService';
+import { defaultHeaders } from '../../../utils';
 
 // Every 5 minute
 const FORECAST_REFRESH_INTERVAL = 5 * 60 * 1000;
 
-export const getForecastsFromRequest = function(req: express.Request, res: express.Response) {
+const getForecastsFromRequest = function(req: express.Request, res: express.Response) {
   const { lat, lon, sse } = req.query;
   if (!lat || !lon) {
     res.writeHead(400);
@@ -22,7 +22,7 @@ export const getForecastsFromRequest = function(req: express.Request, res: expre
     pollForecasts(+lat, +lon, res);
     res.on('close', () => stopPollForecast());
   } else {
-    getWeatherForecasts(+lat, +lon)
+    WeatherService.getWeatherForecasts(+lat, +lon)
       .then(forecasts => {
         res.writeHead(200, defaultHeaders);
         res.write(JSON.stringify(forecasts));
@@ -38,9 +38,9 @@ export const getForecastsFromRequest = function(req: express.Request, res: expre
 };
 
 let timer: any;
-export const pollForecasts = (lat: number, lon: number, res: express.Response) => {
+const pollForecasts = (lat: number, lon: number, res: express.Response) => {
   const pollFn = (lat: number, lon: number, res: express.Response) => {
-    getWeatherForecasts(+lat, +lon).then(forecasts => {
+    WeatherService.getWeatherForecasts(+lat, +lon).then(forecasts => {
       res.write(`data:${JSON.stringify(forecasts)}\n\n`);
     });
   };
@@ -48,4 +48,6 @@ export const pollForecasts = (lat: number, lon: number, res: express.Response) =
   pollFn(lat, lon, res);
 };
 
-export const stopPollForecast = () => clearInterval(timer);
+const stopPollForecast = () => clearInterval(timer);
+
+export default { getForecastsFromRequest, pollForecasts, stopPollForecast };

@@ -1,6 +1,6 @@
 import 'jest';
-import { WeatherSymbol } from '../../shared/types';
-import { generateSmhiData } from './test.data';
+import { WeatherSymbol } from '../../../../shared/types';
+import { generateSmhiData } from './test/test.data';
 import * as api from './SmhiApi';
 
 let mockResponse: Promise<any> = Promise.resolve();
