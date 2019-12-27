@@ -22,13 +22,15 @@ class EventSourceMock {
 
 jest.useFakeTimers();
 
+const SVG_ROOT = '../../../public/svgs';
+
 describe('Weather', () => {
   describe('Models', () => {
     it('has all weather symbol files', () => {
       Object.keys(WeatherSymbol).forEach(symbol => {
         const fileName = `${WeatherSymbol[symbol]}.svg`;
-        expect(require(`./svgs/animated/${fileName}`)).toBeDefined();
-        expect(require(`./svgs/static/${fileName}`)).toBeDefined();
+        expect(require(`${SVG_ROOT}/animated/${fileName}`)).toBeDefined();
+        expect(require(`${SVG_ROOT}/static/${fileName}`)).toBeDefined();
       });
     });
   });

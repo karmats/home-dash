@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ReactSVG from 'react-svg';
+import { ReactSVG } from 'react-svg';
 import { Forecast } from '../../../shared/types/Weather.models';
 import api from '../../apis';
 import UserService from '../../services/UserService';
@@ -29,7 +29,7 @@ const MainWeather = ({ forecast }: WeatherProps) => {
         beforeInjection={svg => {
           svg.classList.add('Weather-main__svg');
         }}
-        src={require(`./svgs/animated/${forecast.symbol}.svg`)}
+        src={`./svgs/animated/${forecast.symbol}.svg`}
       />
       <div>
         <p className="Weather-main--strong">{forecast.degrees.toFixed(0)}°</p>
@@ -38,11 +38,11 @@ const MainWeather = ({ forecast }: WeatherProps) => {
             beforeInjection={svg => {
               svg.setAttribute('style', `transform:rotate(${forecast.windDirection}deg)`);
             }}
-            src={require('./svgs/static/wind.svg')}
+            src={'./svgs/static/wind.svg'}
             wrapper="span"
           />
           <span>{`${forecast.windSpeed.toFixed(0)} m/s`}</span>
-          <ReactSVG src={require('./svgs/static/precipitation.svg')} wrapper="span" />
+          <ReactSVG src={'./svgs/static/precipitation.svg'} wrapper="span" />
           <span>{`${forecast.precipitation} mm/h`}</span>
         </div>
       </div>
@@ -51,7 +51,7 @@ const MainWeather = ({ forecast }: WeatherProps) => {
 };
 const CommingWeather = ({ forecast }: WeatherProps) => (
   <div className="Weather-comming">
-    <ReactSVG src={require(`./svgs/static/${forecast.symbol}.svg`)} />
+    <ReactSVG src={`./svgs/static/${forecast.symbol}.svg`} />
     {<p>{util.dateToTime(new Date(forecast.time))}</p>}
     <p>{forecast.degrees.toFixed(0)}°</p>
     <div className="Weather-comming--weak">
@@ -59,12 +59,12 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
         beforeInjection={svg => {
           svg.setAttribute('style', `transform:rotate(${forecast.windDirection}deg)`);
         }}
-        src={require('./svgs/static/wind.svg')}
+        src={'./svgs/static/wind.svg'}
         wrapper="span"
       />
       <span>{`${forecast.windSpeed.toFixed(0)} m/s`}</span>
       <br />
-      <ReactSVG src={require('./svgs/static/precipitation.svg')} wrapper="span" />
+      <ReactSVG src={'./svgs/static/precipitation.svg'} wrapper="span" />
       <span>{`${forecast.precipitation} mm/h`}</span>
     </div>
   </div>
