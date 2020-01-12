@@ -5,7 +5,7 @@ import { defaultHeaders } from '../../../utils';
 // Every 5 minute
 const FORECAST_REFRESH_INTERVAL = 5 * 60 * 1000;
 
-const getForecastsFromRequest = function(req: express.Request, res: express.Response) {
+const getForecastsFromRequest = (req: express.Request, res: express.Response) => {
   const { lat, lon, sse } = req.query;
   if (!lat || !lon) {
     res.writeHead(400);

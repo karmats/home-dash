@@ -1,7 +1,3 @@
-import { getCalendarEvents } from '../../apis';
+import { getCalendarEvents, isConnected, getAuthenticationUrl } from '../../../../apis/GoogleApi';
 
-const getEvents = (from: Date, to: Date) => {
-  return getCalendarEvents(from, to);
-};
-
-export default { getEvents };
+export default { getCalendarEvents, isConnected, getAuthenticationUrl };
