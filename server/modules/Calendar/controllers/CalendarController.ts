@@ -5,7 +5,6 @@ import { defaultHeaders } from '../../../utils';
 const DATE_REGEX = /\d{4}-\d{2}-\d{2}/;
 
 const getCalendarEventsFromRequest = (req: express.Request, res: express.Response) => {
-  console.log('Getting calendar events');
   const { from, to } = req.query;
   if (!from || !to || !DATE_REGEX.test(from) || !DATE_REGEX.test(to)) {
     res.writeHead(400);

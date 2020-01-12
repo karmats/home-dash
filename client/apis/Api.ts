@@ -1,4 +1,4 @@
-import { Forecast } from '../../shared/types';
+import { Forecast, CalendarEvent } from '../../shared/types';
 
 const API_PORT = 4000;
 
@@ -13,7 +13,19 @@ const getForecasts = (lat: number, lon: number): Promise<Forecast[]> =>
 const getForecastEventSource = (lat: number, lon: number): EventSource =>
   new EventSource(`${getBaseUrl()}/weather?lat=${lat}&lon=${lon}&sse=true`);
 
+const getCalendarEvents = (from: Date, to: Date): Promise<CalendarEvent[]> =>
+  fetch(`${getBaseUrl()}/calendar?from=${from.toISOString()}&to=${to.toISOString()}`)
+    .then(response => response.json())
+    .then(events =>
+      events.map((e: any) => ({
+        ...e,
+        from: new Date(e.from),
+        to: new Date(e.to)
+      }))
+    );
+
 export default {
   getForecasts,
-  getForecastEventSource
+  getForecastEventSource,
+  getCalendarEvents
 };

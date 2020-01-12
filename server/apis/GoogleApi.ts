@@ -76,7 +76,6 @@ const getAuthToken = (): Promise<any> => {
       if (err || !token) {
         reject(`Failed to read token file: ${JSON.stringify(err)}`);
       } else {
-        console.log('Got token', token);
         resolve(JSON.parse(token));
       }
     });

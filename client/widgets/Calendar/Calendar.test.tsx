@@ -21,5 +21,29 @@ describe('Calendar', () => {
       const weekdays = util.getWeekDates(new Date('2019-12-31'));
       expect(weekdays.map(d => d.getDate())).toEqual([30, 31, 1, 2, 3, 4, 5]);
     });
+
+    it('from and to should be monday and sunday', () => {
+      const { from, to } = util.getCurrentWeekStartAndEnd();
+      expect(from.getDay()).toBe(1);
+      expect(to.getDay()).toBe(0);
+    });
+
+    it('from and to should be sunday and saturday', () => {
+      const { from, to } = util.getCurrentWeekStartAndEnd(false);
+      expect(from.getDay()).toBe(0);
+      expect(to.getDay()).toBe(6);
+    });
+
+    it('is same date', () => {
+      const date1 = new Date('2020-01-01T20:44:54.062Z');
+      const date2 = new Date('2020-01-01T06:12:22.041Z');
+      expect(util.isSameDay(date1, date2)).toBe(true);
+    })
+
+    it('is not same date', () => {
+      const date1 = new Date('2020-01-01T20:44:54.062Z');
+      const date2 = new Date('2020-01-02T06:12:22.041Z');
+      expect(util.isSameDay(date1, date2)).toBe(false);
+    })
   });
 });
