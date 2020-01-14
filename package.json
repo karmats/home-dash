@@ -21,6 +21,7 @@
     "babel-plugin-named-asset-import": "^0.3.5",
     "babel-preset-react-app": "^9.1.0",
     "camelcase": "^5.3.1",
+    "concurrently": "^5.0.2",
     "eslint": "^6.8.0",
     "eslint-config-react-app": "^5.1.0",
     "eslint-loader": "^3.0.3",
@@ -69,8 +70,8 @@
     "url-loader": "^3.0.0"
   },
   "scripts": {
-    "start": "node scripts/start.js & npm run server",
-    "server": "npm run build:server -- -w & nodemon build/server/server.js",
+    "start": "concurrently --kill-others-on-fail 'node scripts/start.js' 'npm run server'",
+    "server": "concurrently --kill-others-on-fail 'npm run build:server -- -w' 'nodemon build/server/server.js'",
     "build:server": "tsc -p tsconfig.server.json",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
