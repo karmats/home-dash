@@ -38,12 +38,19 @@ describe('Calendar', () => {
       const date1 = new Date('2020-01-01T20:44:54.062Z');
       const date2 = new Date('2020-01-01T06:12:22.041Z');
       expect(util.isSameDay(date1, date2)).toBe(true);
-    })
+    });
 
     it('is not same date', () => {
       const date1 = new Date('2020-01-01T20:44:54.062Z');
       const date2 = new Date('2020-01-02T06:12:22.041Z');
       expect(util.isSameDay(date1, date2)).toBe(false);
-    })
+    });
+
+    it('converts to time', () => {
+      const date1 = new Date('2020-01-01T20:44:54');
+      const date2 = new Date('2020-01-01T01:09:54');
+      expect(util.getDateAsTimeString(date1)).toBe('20:44');
+      expect(util.getDateAsTimeString(date2)).toBe('01:09');
+    });
   });
 });

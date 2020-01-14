@@ -51,3 +51,11 @@ export const isSameDay = (date1: Date, date2: Date) =>
   date1.getFullYear() === date2.getFullYear() &&
   date1.getMonth() === date2.getMonth() &&
   date1.getDate() === date2.getDate();
+
+const rightPadNumberWithZero = (num: number) => (num < 10 ? `0${num}` : num.toString());
+/**
+ * Date to time string in format HH:mm.
+ * @param date
+ */
+export const getDateAsTimeString = (date: Date) =>
+  `${rightPadNumberWithZero(date.getHours())}:${rightPadNumberWithZero(date.getMinutes())}`;

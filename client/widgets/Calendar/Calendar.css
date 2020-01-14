@@ -13,6 +13,11 @@
     justify-items: left;
 }
 
+.Calendar-weekday--event > div {
+    text-align: left;
+    padding-top: 0.2rem;
+}
+
 .Calendar-weekday p {
     font-size: 2rem;
     margin: 0;

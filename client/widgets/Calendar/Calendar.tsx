@@ -6,12 +6,19 @@ import * as util from './Calendar.utils';
 
 type WeekdayProps = {
   date: Date;
-  events: string[];
+  events: CalendarEvent[];
 };
+
+const eventToString = (event: CalendarEvent) =>
+  `${util.getDateAsTimeString(event.from)} - ${util.getDateAsTimeString(event.to)} ${event.summary}`;
 const Weekday = ({ date, events }: WeekdayProps) => (
   <div className="Calendar-weekday">
     <p>{date.getDate()}</p>
-    <div>{events.length ? events.map(e => <span key={e}>{e}</span>) : 'No plans!'}</div>
+    <div className="Calendar-weekday--event">
+      {events.length
+        ? events.map(e => <div key={`${e.from.toISOString()}_${e.to.toISOString}`}>{eventToString(e)}</div>)
+        : 'No plans!'}
+    </div>
   </div>
 );
 
@@ -29,7 +36,7 @@ export default () => {
         <Weekday
           key={`${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`}
           date={d}
-          events={events.filter(e => util.isSameDay(d, e.from)).map(e => e.summary)}
+          events={events.filter(e => util.isSameDay(d, e.from))}
         />
       ))}
     </div>
