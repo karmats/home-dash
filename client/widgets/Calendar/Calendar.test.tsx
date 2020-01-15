@@ -52,5 +52,12 @@ describe('Calendar', () => {
       expect(util.getDateAsTimeString(date1)).toBe('20:44');
       expect(util.getDateAsTimeString(date2)).toBe('01:09');
     });
+
+    it('is today', () => {
+      expect(util.isToday(new Date())).toBe(true);
+    });
+    it('is not today', () => {
+      expect(util.isToday(new Date('2019-01-10'))).toBe(false);
+    });
   });
 });

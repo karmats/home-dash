@@ -22,9 +22,17 @@ p {
     font-size: 1rem;
     opacity: 0.8;
 }
+.Weather-main--weak > span {
+    font-size: 1rem;
+    opacity: 0.8;
+}
 .Weather-main--weak svg {
-    width: 1rem;
     height: 1rem;
+    vertical-align: text-bottom;
+    width: 1rem;
+}
+.Weather-main--weak svg:last-child {
+    margin-left: 0.5rem;
 }
 
 .Weather-footer {

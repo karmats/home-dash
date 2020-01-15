@@ -59,3 +59,10 @@ const rightPadNumberWithZero = (num: number) => (num < 10 ? `0${num}` : num.toSt
  */
 export const getDateAsTimeString = (date: Date) =>
   `${rightPadNumberWithZero(date.getHours())}:${rightPadNumberWithZero(date.getMinutes())}`;
+
+export const isToday = (date: Date) => {
+  const now = new Date();
+  return (
+    now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate()
+  );
+};

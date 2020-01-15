@@ -12,12 +12,12 @@ type WeekdayProps = {
 const eventToString = (event: CalendarEvent) =>
   `${util.getDateAsTimeString(event.from)} - ${util.getDateAsTimeString(event.to)} ${event.summary}`;
 const Weekday = ({ date, events }: WeekdayProps) => (
-  <div className="Calendar-weekday">
+  <div className={`Calendar-weekday${util.isToday(date) ? ' Calendar-weekday--today' : ''}`}>
     <p>{date.getDate()}</p>
     <div className="Calendar-weekday--event">
       {events.length
         ? events.map(e => <div key={`${e.from.toISOString()}_${e.to.toISOString}`}>{eventToString(e)}</div>)
-        : 'No plans!'}
+        : ''}
     </div>
   </div>
 );
