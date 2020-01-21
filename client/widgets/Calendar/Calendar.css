@@ -32,5 +32,6 @@
     padding: 0.5rem;
 }
 .Calendar-weekday--today {
-    background-color: #0D47A1;
+    background-color: #64FFDA;
+    color: #282c34;
 }

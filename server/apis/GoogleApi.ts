@@ -90,16 +90,12 @@ const getAuthToken = (): Promise<any> => {
  */
 const listEvents = async (from: Date, to: Date): Promise<ReadonlyArray<CalendarEvent>> => {
   const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
-  /*calendar.calendarList.list().then(calendars => {
-      console.log(calendars.data);
-    });*/
   return calendar.events
     .list({
       calendarId: 'primary',
       timeMin: from.toISOString(),
       timeMax: to.toISOString(),
-      singleEvents: true,
-      orderBy: 'startTime'
+      singleEvents: true
     })
     .then(res => {
       const events = res?.data?.items;

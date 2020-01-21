@@ -12,7 +12,12 @@ const getCalendarEventsFromRequest = (req: express.Request, res: express.Respons
     res.end();
   } else {
     const dateFrom = new Date(from);
+    dateFrom.setHours(0);
+    dateFrom.setMinutes(0);
+    dateFrom.setMilliseconds(0);
     const dateTo = new Date(to);
+    dateTo.setHours(23);
+    dateTo.setMinutes(59);
 
     CalendarService.isConnected().then(ready => {
       if (ready) {

@@ -6,14 +6,14 @@ import UserService from '../../services/UserService';
 import * as util from './Weather.utils';
 import './Weather.css';
 
-// Every 30 second
-const TIME_REFRESH_INTERVAL = 30 * 1000;
+// Every 10 second
+const TIME_REFRESH_INTERVAL = 10 * 1000;
 
 type WeatherProps = {
   forecast: Forecast;
 };
 
-const MainWeather = ({ forecast }: WeatherProps) => {
+const Clock = () => {
   const [now, setNow] = useState(new Date());
   useEffect(() => {
     const updateNow = () => setNow(new Date());
@@ -22,9 +22,13 @@ const MainWeather = ({ forecast }: WeatherProps) => {
       clearInterval(timeInterval);
     };
   }, [now]);
+  return <p className="Clock-main">{util.dateToTime(now)}</p>;
+};
+
+const MainWeather = ({ forecast }: WeatherProps) => {
   return (
     <div className="Weather-main">
-      <p className="Weather-main--strong">{util.dateToTime(now)}</p>
+      <Clock />
       <ReactSVG
         beforeInjection={svg => {
           svg.classList.add('Weather-main__svg');
