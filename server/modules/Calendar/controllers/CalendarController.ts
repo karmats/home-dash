@@ -1,5 +1,6 @@
 import express from 'express';
 import CalendarService from '../services/CalendarService';
+import { AuthenticationService } from '../../Authentication';
 import { defaultHeaders } from '../../../utils';
 
 const DATE_REGEX = /\d{4}-\d{2}-\d{2}/;
@@ -19,7 +20,7 @@ const getCalendarEventsFromRequest = (req: express.Request, res: express.Respons
     dateTo.setHours(23);
     dateTo.setMinutes(59);
 
-    CalendarService.isConnected().then(ready => {
+    AuthenticationService.isConnectedToGoogle().then(ready => {
       if (ready) {
         CalendarService.getCalendarEvents(dateFrom, dateTo).then(
           events => {
@@ -34,7 +35,8 @@ const getCalendarEventsFromRequest = (req: express.Request, res: express.Respons
           }
         );
       } else {
-        res.redirect(CalendarService.getAuthenticationUrl());
+        // User not logged in to google, create an authentication url
+        res.redirect(AuthenticationService.getGoogleAuthenticationUrl());
         res.end();
       }
     });

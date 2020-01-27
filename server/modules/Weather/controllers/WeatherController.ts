@@ -1,5 +1,5 @@
 import express from 'express';
-import WeatherService from '../services/WeatherService';
+import WeatherService from '../services/WeatherService/WeatherService';
 import { defaultHeaders } from '../../../utils';
 
 // Every 5 minute

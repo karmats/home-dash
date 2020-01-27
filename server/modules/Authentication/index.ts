@@ -1,2 +1,3 @@
 import GoogleAuthenticationController from './controllers';
-export { GoogleAuthenticationController };
+import AuthenticationService from './services';
+export { GoogleAuthenticationController, AuthenticationService };

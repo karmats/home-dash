@@ -1,3 +1,2 @@
-import { getCalendarEvents, isConnected, getAuthenticationUrl } from '../../../../apis/GoogleApi';
-
-export default { getCalendarEvents, isConnected, getAuthenticationUrl };
+import { getCalendarEvents } from '../../../../apis/GoogleApi';
+export default { getCalendarEvents };

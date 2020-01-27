@@ -1,5 +1,5 @@
-import { Forecast, SunriseSunset } from '../../../../shared/types';
-import { getForecasts, getSunriseSunset } from '../apis';
+import { Forecast, SunriseSunset } from '../../../../../shared/types';
+import { getForecasts, getSunriseSunset } from '../../apis';
 
 // Once a day
 const SUNRISE_SUNSET_REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
