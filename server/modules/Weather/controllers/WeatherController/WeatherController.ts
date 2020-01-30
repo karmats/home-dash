@@ -1,6 +1,6 @@
 import express from 'express';
-import WeatherService from '../services/WeatherService/WeatherService';
-import { defaultHeaders } from '../../../utils';
+import WeatherService from '../../services/WeatherService/WeatherService';
+import { defaultHeaders } from '../../../../utils';
 
 // Every 5 minute
 const FORECAST_REFRESH_INTERVAL = 5 * 60 * 1000;

@@ -1,2 +1,2 @@
 import CalendarController from './CalendarController';
-export { CalendarController };
+export default CalendarController;

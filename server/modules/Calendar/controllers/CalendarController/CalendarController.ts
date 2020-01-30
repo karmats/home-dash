@@ -1,7 +1,7 @@
 import express from 'express';
-import CalendarService from '../services/CalendarService';
-import { AuthenticationService } from '../../Authentication';
-import { defaultHeaders } from '../../../utils';
+import CalendarService from '../../services/CalendarService';
+import { AuthenticationService } from '../../../Authentication';
+import { defaultHeaders } from '../../../../utils';
 
 const DATE_REGEX = /\d{4}-\d{2}-\d{2}/;
 

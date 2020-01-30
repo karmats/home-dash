@@ -1,2 +1,2 @@
-import WeatherController from './WeatherController';
-export default WeatherController;
+import WeatherController from './WeatherController/WeatherController';
+export { WeatherController };

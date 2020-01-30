@@ -1,2 +1,2 @@
-import GoogleAuthenticatorController from './GoogleAuthenticatorController';
-export default GoogleAuthenticatorController;
+import GoogleAuthenticatorController from './GoogleAuthenticatorController/GoogleAuthenticatorController';
+export { GoogleAuthenticatorController };

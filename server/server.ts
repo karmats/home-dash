@@ -1,7 +1,7 @@
 import express from 'express';
 import { WeatherController } from './modules/Weather';
 import { CalendarController } from './modules/Calendar';
-import { GoogleAuthenticationController } from './modules/Authentication';
+import { GoogleAuthenticatorController } from './modules/Authentication';
 
 const hostname = '0.0.0.0';
 const port = 4000;
@@ -13,7 +13,7 @@ app.get('/', function(_, res) {
 });
 app.get('/weather', WeatherController.getForecastsFromRequest);
 app.get('/calendar', CalendarController.getCalendarEventsFromRequest);
-app.get('/auth/google', GoogleAuthenticationController.authenticateToGoogle);
+app.get('/auth/google', GoogleAuthenticatorController.authenticateToGoogle);
 
 app.listen(port, hostname, function() {
   console.log(`Server running at http://${hostname}:${port}/`);

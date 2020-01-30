@@ -1,2 +1,2 @@
-import AuthtenticationService from './AuthenticationService';
-export default AuthtenticationService;
+import AuthenticationService from './AuthenticationService';
+export { AuthenticationService };
