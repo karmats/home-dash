@@ -3,7 +3,7 @@ import { WeatherController } from './modules/Weather';
 import { CalendarController } from './modules/Calendar';
 import { GoogleAuthenticationController } from './modules/Authentication';
 
-const hostname = '127.0.0.1';
+const hostname = '0.0.0.0';
 const port = 4000;
 
 const app = express();
