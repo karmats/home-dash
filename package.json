@@ -73,7 +73,8 @@
     "start": "concurrently --kill-others-on-fail 'node scripts/start.js' 'npm run server'",
     "server": "concurrently --kill-others-on-fail 'npm run build:server -- -w' 'nodemon build/server/server.js'",
     "build:server": "tsc -p tsconfig.server.json",
-    "build": "node scripts/build.js",
+    "build:client": "node scripts/build.js",
+    "build": "npm run build:client && npm run build:server",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
