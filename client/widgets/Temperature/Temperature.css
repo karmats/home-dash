@@ -1,0 +1,17 @@
+.Temperature-main {
+
+    display: grid;
+    grid-column-gap: 0.5rem;
+    grid-row-gap: 0.5rem;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+
+}
+.Temperature-box {
+    padding: 1rem;
+    background-color: #424242;
+}
+
+.Temperature-box > span {
+    margin-left: 0.5rem;
+}
