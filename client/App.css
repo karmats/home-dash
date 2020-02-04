@@ -27,8 +27,8 @@
 }
 
 .App>* {
-  background-color: #282c34;
-  color: white;
+  background-color: var(--box-bg-color);
+  color: var(--box-color);
   padding: 2rem;
   text-align: center;
 }

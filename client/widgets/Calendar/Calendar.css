@@ -6,7 +6,7 @@
 
 .Calendar-weekday {
     align-items: center;
-    background-color: #424242;
+    background-color: var(--box-bg-complementary-color);
     display: grid;
     justify-items: left;
     grid-column-gap: 1rem;
@@ -32,6 +32,6 @@
     padding: 0.5rem;
 }
 .Calendar-weekday--today {
-    background-color: #64FFDA;
-    color: #282c34;
+    background-color: var(--active-bg-color);
+    color: var(--active-color);
 }

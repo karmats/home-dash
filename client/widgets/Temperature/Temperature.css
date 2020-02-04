@@ -9,7 +9,7 @@
 }
 .Temperature-box {
     padding: 1rem;
-    background-color: #424242;
+    background-color: var(--box-bg-complementary-color);
 }
 
 .Temperature-box > span {
