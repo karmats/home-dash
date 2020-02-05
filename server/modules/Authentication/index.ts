@@ -1,3 +1,3 @@
-import { GoogleAuthenticatorController } from './controllers';
+import { GoogleAuthenticatorController, SectorAlarmAuthenticationController } from './controllers';
 import { AuthenticationService } from './services';
-export { GoogleAuthenticatorController, AuthenticationService };
+export { GoogleAuthenticatorController, SectorAlarmAuthenticationController, AuthenticationService };

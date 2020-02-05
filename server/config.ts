@@ -10,5 +10,12 @@ export default {
       redirect_uris: ['redirect_uris'],
       javascript_origins: ['javascript_origins']
     }
+  },
+  sectoralarm: {
+    auth: {
+      username: 'username',
+      password: 'password'
+    },
+    deviceId: '01234567'
   }
 };

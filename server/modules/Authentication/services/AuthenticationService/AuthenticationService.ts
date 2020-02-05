@@ -1,2 +1,7 @@
 import { isConnected, getAuthenticationUrl } from '../../../../apis/GoogleApi';
-export default { isConnectedToGoogle: isConnected, getGoogleAuthenticationUrl: getAuthenticationUrl };
+import { authenticate } from '../../../../apis/SectorAlarmApi';
+export default {
+  isConnectedToGoogle: isConnected,
+  getGoogleAuthenticationUrl: getAuthenticationUrl,
+  authenticateToSectorAlarm: authenticate
+};

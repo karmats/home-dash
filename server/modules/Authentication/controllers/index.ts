@@ -1,2 +1,3 @@
-import GoogleAuthenticatorController from './GoogleAuthenticatorController/GoogleAuthenticatorController';
-export { GoogleAuthenticatorController };
+import GoogleAuthenticatorController from './GoogleAuthenticatorController';
+import SectorAlarmAuthenticationController from './SectorAlarmAuthenticationController';
+export { GoogleAuthenticatorController, SectorAlarmAuthenticationController };
