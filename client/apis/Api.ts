@@ -1,4 +1,4 @@
-import { Forecast, CalendarEvent } from '../../shared/types';
+import { Forecast, CalendarEvent, Temperature } from '../../shared/types';
 
 const API_PORT = 4000;
 
@@ -24,8 +24,12 @@ const getCalendarEvents = (from: Date, to: Date): Promise<CalendarEvent[]> =>
       }))
     );
 
+const getIndoorTemperatures = (): Promise<Temperature[]> =>
+  fetch(`${getBaseUrl()}/temperatures/indoor`).then(response => response.json());
+
 export default {
   getForecasts,
   getForecastEventSource,
-  getCalendarEvents
+  getCalendarEvents,
+  getIndoorTemperatures
 };

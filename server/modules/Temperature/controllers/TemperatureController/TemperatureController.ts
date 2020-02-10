@@ -2,7 +2,7 @@ import express from 'express';
 import { TemperatureService } from '../../services';
 import { defaultHeaders } from '../../../../utils';
 
-const getIndoorTemperatures = (req: express.Request, res: express.Response) => {
+const getIndoorTemperatures = (_: express.Request, res: express.Response) => {
   res.writeHead(200, defaultHeaders);
   TemperatureService.getIndoorTemperatures()
     .then(temperatures => {

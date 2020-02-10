@@ -1,10 +1,14 @@
 .Temperature-main {
-
     display: grid;
     grid-column-gap: 0.5rem;
     grid-row-gap: 0.5rem;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
+
+    --hot-color: #F44336;
+    --warm-color: #FFB74D;
+    --cold-color: #B2EBF2;
+    --chilly-color: #64B5F6;
 
 }
 .Temperature-box {
@@ -14,4 +18,20 @@
 
 .Temperature-box > span {
     margin-left: 0.5rem;
+}
+
+.Temperature-box > span.hot {
+    color: var(--hot-color);
+}
+
+.Temperature-box > span.warm {
+    color: var(--warm-color);
+}
+
+.Temperature-box > span.cold {
+    color: var(--cold-color);
+}
+
+.Temperature-box > span.chilly {
+    color: var(--chilly-color);
 }

@@ -14,7 +14,7 @@ app.get('/', function(_, res) {
 });
 app.get('/weather', WeatherController.getForecastsFromRequest);
 app.get('/calendar', CalendarController.getCalendarEventsFromRequest);
-app.get('/temperatures', TemperatureController.getIndoorTemperatures);
+app.get('/temperatures/indoor', TemperatureController.getIndoorTemperatures);
 app.get('/auth/google', GoogleAuthenticatorController.authenticateToGoogle);
 app.get('/auth/sectoralarm', SectorAlarmAuthenticationController.authenticateToSectorAlarm);
 
