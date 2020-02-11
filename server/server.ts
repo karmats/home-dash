@@ -3,6 +3,7 @@ import { GoogleAuthenticatorController, SectorAlarmAuthenticationController } fr
 import { WeatherController } from './modules/Weather';
 import { CalendarController } from './modules/Calendar';
 import { TemperatureController } from './modules/Temperature';
+import { HomeAlarmController } from './modules/HomeAlarm';
 
 const hostname = '0.0.0.0';
 const port = 4000;
@@ -15,6 +16,7 @@ app.get('/', function(_, res) {
 app.get('/weather', WeatherController.getForecastsFromRequest);
 app.get('/calendar', CalendarController.getCalendarEventsFromRequest);
 app.get('/temperatures/indoor', TemperatureController.getIndoorTemperatures);
+app.get('/homealarm/status', HomeAlarmController.getHomeAlarmStatusInfo);
 app.get('/auth/google', GoogleAuthenticatorController.authenticateToGoogle);
 app.get('/auth/sectoralarm', SectorAlarmAuthenticationController.authenticateToSectorAlarm);
 

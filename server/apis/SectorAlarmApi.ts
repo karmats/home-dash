@@ -2,7 +2,7 @@ import fs from 'fs';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import config from '../config';
-import { Temperature } from '../../shared/types';
+import { Temperature, HomeAlarmInfo, ArmedStatus } from '../../shared/types';
 
 const BASE_URL = 'https://mypagesapi.sectoralarm.net';
 const REQUEST_VERIFICATON_TOKEN_NAME = '__RequestVerificationToken';
@@ -11,6 +11,24 @@ const COOKIE_JAR_PATH = 'sa-cookie.json';
 type SectorAlarmMeta = {
   version: string;
   cookie: string;
+};
+
+const armedStatusToAlarmStatus = (armedStatus: string): ArmedStatus => {
+  switch (armedStatus) {
+    case 'armed':
+      return ArmedStatus.FULL;
+    case 'partialarmed':
+      return ArmedStatus.PARTIAL;
+    case 'disarmed':
+      return ArmedStatus.OFF;
+    default:
+      return ArmedStatus.UNKNOWN;
+  }
+};
+
+const sectorAlarmDateToDate = (date: string): Date | null => {
+  const ms = /\/Date\((-?\d*)\)\//.exec(date);
+  return ms && ms[1] ? new Date(+ms[1]) : null;
 };
 
 /**
@@ -97,6 +115,35 @@ const getSessionMeta = (): Promise<SectorAlarmMeta> => {
           });
       }
     });
+  });
+};
+
+/**
+ * Get house alarm status. If there are more than one alarm registered only the first will be returned.
+ */
+export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
+  return getSessionMeta().then(async sessionMeta => {
+    return fetch(`${BASE_URL}/Panel/GetPanelList`, {
+      headers: {
+        Accept: 'application/json',
+        'Content-type': 'application/json',
+        Cookie: sessionMeta.cookie
+      }
+    })
+      .then(response => response.json())
+      .then(json => {
+        if (json.length) {
+          return json
+            .map((j: any) => ({
+              status: armedStatusToAlarmStatus(j.ArmedStatus),
+              online: j.IsOnline,
+              time: sectorAlarmDateToDate(j.PanelTime)
+            }))
+            .pop();
+        } else {
+          throw new Error('Expected at least one alarm, got zero');
+        }
+      });
   });
 };
 
