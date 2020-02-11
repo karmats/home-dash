@@ -1,4 +1,4 @@
-import { Forecast, CalendarEvent, Temperature } from '../../shared/types';
+import { Forecast, CalendarEvent, Temperature, HomeAlarmInfo } from '../../shared/types';
 
 const API_PORT = 4000;
 
@@ -27,9 +27,18 @@ const getCalendarEvents = (from: Date, to: Date): Promise<CalendarEvent[]> =>
 const getIndoorTemperatures = (): Promise<Temperature[]> =>
   fetch(`${getBaseUrl()}/temperatures/indoor`).then(response => response.json());
 
+const getHomeAlarmStatus = (): Promise<HomeAlarmInfo> =>
+  fetch(`${getBaseUrl()}/homealarm/status`)
+    .then(response => response.json())
+    .then(info => ({
+      ...info,
+      time: new Date(info.time)
+    }));
+
 export default {
   getForecasts,
   getForecastEventSource,
   getCalendarEvents,
-  getIndoorTemperatures
+  getIndoorTemperatures,
+  getHomeAlarmStatus
 };

@@ -16,19 +16,19 @@ type SectorAlarmMeta = {
 const armedStatusToAlarmStatus = (armedStatus: string): ArmedStatus => {
   switch (armedStatus) {
     case 'armed':
-      return ArmedStatus.FULL;
+      return 'full';
     case 'partialarmed':
-      return ArmedStatus.PARTIAL;
+      return 'partial';
     case 'disarmed':
-      return ArmedStatus.OFF;
+      return 'off';
     default:
-      return ArmedStatus.UNKNOWN;
+      return 'unknown';
   }
 };
 
-const sectorAlarmDateToDate = (date: string): Date | null => {
+const sectorAlarmDateToMs = (date: string): number => {
   const ms = /\/Date\((-?\d*)\)\//.exec(date);
-  return ms && ms[1] ? new Date(+ms[1]) : null;
+  return ms && ms[1] ? +ms[1] : -1;
 };
 
 /**
@@ -77,11 +77,11 @@ export const authenticate = async (): Promise<SectorAlarmMeta> => {
                     version: meta.version
                   };
                   // Save cookie to file so login isn't necessary every time
-                  fs.writeFile(COOKIE_JAR_PATH, JSON.stringify(sessionMeta), err => {
+                  /*fs.writeFile(COOKIE_JAR_PATH, JSON.stringify(sessionMeta), err => {
                     if (err) {
                       throw new Error(`Failed to write file: ${JSON.stringify(err)}`);
                     }
-                  });
+                  });*/
                   resolve(sessionMeta);
                 } else {
                   reject(`Expected set-cookie header to be defined, ${setCookieHeader}`);
@@ -137,7 +137,7 @@ export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
             .map((j: any) => ({
               status: armedStatusToAlarmStatus(j.ArmedStatus),
               online: j.IsOnline,
-              time: sectorAlarmDateToDate(j.PanelTime)
+              time: sectorAlarmDateToMs(j.PanelTime)
             }))
             .pop();
         } else {

@@ -1,11 +1,6 @@
-export enum ArmedStatus {
-  PARTIAL = 'PARTIAL',
-  FULL = 'FULL',
-  OFF = 'OFF',
-  UNKNOWN = 'UNKNOWN'
-}
-export type HomeAlarmInfo = {
-  status: ArmedStatus;
+export type ArmedStatus = 'full' | 'partial' | 'off' | 'unknown';
+export interface HomeAlarmInfo {
+  status: 'full' | 'partial' | 'off' | 'unknown';
   online: boolean;
   time: Date;
-};
+}

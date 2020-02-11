@@ -1,0 +1,28 @@
+.HomeAlarm--indicator {
+    border: 2px solid;
+    border-radius: 4rem;
+    display: inline-flex;
+    padding: 1.5rem;
+}
+.HomeAlarm--indicator svg {
+    height: 4rem;
+    width: 4rem;
+}
+.HomeAlarm--indicator.full, .HomeAlarm--indicator.partial {
+    border-color: var(--active-bg-color);
+}
+.HomeAlarm--indicator.full svg, .HomeAlarm--indicator.partial svg {
+    fill: var(--active-bg-color);
+}
+
+.HomeAlarm--indicator.unarmed {
+    border-color: var(--disabled-bg-color);
+}
+.HomeAlarm--indicator.unarmed svg {
+    fill: var(--disabled-bg-color);
+}
+
+.HomeAlarm--time {
+    opacity: 0.8;
+    margin-top: 1rem;
+}

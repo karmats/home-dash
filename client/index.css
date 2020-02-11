@@ -6,6 +6,7 @@
   --box-bg-complementary-color: #424242;
   --active-bg-color: #64FFDA;
   --active-color: #282c34;
+  --disabled-bg-color: #bdbdbd;
 }
 
 body {
