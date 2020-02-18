@@ -25,6 +25,21 @@ var dotenvFiles = [
   paths.dotenv,
 ].filter(Boolean);
 
+// Load environment variables from .env* files. Suppress warnings using silent
+// if this file is missing. dotenv will never modify any environment variables
+// that have already been set.  Variable expansion is supported in .env files.
+// https://github.com/motdotla/dotenv
+// https://github.com/motdotla/dotenv-expand
+dotenvFiles.forEach(dotenvFile => {
+  if (fs.existsSync(dotenvFile)) {
+    require('dotenv-expand')(
+      require('dotenv').config({
+        path: dotenvFile,
+      })
+    );
+  }
+});
+
 // We support resolving modules according to `NODE_PATH`.
 // This lets you use absolute paths in imports inside large monorepos:
 // https://github.com/facebook/create-react-app/issues/253.

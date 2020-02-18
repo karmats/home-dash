@@ -8,10 +8,10 @@
     height: 4rem;
     width: 4rem;
 }
-.HomeAlarm--indicator.full, .HomeAlarm--indicator.partial {
+.HomeAlarm--indicator.armed, .HomeAlarm--indicator.partial {
     border-color: var(--active-bg-color);
 }
-.HomeAlarm--indicator.full svg, .HomeAlarm--indicator.partial svg {
+.HomeAlarm--indicator.armed svg, .HomeAlarm--indicator.partial svg {
     fill: var(--active-bg-color);
 }
 
