@@ -76,27 +76,24 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
 
 export default function() {
   const [forecasts, setForecasts] = useState<Forecast[]>([]);
-  const [eventSource, setEventSource] = useState<EventSource>();
 
   useEffect(() => {
     UserService.getLocation().then(location => {
-      setEventSource(api.getForecastEventSource(location.lat, location.lon));
-    });
-  }, []);
-  useEffect(() => {
-    if (eventSource) {
-      eventSource.onmessage = e => {
-        if (e.data) {
-          setForecasts(JSON.parse(e.data));
+      const eventSource = api.getForecastEventSource(location.lat, location.lon);
+      if (eventSource) {
+        eventSource.onmessage = e => {
+          if (e.data) {
+            setForecasts(JSON.parse(e.data));
+          }
+        };
+      }
+      return () => {
+        if (eventSource) {
+          eventSource.close();
         }
       };
-    }
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
-  }, [eventSource]);
+    });
+  }, []);
   return (
     <div>
       {forecasts.length ? (

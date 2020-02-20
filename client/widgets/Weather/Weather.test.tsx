@@ -1,12 +1,17 @@
 import 'jest';
 import React from 'react';
-import { render, cleanup, waitForElement } from '@testing-library/react';
-import { WeatherSymbol } from '../../../shared/types';
+import { render, cleanup, wait } from '@testing-library/react';
+import { WeatherSymbol, Forecast } from '../../../shared/types';
 import * as util from './Weather.utils';
 import Weather from './Weather';
 
 // Mocks
 jest.mock('react-svg');
+
+let mockGetForecastEventSource: any = jest.fn();
+jest.mock('../../apis', () => ({
+  getForecastEventSource: () => mockGetForecastEventSource
+}));
 
 const mockGeolocation = {
   getCurrentPosition: jest.fn(success =>
@@ -14,7 +19,6 @@ const mockGeolocation = {
   )
 };
 class EventSourceMock {
-  constructor() {}
   close() {}
 }
 (global as any).navigator.geolocation = mockGeolocation;
@@ -47,9 +51,6 @@ describe('Weather', () => {
   });
 
   describe('Component', () => {
-    const smhiData = {
-      mainTemp: 3
-    };
     afterEach(cleanup);
     it('renders', () => {
       render(<Weather />);
@@ -60,10 +61,27 @@ describe('Weather', () => {
       expect(indicator).toBeDefined();
       expect(indicator.tagName).toBe('SPAN');
     });
-    // FIXME
-    xit('renders main weather and comming weather', async () => {
+    it('renders main weather and comming weather', async () => {
+      const eventSource = new EventSource('mock-url');
+      mockGetForecastEventSource = eventSource;
+      const smhiData: Forecast[] = Array.from(new Array(10)).map((_, idx) => ({
+        symbol: WeatherSymbol.CLEAR_SKY,
+        degrees: idx,
+        precipitation: idx * 10,
+        windSpeed: idx,
+        windDirection: idx * 10,
+        time: Date.now()
+      }));
+
       const { getByText } = render(<Weather />);
-      await waitForElement(() => getByText(`${smhiData.mainTemp}°`));
+      await wait(() => {
+        eventSource.onmessage!({
+          data: JSON.stringify(smhiData)
+        } as MessageEvent);
+      });
+      expect(getByText('8 m/s')).toBeDefined();
+      expect(getByText('8°')).toBeDefined();
+      expect(getByText('80 mm/h')).toBeDefined();
     });
   });
 });
