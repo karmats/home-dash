@@ -89,7 +89,7 @@ const getAuthToken = (): Promise<any> => {
   });
 };
 
-const isCommingRequest = (request: CalendarEventRequest): request is CalendarCommingRequest => !isNaN(request['next']);
+const isCommingRequest = (request: CalendarEventRequest): request is CalendarCommingRequest => Object.keys(request).indexOf('next') >= 0;
 
 /**
  * Lists events on the user's calendar.

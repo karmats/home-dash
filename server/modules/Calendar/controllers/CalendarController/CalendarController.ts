@@ -25,7 +25,7 @@ const getCalendarEventsFromRequest = (req: express.Request, res: express.Respons
       if (ready) {
         const request = comming
           ? CalendarService.getNextCalendarEvents(comming)
-          : CalendarService.getCalendarEventsByDates(dateFrom, dateTo);
+          : CalendarService.getCalendarEventsByDates(dateFrom!, dateTo!);
         request.then(
           events => {
             res.writeHead(200, defaultHeaders);
