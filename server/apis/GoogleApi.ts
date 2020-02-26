@@ -3,6 +3,13 @@ import { google } from 'googleapis';
 import config from '../config';
 import { CalendarEvent } from '../../shared/types';
 
+type CalendarFromToRequest = {
+  from: Date;
+  to: Date;
+};
+type CalendarCommingRequest = { next: number };
+type CalendarEventRequest = CalendarFromToRequest | CalendarCommingRequest;
+
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -17,10 +24,10 @@ const oAuth2Client = new google.auth.OAuth2(
 );
 
 // Load client secrets from a local file.
-export const getCalendarEvents = (from: Date, to: Date): Promise<ReadonlyArray<CalendarEvent>> => {
+export const getCalendarEvents = (request: CalendarEventRequest): Promise<ReadonlyArray<CalendarEvent>> => {
   return getAuthToken().then(token => {
     oAuth2Client.setCredentials(token);
-    return listEvents(from, to);
+    return listEvents(request);
   });
 };
 
@@ -82,21 +89,27 @@ const getAuthToken = (): Promise<any> => {
   });
 };
 
+const isCommingRequest = (request: CalendarEventRequest): request is CalendarCommingRequest => !isNaN(request['next']);
+
 /**
  * Lists events on the user's calendar.
  *
- * @param from  From date
- * @param to    To Date
+ * @param request The CalendarEventRequest, either a from/to or comming x events
  */
-const listEvents = async (from: Date, to: Date): Promise<ReadonlyArray<CalendarEvent>> => {
+const listEvents = async (request: CalendarEventRequest): Promise<ReadonlyArray<CalendarEvent>> => {
   const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+  const eventRequest = {
+    calendarId: 'primary',
+    singleEvents: true,
+    timeMin: new Date().toISOString(),
+    orderBy: 'startTime'
+  };
   return calendar.events
-    .list({
-      calendarId: 'primary',
-      timeMin: from.toISOString(),
-      timeMax: to.toISOString(),
-      singleEvents: true
-    })
+    .list(
+      isCommingRequest(request)
+        ? { ...eventRequest, maxResults: request.next }
+        : { ...eventRequest, timeMin: request.from.toISOString(), timeMax: request.to.toISOString() }
+    )
     .then(res => {
       const events = res?.data?.items;
       if (events && events.length) {

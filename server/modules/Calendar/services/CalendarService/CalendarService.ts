@@ -1,2 +1,6 @@
 import { getCalendarEvents } from '../../../../apis/GoogleApi';
-export default { getCalendarEvents };
+
+const getCalendarEventsByDates = (from: Date, to: Date) => getCalendarEvents({ from, to });
+const getNextCalendarEvents = (next: number) => getCalendarEvents({ next });
+
+export default { getCalendarEventsByDates, getNextCalendarEvents };
