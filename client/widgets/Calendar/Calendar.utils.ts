@@ -60,6 +60,12 @@ const rightPadNumberWithZero = (num: number) => (num < 10 ? `0${num}` : num.toSt
 export const getDateAsTimeString = (date: Date) =>
   `${rightPadNumberWithZero(date.getHours())}:${rightPadNumberWithZero(date.getMinutes())}`;
 
+/**
+ * Date to date string in format yyyy-MM-dd
+ * @param date
+ */
+export const getDateAsIsoString = (date: Date) => date.toISOString().slice(0, 10);
+
 export const isToday = (date: Date) => {
   const now = new Date();
   return (

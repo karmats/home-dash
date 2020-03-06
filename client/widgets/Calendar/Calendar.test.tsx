@@ -53,6 +53,13 @@ describe('Calendar', () => {
       expect(util.getDateAsTimeString(date2)).toBe('01:09');
     });
 
+    it('converts to iso date', () => {
+      const date1 = new Date('2020-01-01T20:44:54');
+      const date2 = new Date('2020-12-22T01:09:54');
+      expect(util.getDateAsIsoString(date1)).toBe('2020-01-01');
+      expect(util.getDateAsIsoString(date2)).toBe('2020-12-22');
+    });
+
     it('is today', () => {
       expect(util.isToday(new Date())).toBe(true);
     });
