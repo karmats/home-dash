@@ -60,6 +60,20 @@ describe('Calendar', () => {
       expect(util.getDateAsIsoString(date2)).toBe('2020-12-22');
     });
 
+    it('returns months in english', () => {
+      const date1 = new Date('2020-01-01T20:44:54');
+      const date2 = new Date('2020-05-22T01:09:54');
+      expect(util.getMonthName(date1, 'en-GB')).toBe('January');
+      expect(util.getMonthName(date2, 'en-GB')).toBe('May');
+    });
+
+    it('returns days in english', () => {
+      const date1 = new Date('2020-01-01T20:44:54');
+      const date2 = new Date('2020-05-22T01:09:54');
+      expect(util.getWeekdayName(date1, 'en-GB')).toBe('Wed');
+      expect(util.getWeekdayName(date2, 'en-GB')).toBe('Fri');
+    });
+
     it('is today', () => {
       expect(util.isToday(new Date())).toBe(true);
     });

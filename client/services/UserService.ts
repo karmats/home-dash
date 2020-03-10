@@ -5,6 +5,8 @@ const DEFAULT_LOCATION = {
   lon: 11.930191
 };
 
+const DEFAULT_LOCALE = 'sv-SE';
+
 const getLocation = async (): Promise<Location> => {
   return new Promise(resolve => {
     navigator.geolocation.getCurrentPosition(
@@ -21,4 +23,6 @@ const getLocation = async (): Promise<Location> => {
   });
 };
 
-export default { getLocation }
+const getLocale = () => DEFAULT_LOCALE;
+
+export default { getLocation, getLocale };

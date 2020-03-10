@@ -66,6 +66,20 @@ export const getDateAsTimeString = (date: Date) =>
  */
 export const getDateAsIsoString = (date: Date) => date.toISOString().slice(0, 10);
 
+/**
+ * Month name for a date with a specific locale.
+ * @param date
+ * @param locale
+ */
+export const getMonthName = (date: Date, locale: string) => date.toLocaleString(locale, { month: 'long' });
+
+/**
+ * Weekday name for a date with a specific locale.
+ * @param date
+ * @param locale
+ */
+export const getWeekdayName = (date: Date, locale: string) => date.toLocaleString(locale, { weekday: 'short' });
+
 export const isToday = (date: Date) => {
   const now = new Date();
   return (
