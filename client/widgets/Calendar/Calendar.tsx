@@ -70,9 +70,20 @@ const MonthHeader = ({ month }: MonthHeaderProps) => (
 export default () => {
   const [events, setEvents] = useState<EventsByDate>({});
   useEffect(() => {
-    api.getNextCalendarEvents(EVENTS_TO_SHOW).then(result => {
-      setEvents(calendarEventsToEventsByDate(result));
-    });
+    const eventSource = api.getNextCalendarEventsEventSource(EVENTS_TO_SHOW);
+    if (eventSource) {
+      eventSource.onmessage = e => {
+        if (e.data) {
+          const parsed: unknown[] = JSON.parse(e.data);
+          setEvents(calendarEventsToEventsByDate(parsed.map(api.eventResponseToCalendarEvent)));
+        }
+      };
+    }
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
   }, []);
   return (
     <div className="Calendar-main">

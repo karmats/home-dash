@@ -1,9 +1,9 @@
 import express from 'express';
 import WeatherService from '../../services/WeatherService/WeatherService';
-import { defaultHeaders } from '../../../../utils';
+import { DEFAULT_HEADERS, SSE_HEADERS, jsonToSseData } from '../../../../utils';
 
-// Every 5 minute
-const FORECAST_REFRESH_INTERVAL = 5 * 60 * 1000;
+// Every 20 minute
+const FORECAST_REFRESH_INTERVAL = 20 * 60 * 1000;
 
 const getForecastsFromRequest = (req: express.Request, res: express.Response) => {
   const { lat, lon, sse } = req.query;
@@ -13,18 +13,13 @@ const getForecastsFromRequest = (req: express.Request, res: express.Response) =>
     res.end();
   } else if (sse) {
     // Sse requested, keep connection open and feed with weather data
-    res.writeHead(200, {
-      ...defaultHeaders,
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      Connection: 'keep-alive'
-    });
+    res.writeHead(200, SSE_HEADERS);
     pollForecasts(+lat, +lon, res);
     res.on('close', () => stopPollForecast());
   } else {
     WeatherService.getWeatherForecasts(+lat, +lon)
       .then(forecasts => {
-        res.writeHead(200, defaultHeaders);
+        res.writeHead(200, DEFAULT_HEADERS);
         res.write(JSON.stringify(forecasts));
         res.end();
       })
@@ -41,7 +36,7 @@ let timer: any;
 const pollForecasts = (lat: number, lon: number, res: express.Response) => {
   const pollFn = (lat: number, lon: number, res: express.Response) => {
     WeatherService.getWeatherForecasts(+lat, +lon).then(forecasts => {
-      res.write(`data:${JSON.stringify(forecasts)}\n\n`);
+      res.write(jsonToSseData(forecasts));
     });
   };
   timer = setInterval(pollFn, FORECAST_REFRESH_INTERVAL, lat, lon, res);
