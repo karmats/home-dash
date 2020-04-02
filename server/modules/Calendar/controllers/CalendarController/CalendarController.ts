@@ -26,7 +26,7 @@ const getCalendarEventsFromRequest = (req: express.Request, res: express.Respons
     AuthenticationService.isConnectedToGoogle().then(ready => {
       if (ready) {
         if (sse && comming) {
-          // Sse requested, keep connection open and feed with weather data
+          // Sse requested, keep connection open and feed with calendar event data
           res.writeHead(200, SSE_HEADERS);
           pollNextEvents(comming, res);
           res.on('close', () => stopPollEvents());

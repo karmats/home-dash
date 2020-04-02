@@ -34,6 +34,9 @@ const getNextCalendarEventsEventSource = (next: number): EventSource =>
 const getIndoorTemperatures = (): Promise<Temperature[]> =>
   fetch(`${getBaseUrl()}/temperatures/indoor`).then(response => response.json());
 
+const getIndoorTemperaturesEventSource = (): EventSource =>
+  new EventSource(`${getBaseUrl()}/temperatures/indoor?sse=true`);
+
 const getHomeAlarmStatus = (): Promise<HomeAlarmInfo> =>
   fetch(`${getBaseUrl()}/homealarm/status`)
     .then(response => response.json())
@@ -50,5 +53,6 @@ export default {
   getNextCalendarEventsEventSource,
   eventResponseToCalendarEvent,
   getIndoorTemperatures,
+  getIndoorTemperaturesEventSource,
   getHomeAlarmStatus
 };

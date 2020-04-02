@@ -18,9 +18,19 @@ export default function() {
     }
   };
   useEffect(() => {
-    api.getIndoorTemperatures().then(result => {
-      setTemperatures(result);
-    });
+    const eventSource = api.getIndoorTemperaturesEventSource();
+    if (eventSource) {
+      eventSource.onmessage = e => {
+        if (e.data) {
+          setTemperatures(JSON.parse(e.data));
+        }
+      };
+    }
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
   }, []);
   return (
     <div className="Temperature-main">
