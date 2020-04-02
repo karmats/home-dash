@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ReactSVG } from 'react-svg';
-import { Forecast } from '../../../shared/types/Weather.models';
+import { Forecast, SseData } from '../../../shared/types';
 import api from '../../apis';
 import UserService from '../../services/UserService';
 import * as util from './Weather.utils';
@@ -82,8 +82,11 @@ export default function() {
       const eventSource = api.getForecastEventSource(location.lat, location.lon);
       if (eventSource) {
         eventSource.onmessage = e => {
-          if (e.data) {
-            setForecasts(JSON.parse(e.data));
+          const { result, error }: SseData<Forecast[]> = JSON.parse(e.data);
+          if (result) {
+            setForecasts(result);
+          } else {
+            console.error(error);
           }
         };
       }

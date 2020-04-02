@@ -1,7 +1,7 @@
 import express from 'express';
 import CalendarService from '../../services/CalendarService';
 import { AuthenticationService } from '../../../Authentication';
-import { DEFAULT_HEADERS, SSE_HEADERS, jsonToSseData } from '../../../../utils';
+import { DEFAULT_HEADERS, SSE_HEADERS, resultToSseData, errorToSseData } from '../../../../utils';
 
 // Every hour
 const CALENDAR_REFRESH_INTERVAL = 60 * 60 * 1000;
@@ -65,10 +65,10 @@ const pollNextEvents = (comming: number, res: express.Response) => {
   const pollFn = (comming: number, res: express.Response) => {
     CalendarService.getNextCalendarEvents(comming).then(
       events => {
-        res.write(jsonToSseData(events));
+        res.write(resultToSseData(events));
       },
       err => {
-        res.write(jsonToSseData(err));
+        res.write(errorToSseData(err));
       }
     );
   };

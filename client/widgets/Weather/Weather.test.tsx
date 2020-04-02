@@ -1,7 +1,7 @@
 import 'jest';
 import React from 'react';
 import { render, cleanup, wait } from '@testing-library/react';
-import { WeatherSymbol, Forecast } from '../../../shared/types';
+import { WeatherSymbol, Forecast, SseData } from '../../../shared/types';
 import * as util from './Weather.utils';
 import Weather from './Weather';
 
@@ -64,14 +64,16 @@ describe('Weather', () => {
     it('renders main weather and comming weather', async () => {
       const eventSource = new EventSource('mock-url');
       mockGetForecastEventSource = eventSource;
-      const smhiData: Forecast[] = Array.from(new Array(10)).map((_, idx) => ({
-        symbol: WeatherSymbol.CLEAR_SKY,
-        degrees: idx,
-        precipitation: idx * 10,
-        windSpeed: idx,
-        windDirection: idx * 10,
-        time: Date.now()
-      }));
+      const smhiData: SseData<Forecast[]> = {
+        result: Array.from(new Array(10)).map((_, idx) => ({
+          symbol: WeatherSymbol.CLEAR_SKY,
+          degrees: idx,
+          precipitation: idx * 10,
+          windSpeed: idx,
+          windDirection: idx * 10,
+          time: Date.now()
+        }))
+      };
 
       const { getByText } = render(<Weather />);
       await wait(() => {

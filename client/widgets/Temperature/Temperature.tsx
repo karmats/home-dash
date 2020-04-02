@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Temperature } from '../../../shared/types';
+import { Temperature, SseData } from '../../../shared/types';
 import './Temperature.css';
 import api from '../../apis';
 
@@ -22,7 +22,12 @@ export default function() {
     if (eventSource) {
       eventSource.onmessage = e => {
         if (e.data) {
-          setTemperatures(JSON.parse(e.data));
+          const { result, error }: SseData<Temperature[]> = JSON.parse(e.data);
+          if (result) {
+            setTemperatures(result);
+          } else {
+            console.error(error);
+          }
         }
       };
     }

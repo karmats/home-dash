@@ -1,6 +1,6 @@
 import express from 'express';
 import WeatherService from '../../services/WeatherService/WeatherService';
-import { DEFAULT_HEADERS, SSE_HEADERS, jsonToSseData } from '../../../../utils';
+import { DEFAULT_HEADERS, SSE_HEADERS, resultToSseData, errorToSseData } from '../../../../utils';
 
 // Every 20 minute
 const FORECAST_REFRESH_INTERVAL = 20 * 60 * 1000;
@@ -35,9 +35,12 @@ const getForecastsFromRequest = (req: express.Request, res: express.Response) =>
 let timer: any;
 const pollForecasts = (lat: number, lon: number, res: express.Response) => {
   const pollFn = (lat: number, lon: number, res: express.Response) => {
-    WeatherService.getWeatherForecasts(+lat, +lon).then(forecasts => {
-      res.write(jsonToSseData(forecasts));
-    });
+    WeatherService.getWeatherForecasts(+lat, +lon).then(
+      forecasts => {
+        res.write(resultToSseData(forecasts));
+      },
+      err => res.write(errorToSseData(err))
+    );
   };
   timer = setInterval(pollFn, FORECAST_REFRESH_INTERVAL, lat, lon, res);
   pollFn(lat, lon, res);

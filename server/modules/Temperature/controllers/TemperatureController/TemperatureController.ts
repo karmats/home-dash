@@ -1,6 +1,6 @@
 import express from 'express';
 import { TemperatureService } from '../../services';
-import { DEFAULT_HEADERS, SSE_HEADERS, jsonToSseData } from '../../../../utils';
+import { DEFAULT_HEADERS, SSE_HEADERS, resultToSseData, errorToSseData } from '../../../../utils';
 
 // Every other hour
 const TEMPERATURES_REFRESH_INTERVAL = 2 * 60 * 60 * 1000;
@@ -32,10 +32,10 @@ const pollTemperatures = (res: express.Response) => {
   const pollFn = (res: express.Response) => {
     TemperatureService.getIndoorTemperatures().then(
       temperatures => {
-        res.write(jsonToSseData(temperatures));
+        res.write(resultToSseData(temperatures));
       },
       err => {
-        res.write(jsonToSseData(err));
+        res.write(errorToSseData(err));
       }
     );
   };

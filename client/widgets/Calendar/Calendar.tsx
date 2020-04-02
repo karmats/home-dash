@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserService from '../../services/UserService';
-import { CalendarEvent } from '../../../shared/types';
+import { CalendarEvent, SseData } from '../../../shared/types';
 import api from '../../apis';
 import './Calendar.css';
 import * as util from './Calendar.utils';
@@ -73,9 +73,11 @@ export default () => {
     const eventSource = api.getNextCalendarEventsEventSource(EVENTS_TO_SHOW);
     if (eventSource) {
       eventSource.onmessage = e => {
-        if (e.data) {
-          const parsed: unknown[] = JSON.parse(e.data);
-          setEvents(calendarEventsToEventsByDate(parsed.map(api.eventResponseToCalendarEvent)));
+        const { result, error }: SseData<CalendarEvent[]> = JSON.parse(e.data);
+        if (result) {
+          setEvents(calendarEventsToEventsByDate(result.map(api.eventResponseToCalendarEvent)));
+        } else {
+          console.error(error);
         }
       };
     }

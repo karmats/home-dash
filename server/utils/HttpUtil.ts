@@ -12,4 +12,5 @@ export const SSE_HEADERS = {
   Connection: 'keep-alive'
 };
 
-export const jsonToSseData = (json: any) => `data:${JSON.stringify(json)}\n\n`;
+export const resultToSseData = (result: any) => `data:${JSON.stringify({ result })}\n\n`;
+export const errorToSseData = (error: any) => `data:${JSON.stringify({ error })}\n\n`;
