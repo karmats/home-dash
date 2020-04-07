@@ -1,6 +1,14 @@
 import express from 'express';
 import WeatherService from '../../services/WeatherService/WeatherService';
-import { DEFAULT_HEADERS, SSE_HEADERS, resultToSseData, errorToSseData } from '../../../../utils';
+import {
+  DEFAULT_HEADERS,
+  SSE_HEADERS,
+  resultToSseData,
+  errorToSseData,
+  resultToHeartbeatData,
+} from '../../../../utils';
+import { EventDataPollerService, EventDataHandler } from '../../../../services/EventDataPollerService';
+import { Forecast } from '../../../../../shared/types';
 
 // Every 20 minute
 const FORECAST_REFRESH_INTERVAL = 20 * 60 * 1000;
@@ -14,8 +22,8 @@ const getForecastsFromRequest = (req: express.Request, res: express.Response) =>
   } else if (sse) {
     // Sse requested, keep connection open and feed with weather data
     res.writeHead(200, SSE_HEADERS);
-    pollForecasts(+lat, +lon, res);
-    res.on('close', () => stopPollForecast());
+    createAndStartPollerService(+lat, +lon, res);
+    res.on('close', () => stopPollerService());
   } else {
     WeatherService.getWeatherForecasts(+lat, +lon)
       .then(forecasts => {
@@ -32,20 +40,26 @@ const getForecastsFromRequest = (req: express.Request, res: express.Response) =>
   }
 };
 
-let timer: any;
-const pollForecasts = (lat: number, lon: number, res: express.Response) => {
-  const pollFn = (lat: number, lon: number, res: express.Response) => {
-    WeatherService.getWeatherForecasts(+lat, +lon).then(
-      forecasts => {
-        res.write(resultToSseData(forecasts));
-      },
-      err => res.write(errorToSseData(err))
-    );
+let pollerService: EventDataPollerService<Forecast[]>;
+const createAndStartPollerService = (lat: number, lon: number, res: express.Response) => {
+  const handler: EventDataHandler<Forecast[]> = {
+    next: data => {
+      const { result, heartbeat } = data;
+      if (result) {
+        res.write(resultToSseData(result));
+      } else if (heartbeat) {
+        res.write(resultToHeartbeatData(heartbeat.time));
+      }
+    },
+    error: err => {
+      res.write(errorToSseData(err));
+    },
   };
-  timer = setInterval(pollFn, FORECAST_REFRESH_INTERVAL, lat, lon, res);
-  pollFn(lat, lon, res);
+  const pollFn = () => WeatherService.getWeatherForecasts(+lat, +lon);
+
+  pollerService = new EventDataPollerService(pollFn, handler, FORECAST_REFRESH_INTERVAL);
 };
 
-const stopPollForecast = () => clearInterval(timer);
+const stopPollerService = () => pollerService.finish();
 
-export default { getForecastsFromRequest, pollForecasts, stopPollForecast };
+export default { getForecastsFromRequest, pollForecasts: createAndStartPollerService };

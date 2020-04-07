@@ -5,6 +5,7 @@
   "tabWidth": 2,
   "jsxBracketSameLine": true,
   "htmlWhitespaceSensitivity": "css",
+  "arrowParens": "avoid",
   "overrides": [
     {
       "files": ["*.json", ".prettierrc"],
@@ -15,7 +16,7 @@
     {
       "files": "*.js",
       "options": {
-        "parser": "babylon"
+        "parser": "babel"
       }
     },
     {

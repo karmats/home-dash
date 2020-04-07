@@ -13,4 +13,5 @@ export const SSE_HEADERS = {
 };
 
 export const resultToSseData = (result: any) => `data:${JSON.stringify({ result })}\n\n`;
+export const resultToHeartbeatData = (time: number) => `data:${JSON.stringify({ heartbeat: time })}\n\n`;
 export const errorToSseData = (error: any) => `data:${JSON.stringify({ error })}\n\n`;

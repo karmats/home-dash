@@ -85,7 +85,7 @@ export default function() {
           const { result, error }: SseData<Forecast[]> = JSON.parse(e.data);
           if (result) {
             setForecasts(result);
-          } else {
+          } else if (error) {
             console.error(error);
           }
         };
