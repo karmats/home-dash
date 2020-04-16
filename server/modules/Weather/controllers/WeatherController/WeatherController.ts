@@ -43,13 +43,11 @@ const getForecastsFromRequest = (req: express.Request, res: express.Response) =>
 let pollerService: EventDataPollerService<Forecast[]>;
 const createAndStartPollerService = (lat: number, lon: number, res: express.Response) => {
   const handler: EventDataHandler<Forecast[]> = {
-    next: data => {
-      const { result, heartbeat } = data;
-      if (result) {
-        res.write(resultToSseData(result));
-      } else if (heartbeat) {
-        res.write(resultToHeartbeatData(heartbeat.time));
-      }
+    data: result => {
+      res.write(resultToSseData(result));
+    },
+    heartbeat: heartbeat => {
+      res.write(resultToHeartbeatData(heartbeat.time));
     },
     error: err => {
       res.write(errorToSseData(err));
@@ -62,4 +60,4 @@ const createAndStartPollerService = (lat: number, lon: number, res: express.Resp
 
 const stopPollerService = () => pollerService.finish();
 
-export default { getForecastsFromRequest, pollForecasts: createAndStartPollerService };
+export default { getForecastsFromRequest };

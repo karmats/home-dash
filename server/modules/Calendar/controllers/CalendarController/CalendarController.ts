@@ -1,7 +1,15 @@
 import express from 'express';
 import CalendarService from '../../services/CalendarService';
 import { AuthenticationService } from '../../../Authentication';
-import { DEFAULT_HEADERS, SSE_HEADERS, resultToSseData, errorToSseData } from '../../../../utils';
+import {
+  DEFAULT_HEADERS,
+  SSE_HEADERS,
+  resultToSseData,
+  errorToSseData,
+  resultToHeartbeatData,
+} from '../../../../utils';
+import { EventDataHandler, EventDataPollerService } from '../../../../services/EventDataPollerService';
+import { CalendarEvent } from '../../../../../shared/types';
 
 // Every hour
 const CALENDAR_REFRESH_INTERVAL = 60 * 60 * 1000;
@@ -28,8 +36,8 @@ const getCalendarEventsFromRequest = (req: express.Request, res: express.Respons
         if (sse && comming) {
           // Sse requested, keep connection open and feed with calendar event data
           res.writeHead(200, SSE_HEADERS);
-          pollNextEvents(comming, res);
-          res.on('close', () => stopPollEvents());
+          createAndStartPollerService(comming, res);
+          res.on('close', () => stopPollerService());
         } else {
           const request = comming
             ? CalendarService.getNextCalendarEvents(comming)
@@ -60,22 +68,24 @@ const getCalendarEventsFromRequest = (req: express.Request, res: express.Respons
   }
 };
 
-let timer: any;
-const pollNextEvents = (comming: number, res: express.Response) => {
-  const pollFn = (comming: number, res: express.Response) => {
-    CalendarService.getNextCalendarEvents(comming).then(
-      events => {
-        res.write(resultToSseData(events));
-      },
-      err => {
-        res.write(errorToSseData(err));
-      }
-    );
+let pollerService: EventDataPollerService<ReadonlyArray<CalendarEvent>>;
+const createAndStartPollerService = (comming: number, res: express.Response) => {
+  const handler: EventDataHandler<ReadonlyArray<CalendarEvent>> = {
+    data: result => {
+      res.write(resultToSseData(result));
+    },
+    heartbeat: heartbeat => {
+      res.write(resultToHeartbeatData(heartbeat.time));
+    },
+    error: err => {
+      res.write(errorToSseData(err));
+    },
   };
-  timer = setInterval(pollFn, CALENDAR_REFRESH_INTERVAL, comming, res);
-  pollFn(comming, res);
+  const pollFn = () => CalendarService.getNextCalendarEvents(comming);
+
+  pollerService = new EventDataPollerService(pollFn, handler, CALENDAR_REFRESH_INTERVAL);
 };
 
-const stopPollEvents = () => clearInterval(timer);
+const stopPollerService = () => pollerService.finish();
 
 export default { getCalendarEventsFromRequest };

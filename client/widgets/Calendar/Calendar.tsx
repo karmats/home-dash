@@ -76,7 +76,7 @@ export default () => {
         const { result, error }: SseData<CalendarEvent[]> = JSON.parse(e.data);
         if (result) {
           setEvents(calendarEventsToEventsByDate(result.map(api.eventResponseToCalendarEvent)));
-        } else {
+        } else if (error) {
           console.error(error);
         }
       };

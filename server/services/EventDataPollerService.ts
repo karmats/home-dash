@@ -3,12 +3,13 @@ export type Heartbeat = {
 };
 
 export type EventDataHandler<T> = {
-  next: (value: { result?: T; heartbeat?: Heartbeat }) => void;
+  data: (value: T) => void;
+  heartbeat: (heartBeat: Heartbeat) => void;
   error: (error: any) => void;
   complete?: () => void;
 };
 
-// Every 30 second
+// Send heartbeat every 30 second to keep the connection alive
 const HEARTBEAT_INTERVAL = 30 * 1000;
 
 export class EventDataPollerService<R> {
@@ -26,7 +27,7 @@ export class EventDataPollerService<R> {
         this._fetchData();
         timeElapsed = 0;
       } else {
-        this.handler.next({ heartbeat: { time: Date.now() } });
+        this.handler.heartbeat({ time: Date.now() });
       }
     }, HEARTBEAT_INTERVAL);
     if (immediate) {
@@ -43,7 +44,7 @@ export class EventDataPollerService<R> {
   private _fetchData() {
     this.pollFn().then(
       result => {
-        this.handler.next({ result });
+        this.handler.data(result);
       },
       error => {
         this.handler.error(error);
