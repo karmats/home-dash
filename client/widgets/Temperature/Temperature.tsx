@@ -3,7 +3,7 @@ import { Temperature, SseData } from '../../../shared/types';
 import './Temperature.css';
 import api from '../../apis';
 
-export default function() {
+export default function () {
   const [temperatures, setTemperatures] = useState<Temperature[]>([]);
 
   const temperatureClassName = (temperature: number) => {
@@ -25,7 +25,7 @@ export default function() {
           const { result, error }: SseData<Temperature[]> = JSON.parse(e.data);
           if (result) {
             setTemperatures(result);
-          } else {
+          } else if (error) {
             console.error(error);
           }
         }

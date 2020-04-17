@@ -1,6 +1,14 @@
 import express from 'express';
 import { TemperatureService } from '../../services';
-import { DEFAULT_HEADERS, SSE_HEADERS, resultToSseData, errorToSseData } from '../../../../utils';
+import {
+  DEFAULT_HEADERS,
+  SSE_HEADERS,
+  resultToSseData,
+  errorToSseData,
+  resultToHeartbeatData,
+} from '../../../../utils';
+import { EventDataPollerService, EventDataHandler } from '../../../../services/EventDataPollerService';
+import { Temperature } from '../../../../../shared/types';
 
 // Every other hour
 const TEMPERATURES_REFRESH_INTERVAL = 2 * 60 * 60 * 1000;
@@ -10,8 +18,8 @@ const getIndoorTemperatures = (req: express.Request, res: express.Response) => {
   if (sse) {
     // Sse requested, keep connection open and feed with temperature data
     res.writeHead(200, SSE_HEADERS);
-    pollTemperatures(res);
-    res.on('close', () => stopPollTemperatures());
+    createAndStartPollerService(res);
+    res.on('close', () => stopPollerService());
   } else {
     TemperatureService.getIndoorTemperatures()
       .then(temperatures => {
@@ -27,22 +35,24 @@ const getIndoorTemperatures = (req: express.Request, res: express.Response) => {
   }
 };
 
-let timer: any;
-const pollTemperatures = (res: express.Response) => {
-  const pollFn = (res: express.Response) => {
-    TemperatureService.getIndoorTemperatures().then(
-      temperatures => {
-        res.write(resultToSseData(temperatures));
-      },
-      err => {
-        res.write(errorToSseData(err));
-      }
-    );
+let pollerService: EventDataPollerService<Temperature[]>;
+const createAndStartPollerService = (res: express.Response) => {
+  const handler: EventDataHandler<Temperature[]> = {
+    data: result => {
+      res.write(resultToSseData(result));
+    },
+    heartbeat: heartbeat => {
+      res.write(resultToHeartbeatData(heartbeat.time));
+    },
+    error: err => {
+      res.write(errorToSseData(err));
+    },
   };
-  timer = setInterval(pollFn, TEMPERATURES_REFRESH_INTERVAL, res);
-  pollFn(res);
+  const pollFn = () => TemperatureService.getIndoorTemperatures();
+
+  pollerService = new EventDataPollerService(pollFn, handler, TEMPERATURES_REFRESH_INTERVAL);
 };
 
-const stopPollTemperatures = () => clearInterval(timer);
+const stopPollerService = () => pollerService.finish();
 
 export default { getIndoorTemperatures };
