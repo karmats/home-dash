@@ -9,7 +9,7 @@ import Weather from './Weather';
 jest.mock('react-svg');
 
 let mockGetForecastEventSource: any = jest.fn();
-jest.mock('../../apis', () => ({
+jest.mock('../../apis/Api', () => ({
   getForecastEventSource: () => mockGetForecastEventSource
 }));
 
@@ -18,11 +18,9 @@ const mockGeolocation = {
     success({ coords: { latitude: 57.740614, longitude: 11.930191 }, timestamp: new Date().getTime() })
   )
 };
-class EventSourceMock {
-  close() {}
-}
+
 (global as any).navigator.geolocation = mockGeolocation;
-(global as any).EventSource = EventSourceMock;
+(global as any).EventSource = jest.fn();
 
 jest.useFakeTimers();
 

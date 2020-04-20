@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import UserService from '../../services/UserService';
 import { CalendarEvent, SseData } from '../../../shared/types';
-import api from '../../apis';
+import api from '../../apis/Api';
 import './Calendar.css';
 import * as util from './Calendar.utils';
 

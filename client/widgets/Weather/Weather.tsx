@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ReactSVG } from 'react-svg';
 import { Forecast, SseData } from '../../../shared/types';
-import api from '../../apis';
+import api from '../../apis/Api';
 import UserService from '../../services/UserService';
 import * as util from './Weather.utils';
 import './Weather.css';

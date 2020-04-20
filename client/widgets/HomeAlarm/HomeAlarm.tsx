@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ReactSVG } from 'react-svg';
 import { HomeAlarmInfo, ArmedStatus } from '../../../shared/types';
-import api from '../../apis';
+import api from '../../apis/Api';
 import './HomeAlarm.css';
 import { dateToTime } from '../Weather/Weather.utils';
 

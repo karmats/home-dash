@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Temperature, SseData } from '../../../shared/types';
 import './Temperature.css';
-import api from '../../apis';
+import api from '../../apis/Api';
 
 export default function () {
   const [temperatures, setTemperatures] = useState<Temperature[]>([]);
