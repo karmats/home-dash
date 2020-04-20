@@ -3,20 +3,30 @@ import { Temperature, SseData } from '../../../shared/types';
 import './Temperature.css';
 import api from '../../apis/Api';
 
+const getTemperatureLabel = (temperature: number) => {
+  if (temperature < 15) {
+    return 'chilly';
+  } else if (temperature >= 15 && temperature < 20) {
+    return 'cold';
+  } else if (temperature >= 20 && temperature < 26) {
+    return 'warm';
+  } else {
+    return 'hot';
+  }
+};
+
+const TemperatureText = ({ temperature }: { temperature: number }) => {
+  const label = getTemperatureLabel(temperature);
+  return (
+    <span aria-label={label} className={label}>
+      {temperature}°
+    </span>
+  );
+};
+
 export default function () {
   const [temperatures, setTemperatures] = useState<Temperature[]>([]);
 
-  const temperatureClassName = (temperature: number) => {
-    if (temperature < 15) {
-      return 'chilly';
-    } else if (temperature >= 15 && temperature < 20) {
-      return 'cold';
-    } else if (temperature >= 20 && temperature < 26) {
-      return 'warm';
-    } else {
-      return 'hot';
-    }
-  };
   useEffect(() => {
     const eventSource = api.getIndoorTemperaturesEventSource();
     if (eventSource) {
@@ -42,7 +52,7 @@ export default function () {
       {temperatures.map(t => (
         <div key={t.location} className="Temperature-box">
           <span>{t.location}</span>
-          <span className={temperatureClassName(t.value)}>{t.value}°</span>
+          <TemperatureText temperature={t.value} />
         </div>
       ))}
     </div>

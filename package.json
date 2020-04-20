@@ -97,7 +97,7 @@
     "setupFiles": [
       "react-app-polyfill/jsdom"
     ],
-    "setupFilesAfterEnv": [],
+    "setupFilesAfterEnv": ["<rootDir>/client/setupTests.ts"],
     "testRegex": "((\\.|/)test)\\.tsx?$",
     "testEnvironment": "jest-environment-jsdom-fourteen",
     "transform": {

@@ -10,17 +10,16 @@ jest.mock('react-svg');
 
 let mockGetForecastEventSource: any = jest.fn();
 jest.mock('../../apis/Api', () => ({
-  getForecastEventSource: () => mockGetForecastEventSource
+  getForecastEventSource: () => mockGetForecastEventSource,
 }));
 
 const mockGeolocation = {
   getCurrentPosition: jest.fn(success =>
     success({ coords: { latitude: 57.740614, longitude: 11.930191 }, timestamp: new Date().getTime() })
-  )
+  ),
 };
 
 (global as any).navigator.geolocation = mockGeolocation;
-(global as any).EventSource = jest.fn();
 
 jest.useFakeTimers();
 
@@ -69,14 +68,14 @@ describe('Weather', () => {
           precipitation: idx * 10,
           windSpeed: idx,
           windDirection: idx * 10,
-          time: Date.now()
-        }))
+          time: Date.now(),
+        })),
       };
 
       const { getByText } = render(<Weather />);
       await wait(() => {
         eventSource.onmessage!({
-          data: JSON.stringify(smhiData)
+          data: JSON.stringify(smhiData),
         } as MessageEvent);
       });
       expect(getByText('8 m/s')).toBeDefined();
