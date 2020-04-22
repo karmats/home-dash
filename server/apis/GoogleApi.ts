@@ -18,9 +18,9 @@ const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
 const TOKEN_PATH = 'google-token.json';
 
 const oAuth2Client = new google.auth.OAuth2(
-  config.google.auth.client_id,
-  config.google.auth.client_secret,
-  config.google.auth.redirect_uris[0]
+  config.google.auth.clientId,
+  config.google.auth.clientSecret,
+  config.google.auth.redirectUri
 );
 
 // Load client secrets from a local file.
@@ -53,7 +53,7 @@ export const isConnected = async () => {
 export const getAuthenticationUrl = () => {
   return oAuth2Client.generateAuthUrl({
     access_type: 'offline',
-    scope: SCOPES
+    scope: SCOPES,
   });
 };
 
@@ -89,7 +89,8 @@ const getAuthToken = (): Promise<any> => {
   });
 };
 
-const isCommingRequest = (request: CalendarEventRequest): request is CalendarCommingRequest => Object.keys(request).indexOf('next') >= 0;
+const isCommingRequest = (request: CalendarEventRequest): request is CalendarCommingRequest =>
+  Object.keys(request).indexOf('next') >= 0;
 
 /**
  * Lists events on the user's calendar.
@@ -102,7 +103,7 @@ const listEvents = async (request: CalendarEventRequest): Promise<ReadonlyArray<
     calendarId: 'primary',
     singleEvents: true,
     timeMin: new Date().toISOString(),
-    orderBy: 'startTime'
+    orderBy: 'startTime',
   };
   return calendar.events
     .list(
@@ -119,7 +120,7 @@ const listEvents = async (request: CalendarEventRequest): Promise<ReadonlyArray<
           return {
             from: new Date(start!),
             to: new Date(end!),
-            summary: event.summary!
+            summary: event.summary!,
           };
         });
       }

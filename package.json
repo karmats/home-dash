@@ -2,7 +2,6 @@
   "name": "home-dash",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/karmats/home-dash",
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@svgr/webpack": "^5.3.1",
@@ -23,7 +22,6 @@
     "camelcase": "^5.3.1",
     "concurrently": "^5.1.0",
     "dotenv": "^8.2.0",
-    "dotenv-expand": "^5.1.0",
     "eslint": "^6.8.0",
     "eslint-config-react-app": "^5.2.1",
     "eslint-loader": "^3.0.4",
@@ -97,7 +95,9 @@
     "setupFiles": [
       "react-app-polyfill/jsdom"
     ],
-    "setupFilesAfterEnv": ["<rootDir>/client/setupTests.ts"],
+    "setupFilesAfterEnv": [
+      "<rootDir>/client/setupTests.ts"
+    ],
     "testRegex": "((\\.|/)test)\\.tsx?$",
     "testEnvironment": "jest-environment-jsdom-fourteen",
     "transform": {

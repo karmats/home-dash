@@ -1,21 +1,16 @@
 export default {
   google: {
     auth: {
-      client_id: 'client_id',
-      project_id: 'project_id',
-      auth_uri: 'auth_uri',
-      token_uri: 'token_uri',
-      auth_provider_x509_cert_url: 'auth_provider_x509_cert_url',
-      client_secret: 'client_secret',
-      redirect_uris: ['redirect_uris'],
-      javascript_origins: ['javascript_origins']
-    }
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      redirectUri: process.env.GOOGLE_REDIRECT_URI,
+    },
   },
   sectoralarm: {
     auth: {
-      username: 'username',
-      password: 'password'
+      username: process.env.SA_USERNAME,
+      password: process.env.SA_PASSWORD,
     },
-    deviceId: '01234567'
-  }
+    deviceId: process.env.SA_DEVICE_ID,
+  },
 };
