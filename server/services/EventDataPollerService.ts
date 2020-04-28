@@ -1,3 +1,5 @@
+import { isDay } from '../utils';
+
 export type Heartbeat = {
   time: number;
 };
@@ -23,7 +25,7 @@ export class EventDataPollerService<R> {
     let timeElapsed = 0;
     this.timer = setInterval(() => {
       timeElapsed += HEARTBEAT_INTERVAL;
-      if (timeElapsed > interval) {
+      if (timeElapsed > interval && isDay(new Date())) {
         this._fetchData();
         timeElapsed = 0;
       } else {
