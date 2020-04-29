@@ -1,3 +1,4 @@
+import './env';
 import express from 'express';
 import { GoogleAuthenticatorController, SectorAlarmAuthenticationController } from './modules/Authentication';
 import { WeatherController } from './modules/Weather';

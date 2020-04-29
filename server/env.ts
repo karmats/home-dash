@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { config } from 'dotenv';
 
-const dotenvPath = '../../.env';
+const dotenvPath = `${__dirname}/../.env`;
 
 if (fs.existsSync(`${dotenvPath}.local`)) {
   config({

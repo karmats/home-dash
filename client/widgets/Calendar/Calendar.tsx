@@ -96,7 +96,7 @@ export default () => {
         if (idx === 0 || curr.getMonth() !== prev.getMonth()) {
           const month = util.getMonthName(curr, UserService.getLocale());
           return (
-            <React.Fragment key={month}>
+            <React.Fragment key={`${curr.getFullYear()}_${month}`}>
               <MonthHeader month={month} />
               {weekday}
             </React.Fragment>
