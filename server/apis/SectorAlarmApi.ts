@@ -6,12 +6,13 @@ import { Temperature, HomeAlarmInfo, ArmedStatus } from '../../shared/types';
 
 const BASE_URL = 'https://mypagesapi.sectoralarm.net';
 const REQUEST_VERIFICATON_TOKEN_NAME = '__RequestVerificationToken';
-const COOKIE_JAR_PATH = 'sa-cookie.json';
 
 type SectorAlarmMeta = {
   version: string;
   cookie: string;
 };
+
+let sessionMeta: SectorAlarmMeta;
 
 const armedStatusToAlarmStatus = (armedStatus: string): ArmedStatus => {
   switch (armedStatus) {
@@ -72,16 +73,10 @@ export const authenticate = async (): Promise<SectorAlarmMeta> => {
               } else {
                 const setCookieHeader = response.headers['set-cookie'];
                 if (setCookieHeader && setCookieHeader.length) {
-                  const sessionMeta = {
+                  sessionMeta = {
                     cookie: setCookieHeader[0],
-                    version: meta.version
+                    version: meta.version,
                   };
-                  // Save cookie to file so login isn't necessary every time
-                  /*fs.writeFile(COOKIE_JAR_PATH, JSON.stringify(sessionMeta), err => {
-                    if (err) {
-                      throw new Error(`Failed to write file: ${JSON.stringify(err)}`);
-                    }
-                  });*/
                   resolve(sessionMeta);
                 } else {
                   reject(`Expected set-cookie header to be defined, ${setCookieHeader}`);
@@ -101,20 +96,17 @@ export const authenticate = async (): Promise<SectorAlarmMeta> => {
  */
 const getSessionMeta = (): Promise<SectorAlarmMeta> => {
   return new Promise(resolve => {
-    fs.readFile(COOKIE_JAR_PATH, { encoding: 'UTF-8' }, (err, cookie) => {
-      if (err || !cookie) {
-        resolve(authenticate());
-      } else {
-        const meta: SectorAlarmMeta = JSON.parse(cookie);
-        // Check that the cookie hasn't expired. If it has, re-authenticate
-        fetch(`${BASE_URL}/User/GetUserInfo`, { method: 'HEAD' })
-          .then(response => (response.status === 200 ? resolve(meta) : resolve(authenticate())))
-          .catch(e => {
-            console.error(`Got error "${JSON.stringify(e)}", trying to reconnect`);
-            resolve(authenticate());
-          });
-      }
-    });
+    if (!sessionMeta) {
+      resolve(authenticate());
+    } else {
+      // Check that the cookie hasn't expired. If it has, re-authenticate
+      fetch(`${BASE_URL}/User/GetUserInfo`, { method: 'HEAD' })
+        .then(response => (response.status === 200 ? resolve(sessionMeta) : resolve(authenticate())))
+        .catch(e => {
+          console.error(`Got error "${JSON.stringify(e)}", trying to reconnect`);
+          resolve(authenticate());
+        });
+    }
   });
 };
 
@@ -122,13 +114,13 @@ const getSessionMeta = (): Promise<SectorAlarmMeta> => {
  * Get house alarm status. If there are more than one alarm registered only the first will be returned.
  */
 export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
-  return getSessionMeta().then(async sessionMeta => {
+  return getSessionMeta().then(async meta => {
     return fetch(`${BASE_URL}/Panel/GetPanelList`, {
       headers: {
         Accept: 'application/json',
         'Content-type': 'application/json',
-        Cookie: sessionMeta.cookie
-      }
+        Cookie: meta.cookie,
+      },
     })
       .then(response => response.json())
       .then(json => {
@@ -137,7 +129,7 @@ export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
             .map((j: any) => ({
               status: armedStatusToAlarmStatus(j.ArmedStatus),
               online: j.IsOnline,
-              time: sectorAlarmDateToMs(j.PanelTime)
+              time: sectorAlarmDateToMs(j.PanelTime),
             }))
             .pop();
         } else {
@@ -151,22 +143,22 @@ export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
  * Get temperatures from sensors in the house
  */
 export const getTemperatures = async (): Promise<Temperature[]> => {
-  return getSessionMeta().then(async sessionMeta => {
+  return getSessionMeta().then(async meta => {
     return fetch(`${BASE_URL}/Panel/GetTempratures`, {
       method: 'POST',
-      body: JSON.stringify({ id: config.sectoralarm.deviceId, Version: sessionMeta.version }),
+      body: JSON.stringify({ id: config.sectoralarm.deviceId, Version: meta.version }),
       headers: {
         Accept: 'application/json',
         'Content-type': 'application/json',
-        Cookie: sessionMeta.cookie
-      }
+        Cookie: meta.cookie,
+      },
     })
       .then(response => response.json())
       .then(json =>
         json.map((j: any) => ({
           location: j.Label,
           value: +j.Temprature,
-          scale: 'C'
+          scale: 'C',
         }))
       );
   });

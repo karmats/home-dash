@@ -16,7 +16,7 @@ const getForecastEventSource = (lat: number, lon: number): EventSource =>
 const eventResponseToCalendarEvent = (response: any) => ({
   ...response,
   from: new Date(response.from),
-  to: new Date(response.to)
+  to: new Date(response.to),
 });
 const getCalendarEventsByDates = (from: Date, to: Date): Promise<CalendarEvent[]> =>
   fetch(`${getBaseUrl()}/calendar?from=${from.toISOString()}&to=${to.toISOString()}`)
@@ -42,8 +42,10 @@ const getHomeAlarmStatus = (): Promise<HomeAlarmInfo> =>
     .then(response => response.json())
     .then(info => ({
       ...info,
-      time: new Date(info.time)
+      time: new Date(info.time),
     }));
+
+const getHomeAlarmStatusEventSource = (): EventSource => new EventSource(`${getBaseUrl()}/homealarm/status?sse=true`);
 
 export default {
   getForecasts,
@@ -54,5 +56,6 @@ export default {
   eventResponseToCalendarEvent,
   getIndoorTemperatures,
   getIndoorTemperaturesEventSource,
-  getHomeAlarmStatus
+  getHomeAlarmStatus,
+  getHomeAlarmStatusEventSource,
 };
