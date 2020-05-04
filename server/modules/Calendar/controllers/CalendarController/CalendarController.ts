@@ -10,12 +10,16 @@ import {
 } from '../../../../utils';
 import { EventDataHandler, EventDataPollerService } from '../../../../services/EventDataPollerService';
 import { CalendarEvent } from '../../../../../shared/types';
+import { ExpressRequest } from '../../../../models';
 
 // Every hour
 const CALENDAR_REFRESH_INTERVAL = 60 * 60 * 1000;
 const DATE_REGEX = /\d{4}-\d{2}-\d{2}/;
 
-const getCalendarEventsFromRequest = (req: express.Request, res: express.Response) => {
+const getCalendarEventsFromRequest = (
+  req: ExpressRequest<{ from: string; to: string; next: number; sse?: string }>,
+  res: express.Response
+) => {
   const { from, to, next, sse } = req.query;
   if ((next && !isNaN(next)) || (from && DATE_REGEX.test(from) && to && DATE_REGEX.test(to))) {
     const dateFrom = from ? new Date(from) : null;
@@ -24,7 +28,7 @@ const getCalendarEventsFromRequest = (req: express.Request, res: express.Respons
       dateFrom.setMinutes(0);
       dateFrom.setMilliseconds(0);
     }
-    const dateTo = to ? new Date(to) : to;
+    const dateTo = to ? new Date(to) : null;
     if (dateTo) {
       dateTo.setHours(23);
       dateTo.setMinutes(59);
