@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import UserService from '../../services/UserService';
-import { CalendarEvent, SseData } from '../../../shared/types';
+import { SseData, CalendarEvent } from '../../../shared/types';
 import api from '../../apis/Api';
 import './Calendar.css';
 import * as util from './Calendar.utils';
 
 type EventsByDate = {
-  [date: string]: CalendarEvent[];
+  [date: string]: CalendarClientEvent[];
 };
 
 type WeekdayProps = {
   date: Date;
-  events: CalendarEvent[];
+  events: CalendarClientEvent[];
 };
 type MonthHeaderProps = {
   month: string;
+};
+type CalendarClientEvent = {
+  from: Date;
+  to: Date;
+  isAllDay: boolean;
+  summary: string;
 };
 
 const EVENTS_TO_SHOW = 20;
@@ -22,28 +28,43 @@ const EVENTS_TO_SHOW = 20;
 const calendarEventsToEventsByDate = (events: CalendarEvent[]) =>
   events.reduce(
     (acc, event) => {
-      let currDate = event.from;
-      const endDate = event.to;
+      const fromIsAllDay = !!event.from.date;
+      const startDate = event.from.date ? new Date(event.from.date) : new Date(event.from.dateTime!);
+      const endDate = event.to.date
+        ? // Google adds a day for some reason when it's a whole day event, so we need to substract it
+          new Date(new Date(event.to.date).getTime() - 1000 * 60 * 60 * 24)
+        : new Date(event.to.dateTime!);
+      let currDate = new Date(startDate.getTime());
       const eventDates = [util.getDateAsIsoString(currDate)];
       while (!util.isSameDay(currDate, endDate)) {
         currDate.setDate(currDate.getDate() + 1);
         eventDates.push(util.getDateAsIsoString(currDate));
       }
+      const toCalendarClientEvent = () => ({
+        isAllDay: fromIsAllDay,
+        from: startDate,
+        to: endDate,
+        summary: event.summary,
+      });
       eventDates.forEach(date => {
         if (!acc[date]) {
-          acc[date] = [event];
+          acc[date] = [toCalendarClientEvent()];
         } else {
-          acc[date].push(event);
+          acc[date].push(toCalendarClientEvent());
         }
       });
       return acc;
     },
     {
-      [util.getDateAsIsoString(new Date())]: []
+      [util.getDateAsIsoString(new Date())]: [],
     } as EventsByDate
   );
-const eventToString = (event: CalendarEvent) =>
-  `${util.getDateAsTimeString(event.from)} - ${util.getDateAsTimeString(event.to)} ${event.summary}`;
+const eventToString = (event: CalendarClientEvent) => {
+  if (event.isAllDay) {
+    return event.summary;
+  }
+  return `${util.getDateAsTimeString(event.from)} - ${util.getDateAsTimeString(event.to)} ${event.summary}`;
+};
 
 const Weekday = ({ date, events }: WeekdayProps) => (
   <div className={`Calendar-weekday${util.isToday(date) ? ' Calendar-weekday--today' : ''}`}>
@@ -53,7 +74,7 @@ const Weekday = ({ date, events }: WeekdayProps) => (
     </div>
     <div className="Calendar-weekday--event">
       {events.length ? (
-        events.map(e => <div key={`${e.from.toISOString()}_${e.to.toISOString}`}>{eventToString(e)}</div>)
+        events.map(e => <div key={`${e.from.toISOString()}_${e.to.toISOString()}`}>{eventToString(e)}</div>)
       ) : (
         <div>Inga planer</div>
       )}
@@ -75,7 +96,7 @@ export default () => {
       eventSource.onmessage = e => {
         const { result, error }: SseData<CalendarEvent[]> = JSON.parse(e.data);
         if (result) {
-          setEvents(calendarEventsToEventsByDate(result.map(api.eventResponseToCalendarEvent)));
+          setEvents(calendarEventsToEventsByDate(result));
         } else if (error) {
           console.error(error);
         }

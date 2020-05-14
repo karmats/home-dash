@@ -1,5 +1,10 @@
+interface CalendarDate {
+  date?: string | null;
+  dateTime?: string | null;
+}
+
 export interface CalendarEvent {
-  from: Date;
-  to: Date;
+  from: CalendarDate;
+  to: CalendarDate;
   summary: string;
 }

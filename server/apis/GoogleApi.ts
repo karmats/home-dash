@@ -115,11 +115,9 @@ const listEvents = async (request: CalendarEventRequest): Promise<ReadonlyArray<
       const events = res?.data?.items;
       if (events && events.length) {
         return events.map(event => {
-          const start = event?.start?.dateTime || event?.start?.date;
-          const end = event?.end?.dateTime || event?.end?.date;
           return {
-            from: new Date(start!),
-            to: new Date(end!),
+            from: { date: event?.start?.date, dateTime: event?.start?.dateTime },
+            to: { date: event?.end?.date, dateTime: event?.end?.dateTime },
             summary: event.summary!,
           };
         });
