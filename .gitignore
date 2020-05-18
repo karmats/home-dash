@@ -14,6 +14,8 @@
 .env
 .env.local
 
+error.log
+info.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
