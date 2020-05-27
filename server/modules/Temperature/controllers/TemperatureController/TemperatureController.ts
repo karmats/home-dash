@@ -9,7 +9,9 @@ import {
 } from '../../../../utils';
 import { EventDataPollerService, EventDataHandler } from '../../../../services/EventDataPollerService';
 import { Temperature } from '../../../../../shared/types';
+import { getLogger } from '../../../../logger';
 
+const logger = getLogger('TemperatureController');
 // Every other hour
 const TEMPERATURES_REFRESH_INTERVAL = 2 * 60 * 60 * 1000;
 
@@ -39,12 +41,14 @@ let pollerService: EventDataPollerService<Temperature[]>;
 const createAndStartPollerService = (res: express.Response) => {
   const handler: EventDataHandler<Temperature[]> = {
     data: result => {
+      logger.debug(`Got ${result.length} temperatures`);
       res.write(resultToSseData(result));
     },
     heartbeat: heartbeat => {
       res.write(resultToHeartbeatData(heartbeat.time));
     },
     error: err => {
+      logger.error(`Failed to fetch temperatures: ${JSON.stringify(err)}`);
       res.write(errorToSseData(err));
     },
   };

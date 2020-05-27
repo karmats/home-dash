@@ -1,19 +1,25 @@
 import winston from 'winston';
 
-export const logger = winston.createLogger({
+const { combine, timestamp, printf } = winston.format;
+const loggerFormat = printf(({ label, level, message, timestamp }) => {
+  return `${timestamp} [${label}] ${level}: ${message}`;
+});
+
+const logger = winston.createLogger({
   level: 'info',
-  format: winston.format.json(),
+  format: combine(timestamp(), loggerFormat),
   defaultMeta: { service: 'home-dash' },
   transports: [
     new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'info.log' }),
+    new winston.transports.File({ filename: 'debug.log', level: 'debug' }),
   ],
+  exceptionHandlers: [new winston.transports.File({ filename: 'exceptions.log' })],
+  exitOnError: false,
 });
+// logger['rejections'].handle(new winston.transports.File({ filename: 'rejections.log' }));
 
-if (process.env.NODE_ENV !== 'production') {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.simple(),
-    })
-  );
-}
+export const getLogger = (label: string) => ({
+  debug: (message: string) => logger.debug(message, { label }),
+  info: (message: string) => logger.info(message, { label }),
+  error: (message: string) => logger.error(message, { label }),
+});

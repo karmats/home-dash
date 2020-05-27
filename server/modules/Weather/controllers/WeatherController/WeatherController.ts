@@ -9,7 +9,9 @@ import {
 } from '../../../../utils';
 import { EventDataPollerService, EventDataHandler } from '../../../../services/EventDataPollerService';
 import { Forecast } from '../../../../../shared/types';
+import { getLogger } from '../../../../logger';
 
+const logger = getLogger('WeatherController');
 // Every 20 minute
 const FORECAST_REFRESH_INTERVAL = 20 * 60 * 1000;
 
@@ -44,12 +46,14 @@ let pollerService: EventDataPollerService<Forecast[]>;
 const createAndStartPollerService = (lat: number, lon: number, res: express.Response) => {
   const handler: EventDataHandler<Forecast[]> = {
     data: result => {
+      logger.debug(`Got ${result.length} forecasts`);
       res.write(resultToSseData(result));
     },
     heartbeat: heartbeat => {
       res.write(resultToHeartbeatData(heartbeat.time));
     },
     error: err => {
+      logger.error(`Failed to get forecasts: ${JSON.stringify(err)}`);
       res.write(errorToSseData(err));
     },
   };

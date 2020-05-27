@@ -1,9 +1,10 @@
-import fs from 'fs';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 import config from '../config';
 import { Temperature, HomeAlarmInfo, ArmedStatus } from '../../shared/types';
+import { getLogger } from '../logger';
 
+const logger = getLogger('SectorAlarmApi');
 const BASE_URL = 'https://mypagesapi.sectoralarm.net';
 const REQUEST_VERIFICATON_TOKEN_NAME = '__RequestVerificationToken';
 
@@ -36,6 +37,7 @@ const sectorAlarmDateToMs = (date: string): number => {
  * Authenticates to Sector alarm. Saves the version and cookie to file
  */
 export const authenticate = async (): Promise<SectorAlarmMeta> => {
+  logger.debug('Authenticating to sector alarm');
   return fetch(`${BASE_URL}/User/Login`).then(response => {
     return new Promise<SectorAlarmMeta>((resolve, reject) => {
       let content = '';
@@ -58,6 +60,7 @@ export const authenticate = async (): Promise<SectorAlarmMeta> => {
         new Promise((resolve, reject) => {
           const verficationToken = meta.cookie.split(';').find(c => c.startsWith(REQUEST_VERIFICATON_TOKEN_NAME));
           const token = verficationToken && verficationToken.split('=')[1];
+          logger.debug(`Got token ${token}`);
 
           if (token) {
             const formdata = new FormData();
@@ -65,11 +68,15 @@ export const authenticate = async (): Promise<SectorAlarmMeta> => {
             formdata.append('userID', username);
             formdata.append('password', password);
             formdata.append(REQUEST_VERIFICATON_TOKEN_NAME, token);
+            logger.debug(`Signing in as '${username}'`);
             formdata.submit(`${BASE_URL}/User/Login`, (err, response) => {
               if (err) {
+                logger.error(`Error from sector alarm login: ${JSON.stringify(err)}`);
                 reject(err);
               } else if (response.statusCode !== 302) {
-                reject(`Expected 302 response code, instead got ${response.statusCode}.`);
+                const msg = `Expected 302 response code, instead got ${response.statusCode}.`;
+                logger.error(msg);
+                reject(msg);
               } else {
                 const setCookieHeader = response.headers['set-cookie'];
                 if (setCookieHeader && setCookieHeader.length) {
@@ -84,6 +91,7 @@ export const authenticate = async (): Promise<SectorAlarmMeta> => {
               }
             });
           } else {
+            logger.error(`No token from cookie with version ${meta.version}`);
             reject(`Failed to retrieve token from cookie ${JSON.stringify(meta)}`);
           }
         })
@@ -99,11 +107,12 @@ const getSessionMeta = (): Promise<SectorAlarmMeta> => {
     if (!sessionMeta) {
       resolve(authenticate());
     } else {
+      logger.debug(`Trying to authenticate to sector alarm with version '${sessionMeta.version}'`);
       // Check that the cookie hasn't expired. If it has, re-authenticate
       fetch(`${BASE_URL}/User/GetUserInfo`, { method: 'HEAD' })
         .then(response => (response.status === 200 ? resolve(sessionMeta) : resolve(authenticate())))
         .catch(e => {
-          console.error(`Got error "${JSON.stringify(e)}", trying to reconnect`);
+          logger.error(`Got error, trying to reconnect: ${JSON.stringify(e)}`);
           resolve(authenticate());
         });
     }
@@ -154,12 +163,12 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
       },
     })
       .then(response => response.json())
-      .then(json =>
-        json.map((j: any) => ({
+      .then(json => {
+        return json.map((j: any) => ({
           location: j.Label,
           value: +j.Temprature,
           scale: 'C',
-        }))
-      );
+        }));
+      });
   });
 };

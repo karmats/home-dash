@@ -9,7 +9,9 @@ import {
 } from '../../../../utils';
 import { EventDataPollerService, EventDataHandler } from '../../../../services/EventDataPollerService';
 import { HomeAlarmInfo } from '../../../../../shared/types';
+import { getLogger } from '../../../../logger';
 
+const logger = getLogger('HomeAlarmController');
 // Every hour
 const HOME_ALARM_REFRESH_INTERVAL = 60 * 60 * 1000;
 
@@ -38,12 +40,14 @@ let pollerService: EventDataPollerService<HomeAlarmInfo>;
 const createAndStartPollerService = (res: express.Response) => {
   const handler: EventDataHandler<HomeAlarmInfo> = {
     data: result => {
+      logger.debug(`Got alarm info status '${result.status}'`);
       res.write(resultToSseData(result));
     },
     heartbeat: heartbeat => {
       res.write(resultToHeartbeatData(heartbeat.time));
     },
     error: err => {
+      logger.error(`Failed to get alarm info: ${JSON.stringify(err)}`);
       res.write(errorToSseData(err));
     },
   };

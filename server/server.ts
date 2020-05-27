@@ -5,13 +5,15 @@ import { WeatherController } from './modules/Weather';
 import { CalendarController } from './modules/Calendar';
 import { TemperatureController } from './modules/Temperature';
 import { HomeAlarmController } from './modules/HomeAlarm';
+import { getLogger } from './logger';
 
 const hostname = '0.0.0.0';
 const port = 4000;
 
+const logger = getLogger('server');
 const app = express();
 
-app.get('/', function(_, res) {
+app.get('/', function (_, res) {
   res.send('App is up and running');
 });
 app.get('/weather', WeatherController.getForecastsFromRequest);
@@ -21,6 +23,6 @@ app.get('/homealarm/status', HomeAlarmController.getHomeAlarmStatusInfo);
 app.get('/auth/google', GoogleAuthenticatorController.authenticateToGoogle);
 app.get('/auth/sectoralarm', SectorAlarmAuthenticationController.authenticateToSectorAlarm);
 
-app.listen(port, hostname, function() {
-  console.log(`Server running at http://${hostname}:${port}/`);
+app.listen(port, hostname, function () {
+  logger.info(`Server running at http://${hostname}:${port}/`);
 });

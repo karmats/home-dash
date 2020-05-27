@@ -11,7 +11,9 @@ import {
 import { EventDataHandler, EventDataPollerService } from '../../../../services/EventDataPollerService';
 import { CalendarEvent } from '../../../../../shared/types';
 import { ExpressRequest } from '../../../../models';
+import { getLogger } from '../../../../logger';
 
+const logger = getLogger('CalendarController');
 // Every hour
 const CALENDAR_REFRESH_INTERVAL = 60 * 60 * 1000;
 const DATE_REGEX = /\d{4}-\d{2}-\d{2}/;
@@ -76,12 +78,14 @@ let pollerService: EventDataPollerService<ReadonlyArray<CalendarEvent>>;
 const createAndStartPollerService = (comming: number, res: express.Response) => {
   const handler: EventDataHandler<ReadonlyArray<CalendarEvent>> = {
     data: result => {
+      logger.debug(`Got ${result.length} calendar events`);
       res.write(resultToSseData(result));
     },
     heartbeat: heartbeat => {
       res.write(resultToHeartbeatData(heartbeat.time));
     },
     error: err => {
+      logger.error(`Failed to get calendar events ${JSON.stringify(err)}`);
       res.write(errorToSseData(err));
     },
   };

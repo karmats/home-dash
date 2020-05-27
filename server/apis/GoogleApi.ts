@@ -2,6 +2,7 @@ import fs from 'fs';
 import { google } from 'googleapis';
 import config from '../config';
 import { CalendarEvent } from '../../shared/types';
+import { getLogger } from '../logger';
 
 type CalendarFromToRequest = {
   from: Date;
@@ -10,6 +11,7 @@ type CalendarFromToRequest = {
 type CalendarCommingRequest = { next: number };
 type CalendarEventRequest = CalendarFromToRequest | CalendarCommingRequest;
 
+const logger = getLogger('GoogleApi');
 // If modifying these scopes, delete token.json.
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
@@ -64,6 +66,7 @@ export const getAuthenticationUrl = () => {
 export const authenticate = (code: string) => {
   oAuth2Client.getToken(code).then(response => {
     oAuth2Client.setCredentials(response.tokens);
+    logger.debug('Authenticated to google, saving file');
     // Store the token to disk for later program executions
     fs.writeFile(TOKEN_PATH, JSON.stringify(response.tokens), err => {
       if (err) {
@@ -105,6 +108,7 @@ const listEvents = async (request: CalendarEventRequest): Promise<ReadonlyArray<
     timeMin: new Date().toISOString(),
     orderBy: 'startTime',
   };
+  logger.debug(`Sending event request ${JSON.stringify(eventRequest)}`);
   return calendar.events
     .list(
       isCommingRequest(request)
