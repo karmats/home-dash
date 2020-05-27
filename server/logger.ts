@@ -10,8 +10,8 @@ const logger = winston.createLogger({
   format: combine(timestamp(), loggerFormat),
   defaultMeta: { service: 'home-dash' },
   transports: [
-    new winston.transports.File({ filename: 'error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'debug.log', level: 'debug' }),
+    new winston.transports.File({ filename: 'error.log', level: 'error', maxsize: 5000000, maxFiles: 2 }),
+    new winston.transports.File({ filename: 'debug.log', level: 'debug', maxsize: 5000000, maxFiles: 3 }),
   ],
   exceptionHandlers: [new winston.transports.File({ filename: 'exceptions.log' })],
   exitOnError: false,
