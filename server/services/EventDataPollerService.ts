@@ -16,12 +16,7 @@ const HEARTBEAT_INTERVAL = 30 * 1000;
 
 export class EventDataPollerService<R> {
   timer: any;
-  constructor(
-    private pollFn: () => Promise<R>,
-    private handler: EventDataHandler<R>,
-    interval: number,
-    immediate = true
-  ) {
+  constructor(private pollFn: () => Promise<R>, private handler: EventDataHandler<R>, interval: number, wait = 0) {
     let timeElapsed = 0;
     this.timer = setInterval(() => {
       timeElapsed += HEARTBEAT_INTERVAL;
@@ -32,7 +27,11 @@ export class EventDataPollerService<R> {
         this.handler.heartbeat({ time: Date.now() });
       }
     }, HEARTBEAT_INTERVAL);
-    if (immediate) {
+    if (wait > 0) {
+      setTimeout(() => {
+        this._fetchData();
+      }, wait);
+    } else {
       this._fetchData();
     }
   }

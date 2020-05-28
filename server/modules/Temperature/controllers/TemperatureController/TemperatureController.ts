@@ -14,6 +14,8 @@ import { getLogger } from '../../../../logger';
 const logger = getLogger('TemperatureController');
 // Every other hour
 const TEMPERATURES_REFRESH_INTERVAL = 2 * 60 * 60 * 1000;
+// Wait 5 seconds until first request, so the alarm status can authenticate first
+const REQUEST_WAIT = 5 * 1000;
 
 const getIndoorTemperatures = (req: express.Request, res: express.Response) => {
   const { sse } = req.query;
@@ -54,7 +56,7 @@ const createAndStartPollerService = (res: express.Response) => {
   };
   const pollFn = () => TemperatureService.getIndoorTemperatures();
 
-  pollerService = new EventDataPollerService(pollFn, handler, TEMPERATURES_REFRESH_INTERVAL);
+  pollerService = new EventDataPollerService(pollFn, handler, TEMPERATURES_REFRESH_INTERVAL, REQUEST_WAIT);
 };
 
 const stopPollerService = () => pollerService.finish();

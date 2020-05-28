@@ -33,6 +33,12 @@ const sectorAlarmDateToMs = (date: string): number => {
   return ms && ms[1] ? +ms[1] : -1;
 };
 
+const headers = (cookie: string) => ({
+  Accept: 'application/json',
+  'Content-type': 'application/json',
+  Cookie: cookie,
+});
+
 /**
  * Authenticates to Sector alarm. Saves the version and cookie to file
  */
@@ -60,7 +66,6 @@ export const authenticate = async (): Promise<SectorAlarmMeta> => {
         new Promise((resolve, reject) => {
           const verficationToken = meta.cookie.split(';').find(c => c.startsWith(REQUEST_VERIFICATON_TOKEN_NAME));
           const token = verficationToken && verficationToken.split('=')[1];
-          logger.debug(`Got token ${token}`);
 
           if (token) {
             const formdata = new FormData();
@@ -105,12 +110,24 @@ export const authenticate = async (): Promise<SectorAlarmMeta> => {
 const getSessionMeta = (): Promise<SectorAlarmMeta> => {
   return new Promise(resolve => {
     if (!sessionMeta) {
+      logger.debug('No session meta available, authenticating');
       resolve(authenticate());
     } else {
       logger.debug(`Trying to authenticate to sector alarm with version '${sessionMeta.version}'`);
       // Check that the cookie hasn't expired. If it has, re-authenticate
-      fetch(`${BASE_URL}/User/GetUserInfo`, { method: 'HEAD' })
-        .then(response => (response.status === 200 ? resolve(sessionMeta) : resolve(authenticate())))
+      fetch(`${BASE_URL}/User/GetUserInfo`, {
+        method: 'GET',
+        headers: headers(sessionMeta.cookie),
+      })
+        .then(response => {
+          if (response.status === 200) {
+            logger.debug('Session still valid, reusing cookie');
+            resolve(sessionMeta);
+          } else {
+            logger.debug('Session not valid, reauthenticating');
+            resolve(authenticate());
+          }
+        })
         .catch(e => {
           logger.error(`Got error, trying to reconnect: ${JSON.stringify(e)}`);
           resolve(authenticate());
@@ -125,11 +142,7 @@ const getSessionMeta = (): Promise<SectorAlarmMeta> => {
 export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
   return getSessionMeta().then(async meta => {
     return fetch(`${BASE_URL}/Panel/GetPanelList`, {
-      headers: {
-        Accept: 'application/json',
-        'Content-type': 'application/json',
-        Cookie: meta.cookie,
-      },
+      headers: headers(meta.cookie),
     })
       .then(response => response.json())
       .then(json => {
@@ -156,11 +169,7 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
     return fetch(`${BASE_URL}/Panel/GetTempratures`, {
       method: 'POST',
       body: JSON.stringify({ id: config.sectoralarm.deviceId, Version: meta.version }),
-      headers: {
-        Accept: 'application/json',
-        'Content-type': 'application/json',
-        Cookie: meta.cookie,
-      },
+      headers: headers(meta.cookie),
     })
       .then(response => response.json())
       .then(json => {
