@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ReactSVG } from 'react-svg';
+import Spinner from '../../components/Spinner/Spinner';
 import { HomeAlarmInfo, ArmedStatus, SseData } from '../../../shared/types';
 import api from '../../apis/Api';
 import './HomeAlarm.css';
@@ -50,6 +51,6 @@ export default function () {
       <div className="HomeAlarm--time">{dateToTime(new Date(alarmInfo.time))}</div>
     </div>
   ) : (
-    <span>Loading</span>
+    <Spinner />
   );
 }

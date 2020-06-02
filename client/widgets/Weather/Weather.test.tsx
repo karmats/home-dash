@@ -54,9 +54,9 @@ describe('Weather', () => {
     });
     it('renders indication that weather is fetching', () => {
       const { getByText } = render(<Weather />);
-      const indicator = getByText('Fetching weather data...');
+      const indicator = getByText('Loading...');
       expect(indicator).toBeDefined();
-      expect(indicator.tagName).toBe('SPAN');
+      expect(indicator.tagName).toBe('DIV');
     });
     it('renders main weather and comming weather', async () => {
       const eventSource = new EventSource('mock-url');

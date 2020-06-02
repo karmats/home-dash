@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ReactSVG } from 'react-svg';
 import { Forecast, SseData } from '../../../shared/types';
 import api from '../../apis/Api';
+import Spinner from '../../components/Spinner/Spinner';
 import UserService from '../../services/UserService';
 import * as util from './Weather.utils';
 import './Weather.css';
@@ -74,7 +75,7 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
   </div>
 );
 
-export default function() {
+export default function () {
   const [forecasts, setForecasts] = useState<Forecast[]>([]);
 
   useEffect(() => {
@@ -110,7 +111,7 @@ export default function() {
           </div>
         </>
       ) : (
-        <span>Fetching weather data...</span>
+        <Spinner />
       )}
     </div>
   );

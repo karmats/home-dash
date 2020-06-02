@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Spinner from '../../components/Spinner/Spinner';
 import { Temperature, SseData } from '../../../shared/types';
 import './Temperature.css';
 import api from '../../apis/Api';
@@ -47,7 +48,7 @@ export default function () {
       }
     };
   }, []);
-  return (
+  return temperatures.length ? (
     <div className="Temperature-main">
       {temperatures.map(t => (
         <div key={t.location} className="Temperature-box">
@@ -56,5 +57,7 @@ export default function () {
         </div>
       ))}
     </div>
+  ) : (
+    <Spinner />
   );
 }

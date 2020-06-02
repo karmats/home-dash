@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserService from '../../services/UserService';
+import Spinner from '../../components/Spinner/Spinner';
 import { SseData, CalendarEvent } from '../../../shared/types';
 import api from '../../apis/Api';
 import './Calendar.css';
@@ -108,9 +109,10 @@ export default () => {
       }
     };
   }, []);
-  return (
+  const eventKeys = Object.keys(events);
+  return eventKeys.length ? (
     <div className="Calendar-main">
-      {Object.keys(events).map((d, idx, dates) => {
+      {eventKeys.map((d, idx, dates) => {
         const weekday = <Weekday key={d} date={new Date(d)} events={events[d]} />;
         const curr = new Date(d);
         const prev = idx !== 0 ? new Date(dates[idx - 1]) : curr;
@@ -126,5 +128,7 @@ export default () => {
         return weekday;
       })}
     </div>
+  ) : (
+    <Spinner />
   );
 };
