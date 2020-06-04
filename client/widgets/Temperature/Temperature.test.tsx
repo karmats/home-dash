@@ -16,6 +16,12 @@ describe('Temperature', () => {
       render(<TemperatureComponent />);
     });
 
+    it('renders indication that home alarm is fetching', () => {
+      const { getByText } = render(<TemperatureComponent />);
+      const indicator = getByText('Loading...');
+      expect(indicator).toBeDefined();
+    });
+
     it('renders temperatures', async () => {
       const tempData: SseData<Temperature[]> = {
         result: [

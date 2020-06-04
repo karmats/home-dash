@@ -45,6 +45,11 @@ export default function () {
   return alarmInfo ? (
     <div className="HomeAlarm-main">
       <ReactSVG
+        role="img"
+        beforeInjection={svg => {
+          svg.setAttribute('role', 'img');
+          svg.setAttribute('aria-label', `Alarm indicator '${alarmInfo.status}'`);
+        }}
         className={`HomeAlarm--indicator ${armedStatusClassName(alarmInfo.status)}`}
         src="./svgs/static/house.svg"
       />
