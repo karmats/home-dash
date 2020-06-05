@@ -4,13 +4,21 @@
     display: inline-flex;
     padding: 1.5rem;
 }
-.HomeAlarm--indicator svg {
+.HomeAlarm--indicator > div, .HomeAlarm--indicator svg {
     height: 4rem;
     width: 4rem;
 }
 .HomeAlarm--indicator.armed, .HomeAlarm--indicator.partial {
     border-color: var(--active-bg-color);
+    animation: pulse infinite;
 }
+.HomeAlarm--indicator.partial {
+    animation-duration: 3s;
+}
+.HomeAlarm--indicator.armed {
+    animation-duration: 2s;
+}
+
 .HomeAlarm--indicator.armed svg, .HomeAlarm--indicator.partial svg {
     fill: var(--active-bg-color);
 }
@@ -25,4 +33,18 @@
 .HomeAlarm--time {
     opacity: 0.8;
     margin-top: 1rem;
+}
+
+@keyframes pulse {
+	0% {
+		box-shadow: 0 0 0 0 var(--active-bg-color);
+	}
+
+	70% {
+		box-shadow: 0 0 0 0.75rem rgba(0, 0, 0, 0);
+	}
+
+	100% {
+		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+	}
 }
