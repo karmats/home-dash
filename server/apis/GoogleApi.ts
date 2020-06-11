@@ -82,7 +82,7 @@ export const authenticate = (code: string) => {
 const getAuthToken = (): Promise<any> => {
   return new Promise((resolve, reject) => {
     // Check if we have previously stored a token.
-    fs.readFile(TOKEN_PATH, { encoding: 'UTF-8' }, (err, token) => {
+    fs.readFile(TOKEN_PATH, { encoding: 'utf-8' }, (err, token) => {
       if (err || !token) {
         reject(`Failed to read token file: ${JSON.stringify(err)}`);
       } else {
