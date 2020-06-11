@@ -1,9 +1,10 @@
 import 'jest';
 import React from 'react';
-import { cleanup, render, wait } from '@testing-library/react';
+import { cleanup, render, waitFor } from '@testing-library/react';
 import HomeAlarmComponent from './HomeAlarm';
 import { SseData, HomeAlarmInfo } from '../../../shared/types';
 
+jest.mock('react-svg');
 let mockHomeAlarmStatusEventSource = new EventSource('mock-url');
 jest.mock('../../apis/Api', () => ({
   getHomeAlarmStatusEventSource: () => mockHomeAlarmStatusEventSource,
@@ -34,14 +35,13 @@ describe('HomeAlarm', () => {
         },
       };
 
-      const { getByText, getByRole } = render(<HomeAlarmComponent />);
-      await wait(() => {
+      const { getByText } = render(<HomeAlarmComponent />);
+      await waitFor(() => {
         mockHomeAlarmStatusEventSource.onmessage!({
           data: JSON.stringify(alarmData),
         } as MessageEvent);
       });
       expect(getByText('12:25')).toBeDefined();
-      expect(getByRole('img')).toBeDefined();
     });
   });
 });

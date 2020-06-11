@@ -1,6 +1,6 @@
 import 'jest';
 import React from 'react';
-import { cleanup, render, wait } from '@testing-library/react';
+import { cleanup, render, waitFor } from '@testing-library/react';
 import TemperatureComponent from './Temperature';
 import { Temperature, SseData } from '../../../shared/types';
 
@@ -39,7 +39,7 @@ describe('Temperature', () => {
       };
 
       const { getByText } = render(<TemperatureComponent />);
-      await wait(() => {
+      await waitFor(() => {
         mockIndoorTemperatureEventSource.onmessage!({
           data: JSON.stringify(tempData),
         } as MessageEvent);
@@ -77,7 +77,7 @@ describe('Temperature', () => {
       };
 
       const { getByLabelText } = render(<TemperatureComponent />);
-      await wait(() => {
+      await waitFor(() => {
         mockIndoorTemperatureEventSource.onmessage!({
           data: JSON.stringify(tempData),
         } as MessageEvent);

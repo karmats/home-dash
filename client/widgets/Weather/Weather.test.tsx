@@ -1,25 +1,22 @@
 import 'jest';
 import React from 'react';
-import { render, cleanup, wait } from '@testing-library/react';
+import { render, cleanup, waitFor } from '@testing-library/react';
 import { WeatherSymbol, Forecast, SseData } from '../../../shared/types';
 import * as util from './Weather.utils';
 import Weather from './Weather';
+import { act } from 'react-dom/test-utils';
 
 // Mocks
 jest.mock('react-svg');
 
-let mockGetForecastEventSource: any = jest.fn();
+let mockGetForecastEventSource: any = new EventSource('mock-url');
 jest.mock('../../apis/Api', () => ({
   getForecastEventSource: () => mockGetForecastEventSource,
 }));
 
-const mockGeolocation = {
-  getCurrentPosition: jest.fn(success =>
-    success({ coords: { latitude: 57.740614, longitude: 11.930191 }, timestamp: new Date().getTime() })
-  ),
-};
-
-(global as any).navigator.geolocation = mockGeolocation;
+jest.mock('../../services/UserService', () => ({
+  getLocation: () => Promise.resolve({ lat: 57.740614, lon: 11.930191 }),
+}));
 
 jest.useFakeTimers();
 
@@ -56,11 +53,8 @@ describe('Weather', () => {
       const { getByText } = render(<Weather />);
       const indicator = getByText('Loading...');
       expect(indicator).toBeDefined();
-      expect(indicator.tagName).toBe('DIV');
     });
     it('renders main weather and comming weather', async () => {
-      const eventSource = new EventSource('mock-url');
-      mockGetForecastEventSource = eventSource;
       const smhiData: SseData<Forecast[]> = {
         result: Array.from(new Array(10)).map((_, idx) => ({
           symbol: WeatherSymbol.CLEAR_SKY,
@@ -72,9 +66,12 @@ describe('Weather', () => {
         })),
       };
 
+      await act(async () => {
+        render(<Weather />);
+      });
       const { getByText } = render(<Weather />);
-      await wait(() => {
-        eventSource.onmessage!({
+      await waitFor(() => {
+        mockGetForecastEventSource.onmessage!({
           data: JSON.stringify(smhiData),
         } as MessageEvent);
       });
