@@ -5,7 +5,7 @@ import {
   SSE_HEADERS,
   resultToSseData,
   errorToSseData,
-  resultToHeartbeatData,
+  heartbeatData,
 } from '../../../../utils';
 import { EventDataPollerService, EventDataHandler } from '../../../../services/EventDataPollerService';
 import { Forecast } from '../../../../../shared/types';
@@ -50,7 +50,7 @@ const createAndStartPollerService = (lat: number, lon: number, res: express.Resp
       res.write(resultToSseData(result));
     },
     heartbeat: heartbeat => {
-      res.write(resultToHeartbeatData(heartbeat.time));
+      res.write(heartbeatData(heartbeat.time));
     },
     error: err => {
       logger.error(`Failed to get forecasts: ${JSON.stringify(err)}`);

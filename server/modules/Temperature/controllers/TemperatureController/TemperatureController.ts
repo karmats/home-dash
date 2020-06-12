@@ -5,7 +5,7 @@ import {
   SSE_HEADERS,
   resultToSseData,
   errorToSseData,
-  resultToHeartbeatData,
+  heartbeatData,
 } from '../../../../utils';
 import { EventDataPollerService, EventDataHandler } from '../../../../services/EventDataPollerService';
 import { Temperature } from '../../../../../shared/types';
@@ -47,7 +47,7 @@ const createAndStartPollerService = (res: express.Response) => {
       res.write(resultToSseData(result));
     },
     heartbeat: heartbeat => {
-      res.write(resultToHeartbeatData(heartbeat.time));
+      res.write(heartbeatData(heartbeat.time));
     },
     error: err => {
       logger.error(`Failed to fetch temperatures: ${JSON.stringify(err)}`);

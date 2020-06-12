@@ -1,2 +1,2 @@
 export * from './DateUtils';
-export * from './HttpUtil';
+export * from './HttpUtils';

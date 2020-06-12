@@ -3,7 +3,7 @@ import { HomeAlarmService } from '../../services';
 import {
   DEFAULT_HEADERS,
   resultToSseData,
-  resultToHeartbeatData,
+  heartbeatData,
   errorToSseData,
   SSE_HEADERS,
 } from '../../../../utils';
@@ -44,7 +44,7 @@ const createAndStartPollerService = (res: express.Response) => {
       res.write(resultToSseData(result));
     },
     heartbeat: heartbeat => {
-      res.write(resultToHeartbeatData(heartbeat.time));
+      res.write(heartbeatData(heartbeat.time));
     },
     error: err => {
       logger.error(`Failed to get alarm info: ${JSON.stringify(err)}`);

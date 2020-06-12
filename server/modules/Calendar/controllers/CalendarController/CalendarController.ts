@@ -6,7 +6,7 @@ import {
   SSE_HEADERS,
   resultToSseData,
   errorToSseData,
-  resultToHeartbeatData,
+  heartbeatData,
 } from '../../../../utils';
 import { EventDataHandler, EventDataPollerService } from '../../../../services/EventDataPollerService';
 import { CalendarEvent } from '../../../../../shared/types';
@@ -82,7 +82,7 @@ const createAndStartPollerService = (comming: number, res: express.Response) => 
       res.write(resultToSseData(result));
     },
     heartbeat: heartbeat => {
-      res.write(resultToHeartbeatData(heartbeat.time));
+      res.write(heartbeatData(heartbeat.time));
     },
     error: err => {
       logger.error(`Failed to get calendar events ${JSON.stringify(err)}`);
