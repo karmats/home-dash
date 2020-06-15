@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import FormData from 'form-data';
+import fs from 'fs';
 import config from '../config';
 import { Temperature, HomeAlarmInfo, ArmedStatus } from '../../shared/types';
 import { getLogger } from '../logger';
@@ -7,13 +8,12 @@ import { getLogger } from '../logger';
 const logger = getLogger('SectorAlarmApi');
 const BASE_URL = 'https://mypagesapi.sectoralarm.net';
 const REQUEST_VERIFICATON_TOKEN_NAME = '__RequestVerificationToken';
+const SESSION_META_PATH = 'sa-meta.json';
 
 type SectorAlarmMeta = {
   version: string;
   cookie: string;
 };
-
-let sessionMeta: SectorAlarmMeta;
 
 const armedStatusToAlarmStatus = (armedStatus: string): ArmedStatus => {
   switch (armedStatus) {
@@ -85,10 +85,16 @@ export const authenticate = async (): Promise<SectorAlarmMeta> => {
               } else {
                 const setCookieHeader = response.headers['set-cookie'];
                 if (setCookieHeader && setCookieHeader.length) {
-                  sessionMeta = {
+                  const sessionMeta = {
                     cookie: setCookieHeader[0],
                     version: meta.version,
                   };
+                  logger.debug('Authenticated to sector alarm, saving meta.')
+                  fs.writeFile(SESSION_META_PATH, JSON.stringify(sessionMeta), err => {
+                    if (err) {
+                      throw new Error(`Failed to write file: ${JSON.stringify(err)}`);
+                    }
+                  });
                   resolve(sessionMeta);
                 } else {
                   reject(`Expected set-cookie header to be defined, ${setCookieHeader}`);
@@ -109,30 +115,32 @@ export const authenticate = async (): Promise<SectorAlarmMeta> => {
  */
 const getSessionMeta = (): Promise<SectorAlarmMeta> => {
   return new Promise(resolve => {
-    if (!sessionMeta) {
-      logger.debug('No session meta available, authenticating');
-      resolve(authenticate());
-    } else {
-      logger.debug(`Trying to authenticate to sector alarm with version '${sessionMeta.version}'`);
-      // Check that the cookie hasn't expired. If it has, re-authenticate
-      fetch(`${BASE_URL}/User/GetUserInfo`, {
-        method: 'GET',
-        headers: headers(sessionMeta.cookie),
-      })
-        .then(response => {
-          if (response.status === 200) {
-            logger.debug('Session still valid, reusing cookie');
-            resolve(sessionMeta);
-          } else {
-            logger.debug('Session not valid, reauthenticating');
-            resolve(authenticate());
-          }
+    fs.readFile(SESSION_META_PATH, { encoding: 'utf-8' }, (err, meta) => {
+      if (err || !meta) {
+        logger.info('No session meta file found, authenticating');
+        resolve(authenticate());
+      } else {
+        const sessionMeta: SectorAlarmMeta = JSON.parse(meta);
+        // Check that the cookie hasn't expired. If it has, re-authenticate
+        fetch(`${BASE_URL}/User/GetUserInfo`, {
+          method: 'GET',
+          headers: headers(sessionMeta.cookie),
         })
-        .catch(e => {
-          logger.error(`Got error, trying to reconnect: ${JSON.stringify(e)}`);
-          resolve(authenticate());
-        });
-    }
+          .then(response => {
+            if (response.status === 200) {
+              logger.debug('Session still valid, reusing cookie');
+              resolve(sessionMeta);
+            } else {
+              logger.debug('Session not valid, reauthenticating');
+              resolve(authenticate());
+            }
+          })
+          .catch(e => {
+            logger.error(`Got error, trying to reconnect: ${JSON.stringify(e)}`);
+            resolve(authenticate());
+          });
+      }
+    });
   });
 };
 

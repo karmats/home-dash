@@ -43,8 +43,15 @@ export const isConnected = async () => {
       return google
         .calendar({ version: 'v3', auth: oAuth2Client })
         .calendarList.list()
-        .then(() => true)
-        .catch(() => false);
+        .then(() => {
+          logger.debug('Authenticated to Google!');
+          return true;
+        })
+        .catch(e => {
+          logger.info('Not authenticated:');
+          logger.error(e);
+          return false;
+        });
     })
     .catch(() => false);
 };

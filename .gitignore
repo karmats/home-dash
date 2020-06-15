@@ -17,4 +17,4 @@
 *.log
 .vscode
 google-token.json
-sa-cookie.json
+sa-meta.json
