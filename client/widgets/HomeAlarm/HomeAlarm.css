@@ -16,10 +16,13 @@
     animation-duration: 3s;
 }
 .HomeAlarm--indicator.armed {
-    animation-duration: 2s;
+    animation-duration: 1.5s;
+    background-color: var(--active-bg-color);
 }
-
-.HomeAlarm--indicator.armed svg, .HomeAlarm--indicator.partial svg {
+.HomeAlarm--indicator.armed svg {
+    fill: var(--box-bg-color);
+}
+.HomeAlarm--indicator.partial svg {
     fill: var(--active-bg-color);
 }
 
