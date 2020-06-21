@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import UserService from '../../services/UserService';
 import Spinner from '../../components/Spinner/Spinner';
 import { SseData, CalendarEvent } from '../../../shared/types';
 import api from '../../apis/Api';
@@ -25,6 +24,7 @@ type CalendarClientEvent = {
 };
 
 const EVENTS_TO_SHOW = 20;
+const DEFAULT_LOCALE = 'sv-SE';
 
 const calendarEventsToEventsByDate = (events: CalendarEvent[]) =>
   events.reduce(
@@ -71,7 +71,7 @@ const Weekday = ({ date, events }: WeekdayProps) => (
   <div className={`Calendar-weekday${util.isToday(date) ? ' Calendar-weekday--today' : ''}`}>
     <div className="Calendar-weekday--date">
       <div>{date.getDate()}</div>
-      <div>{util.getWeekdayName(date, UserService.getLocale())}</div>
+      <div>{util.getWeekdayName(date, DEFAULT_LOCALE)}</div>
     </div>
     <div className="Calendar-weekday--event">
       {events.length ? (
@@ -117,7 +117,7 @@ export default () => {
         const curr = new Date(d);
         const prev = idx !== 0 ? new Date(dates[idx - 1]) : curr;
         if (idx === 0 || curr.getMonth() !== prev.getMonth()) {
-          const month = util.getMonthName(curr, UserService.getLocale());
+          const month = util.getMonthName(curr, DEFAULT_LOCALE);
           return (
             <React.Fragment key={`${curr.getFullYear()}_${month}`}>
               <MonthHeader month={month} />
