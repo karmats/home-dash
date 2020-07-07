@@ -39,7 +39,8 @@ Launches the test runner in the interactive watch mode.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.<br>
+Builds the app for production to the `build` folder.
+There are also build scripts to only build server or client, `npm run build:server` and `npm run build:client`.
 
 ## Configuration
 
