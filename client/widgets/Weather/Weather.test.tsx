@@ -2,7 +2,6 @@ import 'jest';
 import React from 'react';
 import { render, cleanup, waitFor } from '@testing-library/react';
 import { WeatherSymbol, Forecast, SseData } from '../../../shared/types';
-import * as util from './Weather.utils';
 import Weather from './Weather';
 import { act } from 'react-dom/test-utils';
 import WeatherService from './Weather.service';
@@ -40,17 +39,6 @@ describe('Weather', () => {
         expect(require(`${SVG_ROOT}/animated/${fileName}`)).toBeDefined();
         expect(require(`${SVG_ROOT}/static/${fileName}`)).toBeDefined();
       });
-    });
-  });
-  describe('Utils', () => {
-    it('converts date to hours and minutes', () => {
-      const d = new Date();
-      d.setHours(2);
-      d.setMinutes(5);
-      expect(util.dateToTime(d)).toBe('02:05');
-      d.setHours(15);
-      d.setMinutes(32);
-      expect(util.dateToTime(d)).toBe('15:32');
     });
   });
 

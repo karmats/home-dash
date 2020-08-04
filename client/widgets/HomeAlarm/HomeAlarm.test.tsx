@@ -41,7 +41,7 @@ describe('HomeAlarm', () => {
           data: JSON.stringify(alarmData),
         } as MessageEvent);
       });
-      expect(getByText('12:25')).toBeDefined();
+      expect(getByText('idag kl. 12:25')).toBeDefined();
     });
   });
 });

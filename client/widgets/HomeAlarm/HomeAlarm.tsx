@@ -3,8 +3,8 @@ import { ReactSVG } from 'react-svg';
 import Spinner from '../../components/Spinner/Spinner';
 import { HomeAlarmInfo, ArmedStatus, SseData } from '../../../shared/types';
 import api from '../../apis/Api';
+import * as util from '../../utils/DateUtils';
 import './HomeAlarm.css';
-import { dateToTime } from '../Weather/Weather.utils';
 
 export default function () {
   const [alarmInfo, setAlarmInfo] = useState<HomeAlarmInfo>();
@@ -53,7 +53,7 @@ export default function () {
         className={`HomeAlarm--indicator ${armedStatusClassName(alarmInfo.status)}`}
         src="./svgs/static/house.svg"
       />
-      <div className="HomeAlarm--time">{dateToTime(new Date(alarmInfo.time))}</div>
+      <div className="HomeAlarm--time">{util.timeAgo(new Date(alarmInfo.time))}</div>
     </div>
   ) : (
     <Spinner />

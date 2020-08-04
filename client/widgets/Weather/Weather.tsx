@@ -4,7 +4,7 @@ import { Forecast, SseData } from '../../../shared/types';
 import api from '../../apis/Api';
 import Spinner from '../../components/Spinner/Spinner';
 import WeatherService from './Weather.service';
-import * as util from './Weather.utils';
+import * as util from '../../utils/DateUtils';
 import './Weather.css';
 
 // Every 10 second
