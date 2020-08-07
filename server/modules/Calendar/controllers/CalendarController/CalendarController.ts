@@ -1,13 +1,7 @@
 import express from 'express';
 import CalendarService from '../../services/CalendarService';
 import { AuthenticationService } from '../../../Authentication';
-import {
-  DEFAULT_HEADERS,
-  SSE_HEADERS,
-  resultToSseData,
-  errorToSseData,
-  heartbeatData,
-} from '../../../../utils';
+import { DEFAULT_HEADERS, SSE_HEADERS, resultToSseData, errorToSseData, heartbeatData } from '../../../../utils';
 import { EventDataHandler, EventDataPollerService } from '../../../../services/EventDataPollerService';
 import { CalendarEvent } from '../../../../../shared/types';
 import { ExpressRequest } from '../../../../models';
@@ -43,6 +37,7 @@ const getCalendarEventsFromRequest = (
           // Sse requested, keep connection open and feed with calendar event data
           res.writeHead(200, SSE_HEADERS);
           createAndStartPollerService(comming, res);
+          req.on('close', () => stopPollerService());
           res.on('close', () => stopPollerService());
         } else {
           const request = comming
@@ -94,6 +89,9 @@ const createAndStartPollerService = (comming: number, res: express.Response) => 
   pollerService = new EventDataPollerService(pollFn, handler, CALENDAR_REFRESH_INTERVAL);
 };
 
-const stopPollerService = () => pollerService.finish();
+const stopPollerService = () => {
+  logger.debug('Closing calendar polling..');
+  pollerService.finish();
+};
 
 export default { getCalendarEventsFromRequest };

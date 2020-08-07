@@ -1,12 +1,6 @@
 import express from 'express';
 import { HomeAlarmService } from '../../services';
-import {
-  DEFAULT_HEADERS,
-  resultToSseData,
-  heartbeatData,
-  errorToSseData,
-  SSE_HEADERS,
-} from '../../../../utils';
+import { DEFAULT_HEADERS, resultToSseData, heartbeatData, errorToSseData, SSE_HEADERS } from '../../../../utils';
 import { EventDataPollerService, EventDataHandler } from '../../../../services/EventDataPollerService';
 import { HomeAlarmInfo } from '../../../../../shared/types';
 import { getLogger } from '../../../../logger';
@@ -21,6 +15,7 @@ const getHomeAlarmStatusInfo = (req: express.Request, res: express.Response) => 
     // Sse requested, keep connection open and feed with temperature data
     res.writeHead(200, SSE_HEADERS);
     createAndStartPollerService(res);
+    req.on('close', () => stopPollerService());
     res.on('close', () => stopPollerService());
   } else {
     res.writeHead(200, DEFAULT_HEADERS);
@@ -56,6 +51,9 @@ const createAndStartPollerService = (res: express.Response) => {
   pollerService = new EventDataPollerService(pollFn, handler, HOME_ALARM_REFRESH_INTERVAL);
 };
 
-const stopPollerService = () => pollerService.finish();
+const stopPollerService = () => {
+  logger.debug('Closing home alarm polling..');
+  pollerService.finish();
+};
 
 export default { getHomeAlarmStatusInfo };

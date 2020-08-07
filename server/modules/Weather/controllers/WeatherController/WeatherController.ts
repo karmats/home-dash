@@ -1,12 +1,6 @@
 import express from 'express';
 import WeatherService from '../../services/WeatherService/WeatherService';
-import {
-  DEFAULT_HEADERS,
-  SSE_HEADERS,
-  resultToSseData,
-  errorToSseData,
-  heartbeatData,
-} from '../../../../utils';
+import { DEFAULT_HEADERS, SSE_HEADERS, resultToSseData, errorToSseData, heartbeatData } from '../../../../utils';
 import { EventDataPollerService, EventDataHandler } from '../../../../services/EventDataPollerService';
 import { Forecast } from '../../../../../shared/types';
 import { getLogger } from '../../../../logger';
@@ -25,6 +19,7 @@ const getForecastsFromRequest = (req: express.Request, res: express.Response) =>
     // Sse requested, keep connection open and feed with weather data
     res.writeHead(200, SSE_HEADERS);
     createAndStartPollerService(+lat, +lon, res);
+    req.on('close', () => stopPollerService());
     res.on('close', () => stopPollerService());
   } else {
     WeatherService.getWeatherForecasts(+lat, +lon)
@@ -62,6 +57,9 @@ const createAndStartPollerService = (lat: number, lon: number, res: express.Resp
   pollerService = new EventDataPollerService(pollFn, handler, FORECAST_REFRESH_INTERVAL);
 };
 
-const stopPollerService = () => pollerService.finish();
+const stopPollerService = () => {
+  logger.debug('Closing weather polling..');
+  pollerService.finish();
+};
 
 export default { getForecastsFromRequest };

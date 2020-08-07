@@ -1,12 +1,6 @@
 import express from 'express';
 import { TemperatureService } from '../../services';
-import {
-  DEFAULT_HEADERS,
-  SSE_HEADERS,
-  resultToSseData,
-  errorToSseData,
-  heartbeatData,
-} from '../../../../utils';
+import { DEFAULT_HEADERS, SSE_HEADERS, resultToSseData, errorToSseData, heartbeatData } from '../../../../utils';
 import { EventDataPollerService, EventDataHandler } from '../../../../services/EventDataPollerService';
 import { Temperature } from '../../../../../shared/types';
 import { getLogger } from '../../../../logger';
@@ -23,6 +17,7 @@ const getIndoorTemperatures = (req: express.Request, res: express.Response) => {
     // Sse requested, keep connection open and feed with temperature data
     res.writeHead(200, SSE_HEADERS);
     createAndStartPollerService(res);
+    req.on('close', () => stopPollerService());
     res.on('close', () => stopPollerService());
   } else {
     TemperatureService.getIndoorTemperatures()
@@ -59,6 +54,9 @@ const createAndStartPollerService = (res: express.Response) => {
   pollerService = new EventDataPollerService(pollFn, handler, TEMPERATURES_REFRESH_INTERVAL, REQUEST_WAIT);
 };
 
-const stopPollerService = () => pollerService.finish();
+const stopPollerService = () => {
+  logger.debug('Closing temperature polling..');
+  pollerService.finish();
+};
 
 export default { getIndoorTemperatures };
