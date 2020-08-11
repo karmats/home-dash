@@ -1,3 +1,3 @@
-import { WeatherController } from './controllers';
-import { WeatherService } from './services';
+import WeatherController from './Weather.controller';
+import WeatherService from './Weather.service';
 export { WeatherController, WeatherService };

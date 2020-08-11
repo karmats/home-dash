@@ -1,3 +1,3 @@
-import { CalendarController } from './controllers';
-import { CalendarService } from './services';
+import CalendarController from './Calendar.controller';
+import CalendarService from './Calendar.service';
 export { CalendarController, CalendarService };

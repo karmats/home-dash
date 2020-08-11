@@ -1,2 +1,0 @@
-import SectorAlarmAuthenticationController from './SectorAlarmAuthenticationController';
-export default SectorAlarmAuthenticationController;
