@@ -100,7 +100,7 @@
     "setupFilesAfterEnv": [
       "<rootDir>/client/setupTests.ts"
     ],
-    "silent": true,
+    "silent": false,
     "testRegex": "((\\.|/)test)\\.tsx?$",
     "testEnvironment": "jest-environment-jsdom-fourteen",
     "transform": {
