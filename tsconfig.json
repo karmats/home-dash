@@ -15,5 +15,6 @@
     "noEmit": true,
     "jsx": "preserve"
   },
-  "include": ["client"]
+  "include": ["client"],
+  "exclude": ["client/**/*.test.ts"]
 }

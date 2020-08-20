@@ -39,11 +39,11 @@ describe('Calendar server', () => {
         },
       };
       const res: any = {
-        writeHead: (status: number, headers) => {
+        writeHead: (status: number, headers: { [key: string]: string }) => {
           expect(status).toBe(200);
           expect(headers).toEqual(DEFAULT_HEADERS);
         },
-        write: body => {
+        write: (body: string) => {
           expect(body).toEqual(JSON.stringify(MOCK_NEXT_CALENDAR_EVENTS));
           return true;
         },
