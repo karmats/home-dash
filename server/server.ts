@@ -1,5 +1,6 @@
 import './env';
 import express from 'express';
+import addRequestId from 'express-request-id';
 import { GoogleAuthenticatorController, SectorAlarmAuthenticationController } from './modules/Authentication';
 import { WeatherController } from './modules/Weather';
 import { CalendarController } from './modules/Calendar';
@@ -12,6 +13,8 @@ const port = 4000;
 
 const logger = getLogger('server');
 const app = express();
+
+app.use(addRequestId());
 
 app.get('/', function (_, res) {
   res.send('App is up and running');

@@ -36,9 +36,8 @@ const getCalendarEventsFromRequest = (
         if (sse && comming) {
           // Sse requested, keep connection open and feed with calendar event data
           res.writeHead(200, SSE_HEADERS);
-          createAndStartPollerService(comming, res);
-          req.on('close', () => stopPollerService());
-          res.on('close', () => stopPollerService());
+          registerPollerService(comming, res, req);
+          req.on('close', () => unregisterPollerService(res, req));
         } else {
           const request = comming
             ? CalendarService.getNextCalendarEvents(comming)
@@ -70,28 +69,38 @@ const getCalendarEventsFromRequest = (
 };
 
 let pollerService: EventDataPollerService<ReadonlyArray<CalendarEvent>>;
-const createAndStartPollerService = (comming: number, res: express.Response) => {
-  const handler: EventDataHandler<ReadonlyArray<CalendarEvent>> = {
-    data: result => {
-      logger.debug(`Got ${result.length} calendar events`);
-      res.write(resultToSseData(result));
-    },
-    heartbeat: heartbeat => {
-      res.write(heartbeatData(heartbeat.time));
-    },
-    error: err => {
-      logger.error(`Failed to get calendar events ${JSON.stringify(err)}`);
-      res.write(errorToSseData(err));
-    },
-  };
-  const pollFn = () => CalendarService.getNextCalendarEvents(comming);
-
-  pollerService = new EventDataPollerService(pollFn, handler, CALENDAR_REFRESH_INTERVAL);
+const registerPollerService = (comming: number, res: express.Response, req: ExpressRequest) => {
+  const handler: EventDataHandler<ReadonlyArray<CalendarEvent>> = createHandler(res, req);
+  if (!pollerService) {
+    logger.debug('Creating poller service');
+    const pollFn = () => CalendarService.getNextCalendarEvents(comming);
+    pollerService = new EventDataPollerService(pollFn, handler, CALENDAR_REFRESH_INTERVAL);
+    pollerService.registerHandler(handler);
+  } else {
+    logger.debug('Register new handler');
+    pollerService.registerHandler(handler);
+  }
 };
 
-const stopPollerService = () => {
+const unregisterPollerService = (res: express.Response, req: ExpressRequest) => {
   logger.debug('Closing calendar polling..');
-  pollerService.finish();
+  res.end();
+  pollerService.finish(req.id);
 };
+
+const createHandler = (res: express.Response, req: ExpressRequest): EventDataHandler<ReadonlyArray<CalendarEvent>> => ({
+  id: req.id,
+  data: result => {
+    logger.debug(`Got ${result.length} calendar events`);
+    res.write(resultToSseData(result));
+  },
+  heartbeat: heartbeat => {
+    res.write(heartbeatData(heartbeat.time));
+  },
+  error: err => {
+    logger.error(`Failed to get calendar events ${JSON.stringify(err)}`);
+    res.write(errorToSseData(err));
+  },
+});
 
 export default { getCalendarEventsFromRequest };
