@@ -11,8 +11,13 @@ type Loggers<D> = {
 export class PollHandler<R> {
   private pollerService: EventDataPollerService<R>;
 
-  constructor(pollFunction: () => Promise<R>, interval: number, private readonly loggers?: Loggers<R>) {
-    this.pollerService = new EventDataPollerService(pollFunction, null, interval);
+  constructor(
+    pollFunction: () => Promise<R>,
+    interval: number,
+    private readonly loggers?: Loggers<R>,
+    requestWailt = 0
+  ) {
+    this.pollerService = new EventDataPollerService(pollFunction, interval, requestWailt);
   }
 
   unregisterPollerService(res: express.Response, req: ExpressRequest) {

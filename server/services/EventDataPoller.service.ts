@@ -19,7 +19,7 @@ export class EventDataPollerService<R> {
   timer: any;
   handlers: EventDataHandler<R>[] = [];
   lastResult: R;
-  constructor(private pollFn: () => Promise<R>, private handler: EventDataHandler<R>, interval: number, wait = 0) {
+  constructor(private pollFn: () => Promise<R>, interval: number, wait = 0) {
     let timeElapsed = 0;
     this.timer = setInterval(() => {
       timeElapsed += HEARTBEAT_INTERVAL;
@@ -28,7 +28,6 @@ export class EventDataPollerService<R> {
         timeElapsed = 0;
       } else {
         this.handlers.forEach(h => h.heartbeat({ time: Date.now() }));
-        this.handler.heartbeat({ time: Date.now() });
       }
     }, HEARTBEAT_INTERVAL);
     if (wait > 0) {
@@ -56,22 +55,16 @@ export class EventDataPollerService<R> {
         clearInterval(this.timer);
       }
     }
-    clearInterval(this.timer);
-    if (this.handler.complete) {
-      this.handler.complete();
-    }
   }
 
   private _fetchData() {
     this.pollFn().then(
       result => {
         this.handlers.forEach(h => h.data(result));
-        this.handler.data(result);
         this.lastResult = result;
       },
       error => {
         this.handlers.forEach(h => h.data(error));
-        this.handler.error(error);
       }
     );
   }

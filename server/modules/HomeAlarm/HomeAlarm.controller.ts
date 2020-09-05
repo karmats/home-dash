@@ -1,22 +1,32 @@
 import express from 'express';
 import HomeAlarmService from './HomeAlarm.service';
-import { DEFAULT_HEADERS, resultToSseData, heartbeatData, errorToSseData, SSE_HEADERS } from '../../utils';
-import { EventDataPollerService, EventDataHandler } from '../../services/EventDataPoller.service';
+import { DEFAULT_HEADERS, SSE_HEADERS } from '../../utils';
 import { HomeAlarmInfo } from '../../../shared/types';
 import { getLogger } from '../../logger';
+import { ExpressRequest } from '../../models';
+import { PollHandler } from '../../services';
 
 const logger = getLogger('HomeAlarmController');
 // Every hour
 const HOME_ALARM_REFRESH_INTERVAL = 60 * 60 * 1000;
 
-const getHomeAlarmStatusInfo = (req: express.Request, res: express.Response) => {
+let pollHandler: PollHandler<HomeAlarmInfo>;
+const getHomeAlarmStatusInfo = (req: ExpressRequest<{ sse?: string }>, res: express.Response) => {
   const { sse } = req.query;
   if (sse) {
     // Sse requested, keep connection open and feed with temperature data
     res.writeHead(200, SSE_HEADERS);
-    createAndStartPollerService(res);
-    req.on('close', () => stopPollerService());
-    res.on('close', () => stopPollerService());
+
+    if (!pollHandler) {
+      const pollFn = () => HomeAlarmService.getAlarmStatus();
+      pollHandler = new PollHandler(pollFn, HOME_ALARM_REFRESH_INTERVAL, {
+        data: d => logger.debug(`Got alarm info status '${d}'`),
+        error: err => logger.error(`Failed to get alarm info: ${JSON.stringify(err)}`),
+      });
+    }
+    pollHandler.registerPollerService(res, req);
+
+    req.on('close', () => pollHandler.unregisterPollerService(res, req));
   } else {
     res.writeHead(200, DEFAULT_HEADERS);
     HomeAlarmService.getAlarmStatus()
@@ -29,31 +39,6 @@ const getHomeAlarmStatusInfo = (req: express.Request, res: express.Response) => 
         res.end();
       });
   }
-};
-
-let pollerService: EventDataPollerService<HomeAlarmInfo>;
-const createAndStartPollerService = (res: express.Response) => {
-  const handler: EventDataHandler<HomeAlarmInfo> = {
-    data: result => {
-      logger.debug(`Got alarm info status '${result.status}'`);
-      res.write(resultToSseData(result));
-    },
-    heartbeat: heartbeat => {
-      res.write(heartbeatData(heartbeat.time));
-    },
-    error: err => {
-      logger.error(`Failed to get alarm info: ${JSON.stringify(err)}`);
-      res.write(errorToSseData(err));
-    },
-  };
-  const pollFn = () => HomeAlarmService.getAlarmStatus();
-
-  pollerService = new EventDataPollerService(pollFn, handler, HOME_ALARM_REFRESH_INTERVAL);
-};
-
-const stopPollerService = () => {
-  logger.debug('Closing home alarm polling..');
-  pollerService.finish();
 };
 
 export default { getHomeAlarmStatusInfo };

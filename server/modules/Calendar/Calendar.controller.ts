@@ -2,7 +2,7 @@ import express from 'express';
 import CalendarService from './Calendar.service';
 import { AuthenticationService } from '../Authentication';
 import { DEFAULT_HEADERS, SSE_HEADERS } from '../../utils';
-import { PollHandler } from '../../services/PollHandler.service';
+import { PollHandler } from '../../services';
 import { CalendarEvent } from '../../../shared/types';
 import { ExpressRequest } from '../../models';
 import { getLogger } from '../../logger';
