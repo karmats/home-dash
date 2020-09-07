@@ -18,7 +18,7 @@ const HEARTBEAT_INTERVAL = 30 * 1000;
 export class EventDataPollerService<R> {
   timer: any;
   handlers: EventDataHandler<R>[] = [];
-  lastResult: R;
+  lastResult?: R;
   constructor(private pollFn: () => Promise<R>, interval: number, wait = 0) {
     let timeElapsed = 0;
     this.timer = setInterval(() => {

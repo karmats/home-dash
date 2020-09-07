@@ -20,7 +20,7 @@ const getHomeAlarmStatusInfo = (req: ExpressRequest<{ sse?: string }>, res: expr
     if (!pollHandler) {
       const pollFn = () => HomeAlarmService.getAlarmStatus();
       pollHandler = new PollHandler(pollFn, HOME_ALARM_REFRESH_INTERVAL, {
-        data: d => logger.debug(`Got alarm info status '${d}'`),
+        data: d => logger.debug(`Got alarm info status '${d.status}'`),
         error: err => logger.error(`Failed to get alarm info: ${JSON.stringify(err)}`),
       });
     }

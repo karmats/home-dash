@@ -6,6 +6,6 @@
     "esModuleInterop": true,
     "outDir": "build"
   },
-  "include": ["server"],
+  "include": ["server", "shared/types/custom.d.ts"],
   "exclude": ["server/**/*.test.ts"]
 }

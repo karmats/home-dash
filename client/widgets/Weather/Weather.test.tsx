@@ -13,12 +13,13 @@ const MOCKED_LOCATION = {
   latitude: 40.73061,
   longitude: -73.935242,
 };
+const mockGeoLocationSuccess = jest.fn((success, _) =>
+  success({
+    coords: MOCKED_LOCATION,
+  })
+);
 const mockGeolocation = {
-  getCurrentPosition: jest.fn((success, _) =>
-    success({
-      coords: MOCKED_LOCATION,
-    })
-  ),
+  getCurrentPosition: mockGeoLocationSuccess,
 };
 (global as any).navigator.geolocation = mockGeolocation;
 
@@ -43,6 +44,9 @@ describe('Weather', () => {
   });
 
   describe('Service', () => {
+    afterEach(() => {
+      mockGeolocation.getCurrentPosition = mockGeoLocationSuccess;
+    });
     it('retrieves users geolocation', async () => {
       const location = await WeatherService.getLocation();
       expect(location).toEqual({ lat: MOCKED_LOCATION.latitude, lon: MOCKED_LOCATION.longitude });
