@@ -23,7 +23,7 @@ export class EventDataPollerService<R> {
     let timeElapsed = 0;
     this.timer = setInterval(() => {
       timeElapsed += HEARTBEAT_INTERVAL;
-      if (timeElapsed > interval && isDay(new Date())) {
+      if (timeElapsed > interval && isDay(new Date()) && this.handlers.length) {
         this._fetchData();
         timeElapsed = 0;
       } else {
@@ -44,16 +44,11 @@ export class EventDataPollerService<R> {
       handler.data(this.lastResult);
     }
   }
-  finish(handlerId?: string) {
-    if (handlerId) {
-      const handler = this.handlers.find(h => h.id === handlerId);
-      this.handlers = this.handlers.filter(h => h.id !== handlerId);
-      if (handler && handler.complete) {
-        handler.complete();
-      }
-      if (!this.handlers.length) {
-        clearInterval(this.timer);
-      }
+  finish(handlerId: string) {
+    const handler = this.handlers.find(h => h.id === handlerId);
+    this.handlers = this.handlers.filter(h => h.id !== handlerId);
+    if (handler && handler.complete) {
+      handler.complete();
     }
   }
 
