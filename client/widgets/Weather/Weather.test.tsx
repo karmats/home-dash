@@ -4,24 +4,9 @@ import { render, cleanup, waitFor } from '@testing-library/react';
 import { WeatherSymbol, Forecast, SseData } from '../../../shared/types';
 import Weather from './Weather';
 import { act } from 'react-dom/test-utils';
-import WeatherService from './Weather.service';
 
 // Mocks
 jest.mock('react-svg');
-
-const MOCKED_LOCATION = {
-  latitude: 40.73061,
-  longitude: -73.935242,
-};
-const mockGeoLocationSuccess = jest.fn((success, _) =>
-  success({
-    coords: MOCKED_LOCATION,
-  })
-);
-const mockGeolocation = {
-  getCurrentPosition: mockGeoLocationSuccess,
-};
-(global as any).navigator.geolocation = mockGeolocation;
 
 let mockGetForecastEventSource: any = new EventSource('mock-url');
 jest.mock('../../apis/Api', () => ({
@@ -40,21 +25,6 @@ describe('Weather', () => {
         expect(require(`${SVG_ROOT}/animated/${fileName}`)).toBeDefined();
         expect(require(`${SVG_ROOT}/static/${fileName}`)).toBeDefined();
       });
-    });
-  });
-
-  describe('Service', () => {
-    afterEach(() => {
-      mockGeolocation.getCurrentPosition = mockGeoLocationSuccess;
-    });
-    it('retrieves users geolocation', async () => {
-      const location = await WeatherService.getLocation();
-      expect(location).toEqual({ lat: MOCKED_LOCATION.latitude, lon: MOCKED_LOCATION.longitude });
-    });
-    it('retrieves default geolocation on error', async () => {
-      mockGeolocation.getCurrentPosition = jest.fn((_, error) => error('Something went work'));
-      const location = await WeatherService.getLocation();
-      expect(location).toEqual(WeatherService.DEFAULT_LOCATION);
     });
   });
 
