@@ -12,20 +12,16 @@ const FORECAST_REFRESH_INTERVAL = 20 * 60 * 1000;
 
 let pollHandler: PollHandler<Forecast[]>;
 const getForecastsFromRequest = (
-  req: ExpressRequest<{ lat?: string; lon?: string; sse?: string }>,
+  req: ExpressRequest<{ sse?: string }>,
   res: express.Response
 ) => {
-  const { lat, lon, sse } = req.query;
-  if (!lat || !lon) {
-    res.writeHead(400);
-    res.write('Parameters lat and lon needs to be supplied.');
-    res.end();
-  } else if (sse) {
+  const { sse } = req.query;
+  if (sse) {
     // Sse requested, keep connection open and feed with weather data
     res.writeHead(200, SSE_HEADERS);
 
     if (!pollHandler) {
-      const pollFn = () => WeatherService.getWeatherForecasts(+lat, +lon);
+      const pollFn = () => WeatherService.getWeatherForecasts();
       pollHandler = new PollHandler(pollFn, FORECAST_REFRESH_INTERVAL, {
         data: d => logger.debug(`Got ${d.length} forecasts`),
         error: err => logger.error(`Failed to get forecasts: ${JSON.stringify(err)}`),
@@ -35,7 +31,7 @@ const getForecastsFromRequest = (
 
     req.on('close', () => pollHandler.unregisterPollerService(res, req));
   } else {
-    WeatherService.getWeatherForecasts(+lat, +lon)
+    WeatherService.getWeatherForecasts()
       .then(forecasts => {
         res.writeHead(200, DEFAULT_HEADERS);
         res.write(JSON.stringify(forecasts));

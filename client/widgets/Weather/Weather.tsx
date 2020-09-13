@@ -3,7 +3,6 @@ import { ReactSVG } from 'react-svg';
 import { Forecast, SseData } from '../../../shared/types';
 import api from '../../apis/Api';
 import Spinner from '../../components/Spinner/Spinner';
-import WeatherService from './Weather.service';
 import * as util from '../../utils/DateUtils';
 import './Weather.css';
 
@@ -79,24 +78,22 @@ export default function () {
   const [forecasts, setForecasts] = useState<Forecast[]>([]);
 
   useEffect(() => {
-    WeatherService.getLocation().then(location => {
-      const eventSource = api.getForecastEventSource(location.lat, location.lon);
-      if (eventSource) {
-        eventSource.onmessage = e => {
-          const { result, error }: SseData<Forecast[]> = JSON.parse(e.data);
-          if (result) {
-            setForecasts(result);
-          } else if (error) {
-            console.error(error);
-          }
-        };
-      }
-      return () => {
-        if (eventSource) {
-          eventSource.close();
+    const eventSource = api.getForecastEventSource();
+    if (eventSource) {
+      eventSource.onmessage = e => {
+        const { result, error }: SseData<Forecast[]> = JSON.parse(e.data);
+        if (result) {
+          setForecasts(result);
+        } else if (error) {
+          console.error(error);
         }
       };
-    });
+    }
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+    };
   }, []);
   return (
     <div>

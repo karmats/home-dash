@@ -54,4 +54,5 @@ GOOGLE_REDIRECT_URI=https://<app_server_deploy_location>:4000/auth/google
 SA_USERNAME=your_sector_alarm_username
 SA_PASSWORD=your_sector_alarm_password
 SA_DEVICE_ID=your_sector_alarm_device_id
-```
+
+USER_LOCATION=your_weather_location

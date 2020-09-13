@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { Forecast, WeatherSymbol, SunriseSunset } from '../../shared/types';
+import { getLogger } from '../logger';
 
 type SmhiData = {
   approvedTime: string;
@@ -21,6 +22,8 @@ type SmhiDataParameter = {
 };
 
 const BASE_URL = 'https://opendata-download-metfcst.smhi.se';
+
+const logger = getLogger('SmhiApi');
 
 const smhiWsymb2ToWeatherSymbol = (wsymb: number, time: Date, sunriseSunset: SunriseSunset): WeatherSymbol => {
   const night = time.getHours() > sunriseSunset.sunset.getHours() || time.getHours() < sunriseSunset.sunrise.getHours();
@@ -71,7 +74,7 @@ const smhiWsymb2ToWeatherSymbol = (wsymb: number, time: Date, sunriseSunset: Sun
     case 27: // Heavy snowfall
       return WeatherSymbol.HEAVY_SNOWFALL;
     default:
-      console.log('Failed to find enum for', wsymb);
+      logger.error('Failed to find enum for' + wsymb);
       return WeatherSymbol.HALFCLEAR_SKY;
   }
 };
@@ -86,15 +89,19 @@ const smhiTimeSerieToForecast = (timeSerie: SmhiDataTimeSerie, sunriseSunset: Su
     precipitation: getParameterValue('pmean'),
     symbol: smhiWsymb2ToWeatherSymbol(getParameterValue('Wsymb2'), time, sunriseSunset),
     windSpeed: getParameterValue('ws'),
-    windDirection: getParameterValue('wd')
+    windDirection: getParameterValue('wd'),
   };
 };
 
-export const getForecasts = async (lat: number, lon: number, sunriseSunset: SunriseSunset): Promise<Forecast[]> =>
-  fetch(`${BASE_URL}/api/category/pmp3g/version/2/geotype/point/lon/${lon.toFixed(4)}/lat/${lat.toFixed(4)}/data.json`)
+export const getForecasts = async (lat: number, lon: number, sunriseSunset: SunriseSunset): Promise<Forecast[]> => {
+  logger.debug(`Fetching forcasts for lat: ${lat}, lon: ${lon}.`);
+  return fetch(
+    `${BASE_URL}/api/category/pmp3g/version/2/geotype/point/lon/${lon.toFixed(4)}/lat/${lat.toFixed(4)}/data.json`
+  )
     .then(response => response.json())
     .then((data: SmhiData) => data.timeSeries.map(t => smhiTimeSerieToForecast(t, sunriseSunset)))
     .catch(e => {
       // FIXME Return cache?
       throw e;
     });
+};

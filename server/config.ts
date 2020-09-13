@@ -13,4 +13,7 @@ export default {
     },
     deviceId: process.env.SA_DEVICE_ID,
   },
+  user: {
+    location: process.env.USER_LOCATION
+  }
 };

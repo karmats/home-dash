@@ -7,11 +7,9 @@ const getBaseUrl = () => {
   return `${protocol}//${hostname}:${API_PORT}`;
 };
 
-const getForecasts = (lat: number, lon: number): Promise<Forecast[]> =>
-  fetch(`${getBaseUrl()}/weather?lat=${lat}&lon=${lon}`).then(response => response.json());
+const getForecasts = (): Promise<Forecast[]> => fetch(`${getBaseUrl()}/weather`).then(response => response.json());
 
-const getForecastEventSource = (lat: number, lon: number): EventSource =>
-  new EventSource(`${getBaseUrl()}/weather?lat=${lat}&lon=${lon}&sse=true`);
+const getForecastEventSource = (): EventSource => new EventSource(`${getBaseUrl()}/weather?sse=true`);
 
 const getCalendarEventsByDates = (from: Date, to: Date): Promise<CalendarEvent[]> =>
   fetch(`${getBaseUrl()}/calendar?from=${from.toISOString()}&to=${to.toISOString()}`).then(response => response.json());
