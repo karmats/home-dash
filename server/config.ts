@@ -5,6 +5,9 @@ export default {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       redirectUri: process.env.GOOGLE_REDIRECT_URI,
     },
+    calendar: {
+      id: process.env.GOOGLE_CALENDAR_ID,
+    },
   },
   sectoralarm: {
     auth: {
@@ -14,6 +17,6 @@ export default {
     deviceId: process.env.SA_DEVICE_ID,
   },
   user: {
-    location: process.env.USER_LOCATION
-  }
+    location: process.env.USER_LOCATION,
+  },
 };

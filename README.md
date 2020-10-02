@@ -50,6 +50,7 @@ To run the application you will need a [`.env`](https://github.com/motdotla/dote
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_REDIRECT_URI=https://<app_server_deploy_location>:4000/auth/google
+GOOGLE_CALENDAR_ID=your_google_calendar_id
 
 SA_USERNAME=your_sector_alarm_username
 SA_PASSWORD=your_sector_alarm_password

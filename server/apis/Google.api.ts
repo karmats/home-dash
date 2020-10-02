@@ -110,7 +110,7 @@ const isCommingRequest = (request: CalendarEventRequest): request is CalendarCom
 const listEvents = async (request: CalendarEventRequest): Promise<ReadonlyArray<CalendarEvent>> => {
   const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
   const eventRequest = {
-    calendarId: 'primary',
+    calendarId: config.google.calendar.id,
     singleEvents: true,
     timeMin: new Date().toISOString(),
     orderBy: 'startTime',
