@@ -59,9 +59,9 @@ describe('Weather', () => {
           data: JSON.stringify(smhiData),
         } as MessageEvent);
       });
-      expect(getByText('8 m/s')).toBeDefined();
+      expect(getByText('8')).toBeDefined();
       expect(getByText('8°')).toBeDefined();
-      expect(getByText('80 mm/h')).toBeDefined();
+      expect(getByText('80')).toBeDefined();
     });
   });
 });

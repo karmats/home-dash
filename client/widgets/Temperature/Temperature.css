@@ -6,14 +6,16 @@
     grid-template-rows: auto auto;
 
     --hot-color: #F44336;
-    --warm-color: #FFB74D;
-    --cold-color: #B2EBF2;
-    --chilly-color: #64B5F6;
-
+    --warm-color: #FFA726;
+    --cold-color: #81D4FA;
+    --chilly-color: #00B0FF;
 }
 .Temperature-box {
     padding: 1rem;
     background-color: var(--box-bg-complementary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .Temperature-box > span {

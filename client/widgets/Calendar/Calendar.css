@@ -2,7 +2,6 @@
     display: flex;
     flex-flow: column nowrap;
     justify-content: space-between;
-    max-height: 27rem;
     overflow: auto;
 }
 

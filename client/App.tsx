@@ -10,8 +10,8 @@ export default () => {
     <div className="App">
       <Weather />
       <Calendar />
-      <Temperature />
       <HomeAlarm />
+      <Temperature />
     </div>
   );
 };

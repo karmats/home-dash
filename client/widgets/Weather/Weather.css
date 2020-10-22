@@ -5,7 +5,6 @@ p {
 
 .Clock-main {
     font-size: 2rem;
-    margin-top: 1rem;
 }
 
 .Weather-main {
@@ -54,6 +53,8 @@ p {
 }
 
 .Weather-comming--weak {
+    display: flex;
+    justify-content: space-around;
     font-size: 0.75rem;
     opacity: 0.8;
 }
