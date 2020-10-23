@@ -43,8 +43,8 @@ p {
 .Weather-footer {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    justify-items: center;
-    margin-top: 1.5rem;
+    justify-items: stretch;
+    margin-top: 1rem;
 }
 
 .Weather-comming {
@@ -54,9 +54,10 @@ p {
 
 .Weather-comming--weak {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-evenly;
     font-size: 0.75rem;
     opacity: 0.8;
+    margin: 0 0.2rem;
 }
 .Weather-comming--weak > span {
     margin-left: 0.1rem;

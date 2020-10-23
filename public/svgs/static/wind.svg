@@ -1,8 +1,1 @@
-<svg width="21px" height="17px" viewBox="187 110 21 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="Wind" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(197.611216, 118.415064) rotate(-270) translate(-197.611216, -118.415064) translate(189.111216, 115.915064)" stroke-linecap="round">
-        <path d="M0.5,2.5 L13,2.5" id="Line" stroke="#ffffff"></path>
-        <polygon id="Triangle-1" stroke="#ffffff" stroke-linejoin="round" fill="#ffffff" points="13 5 13 1.13686838e-13 17 2.5"></polygon>
-    </g>
-</svg>
+<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="long-arrow-alt-down" class="svg-inline--fa fa-long-arrow-alt-down fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M168 345.941V44c0-6.627-5.373-12-12-12h-56c-6.627 0-12 5.373-12 12v301.941H41.941c-21.382 0-32.09 25.851-16.971 40.971l86.059 86.059c9.373 9.373 24.569 9.373 33.941 0l86.059-86.059c15.119-15.119 4.411-40.971-16.971-40.971H168z"></path></svg>

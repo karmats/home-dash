@@ -57,21 +57,14 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
   <div className="Weather-comming">
     <ReactSVG src={`./svgs/static/${forecast.symbol}.svg`} />
     {<p>{util.dateToTime(new Date(forecast.time))}</p>}
-    <p>{forecast.degrees.toFixed(0)}°</p>
     <div className="Weather-comming--weak">
       <div className="Weather-comming--weak__details">
-        <ReactSVG
-          beforeInjection={svg => {
-            svg.setAttribute('style', `transform:rotate(${forecast.windDirection}deg)`);
-          }}
-          src={'./svgs/static/wind.svg'}
-          wrapper="span"
-        />
-        <span>{`${forecast.windSpeed.toFixed(0)}`}</span>
+        <ReactSVG src={'./svgs/static/temperature.svg'} wrapper="span" />
+        <span>{forecast.degrees.toFixed(0)}°</span>
       </div>
       <div className="Weather-comming--weak__details">
         <ReactSVG src={'./svgs/static/precipitation.svg'} wrapper="span" />
-        <span>{`${forecast.precipitation}`}</span>
+        <span>{`${forecast.precipitation} mm/h`}</span>
       </div>
     </div>
   </div>

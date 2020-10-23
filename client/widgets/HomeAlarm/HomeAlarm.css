@@ -27,9 +27,11 @@
     background-color: var(--active-bg-color);
 }
 .HomeAlarm--indicator.armed svg {
+    color: var(--box-bg-color);
     fill: var(--box-bg-color);
 }
 .HomeAlarm--indicator.partial svg {
+    color: var(--active-bg-color);
     fill: var(--active-bg-color);
 }
 
@@ -37,6 +39,7 @@
     border-color: var(--disabled-bg-color);
 }
 .HomeAlarm--indicator.unarmed svg {
+    color: var(--disabled-bg-color);
     fill: var(--disabled-bg-color);
 }
 
