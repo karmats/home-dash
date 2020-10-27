@@ -64,7 +64,7 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
       </div>
       <div className="Weather-comming--weak__details">
         <ReactSVG src={'./svgs/static/precipitation.svg'} wrapper="span" />
-        <span>{`${forecast.precipitation} mm/h`}</span>
+        <span>{`${forecast.precipitation}`}</span>
       </div>
     </div>
   </div>

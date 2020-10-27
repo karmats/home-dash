@@ -5,6 +5,7 @@ p {
 
 .Clock-main {
     font-size: 2rem;
+    line-height: 2rem;
 }
 
 .Weather-main {
@@ -19,7 +20,6 @@ p {
 
 .Weather-main--strong {
     font-size: 1.5rem;
-    margin-top: 0.5rem;
 }
 
 .Weather-main--weak {
@@ -59,11 +59,14 @@ p {
     opacity: 0.8;
     margin: 0 0.2rem;
 }
-.Weather-comming--weak > span {
+.Weather-comming--weak__details > span:last-child {
     margin-left: 0.1rem;
 }
+.Weather-comming--weak__details > span > span {
+    vertical-align: middle;
+}
+
 .Weather-comming--weak svg {
     height: 0.75rem;
     width: 0.75rem;
-    vertical-align: middle;
 }

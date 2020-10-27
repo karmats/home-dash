@@ -59,8 +59,13 @@ describe('Weather', () => {
           data: JSON.stringify(smhiData),
         } as MessageEvent);
       });
+      // Main weather
+      expect(getByText('0°')).toBeDefined();
+      expect(getByText('0 mm/h')).toBeDefined();
+      expect(getByText('0 m/s')).toBeDefined();
+      // Comming weather
       expect(getByText('8°')).toBeDefined();
-      expect(getByText('80 mm/h')).toBeDefined();
+      expect(getByText('80')).toBeDefined();
     });
   });
 });
