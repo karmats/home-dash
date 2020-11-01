@@ -1,5 +1,7 @@
 # Home Dashboard [![Build Status](https://travis-ci.org/karmats/home-dash.svg?branch=master)](https://travis-ci.org/karmats/home-dash) [![Dependencies](https://david-dm.org/karmats/home-dash.svg)](https://david-dm.org/karmats/home-dash)
 
+![Example](/public/example/application-screenshot.png "Dashboard example")
+
 ## Available Widgets
 
 List of all different widgets currently available:
