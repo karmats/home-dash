@@ -8,8 +8,12 @@ import './HomeAlarm.css';
 
 export default function () {
   const [alarmInfo, setAlarmInfo] = useState<HomeAlarmInfo>();
+  const [activate, setActivate] = useState<boolean>(false);
 
   const armedStatusClassName = (status: ArmedStatus): string => {
+    if (activate) {
+      return 'activating';
+    }
     switch (status) {
       case 'full':
         return 'armed';
@@ -20,6 +24,10 @@ export default function () {
       default:
         return '';
     }
+  };
+
+  const handleImageClick = () => {
+    setActivate(!activate);
   };
 
   useEffect(() => {
@@ -46,6 +54,7 @@ export default function () {
     <div className="HomeAlarm-main">
       <ReactSVG
         role="img"
+        onClick={handleImageClick}
         beforeInjection={svg => {
           svg.setAttribute('role', 'img');
           svg.setAttribute('aria-label', `Alarm indicator '${alarmInfo.status}'`);
