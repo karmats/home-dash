@@ -10,10 +10,33 @@
     border-radius: 4rem;
     display: inline-flex;
     padding: 1rem;
+    position: relative;
 }
 .HomeAlarm--indicator > div, .HomeAlarm--indicator svg {
     height: 3rem;
     width: 3rem;
+}
+.HomeAlarm--indicator.activating {
+    border-color: var(--active-bg-color);
+}
+.HomeAlarm--indicator.activating svg {
+    color: var(--active-bg-color);
+    fill: var(--active-bg-color);
+    animation: blink 2s infinite;
+}
+.HomeAlarm--indicator.activating::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    border: solid 4px var(--active-bg-color);
+    border-color: var(--active-bg-color);
+    border-radius: 4rem;
+    border-style: inset;
+    animation: 1s linear rotate infinite;
 }
 .HomeAlarm--indicator.armed, .HomeAlarm--indicator.partial {
     border-color: var(--active-bg-color);
@@ -60,4 +83,25 @@
 	100% {
 		box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
 	}
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+    50%  {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
