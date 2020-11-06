@@ -1,2 +1,2 @@
-import { getAlarmStatus } from '../../apis';
-export default { getAlarmStatus };
+import { getAlarmStatus, toggleAlarm } from '../../apis';
+export default { getAlarmStatus, toggleAlarm };
