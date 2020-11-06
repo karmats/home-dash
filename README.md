@@ -57,5 +57,6 @@ GOOGLE_CALENDAR_ID=your_google_calendar_id
 SA_USERNAME=your_sector_alarm_username
 SA_PASSWORD=your_sector_alarm_password
 SA_DEVICE_ID=your_sector_alarm_device_id
+SA_PIN=your_sector_alarm_pin_code
 
 USER_LOCATION=your_weather_location

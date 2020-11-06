@@ -89,7 +89,7 @@ export const authenticateSectorAlarm = async (): Promise<SectorAlarmMeta> => {
                     cookie: setCookieHeader[0],
                     version: meta.version,
                   };
-                  logger.debug('Authenticated to sector alarm, saving meta.')
+                  logger.debug('Authenticated to sector alarm, saving meta.');
                   fs.writeFile(SESSION_META_PATH, JSON.stringify(sessionMeta), err => {
                     if (err) {
                       throw new Error(`Failed to write file: ${JSON.stringify(err)}`);
@@ -187,5 +187,30 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
           scale: 'C',
         }));
       });
+  });
+};
+
+/** Toggle alarm. If alarm is off, partial alarm is set. Otherwise the alarm turns off */
+export const toggleAlarm = async (): Promise<HomeAlarmInfo> => {
+  return getAlarmStatus().then(async info => {
+    const armCmd = info.status === 'off' ? 'Partial' : 'Disarm';
+    return getSessionMeta().then(async meta => {
+      return fetch(`${BASE_URL}/Panel/ArmPanel`, {
+        method: 'POST',
+        body: JSON.stringify({
+          ArmCmd: armCmd,
+          PanelCode: config.sectoralarm.pin,
+          HasLocks: false,
+          id: config.sectoralarm.deviceId,
+        }),
+        headers: headers(meta.cookie),
+      })
+        .then(response => response.json())
+        .then(json => ({
+          status: armedStatusToAlarmStatus(json.panelData.ArmedStatus),
+          online: json.panelData.IsOnline,
+          time: sectorAlarmDateToMs(json.panelData.PanelTime),
+        }));
+    });
   });
 };

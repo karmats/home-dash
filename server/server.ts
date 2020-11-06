@@ -23,6 +23,7 @@ app.get('/weather', WeatherController.getForecastsFromRequest);
 app.get('/calendar', CalendarController.getCalendarEventsFromRequest);
 app.get('/temperatures/indoor', TemperatureController.getIndoorTemperatures);
 app.get('/homealarm/status', HomeAlarmController.getHomeAlarmStatusInfo);
+app.post('homealarm/toggle', HomeAlarmController.toggleAlarm);
 app.get('/auth/google', GoogleAuthenticatorController.authenticateToGoogle);
 app.get('/auth/sectoralarm', SectorAlarmAuthenticationController.authenticateToSectorAlarm);
 

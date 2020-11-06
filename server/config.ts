@@ -14,6 +14,7 @@ export default {
       username: process.env.SA_USERNAME,
       password: process.env.SA_PASSWORD,
     },
+    pin: process.env.SA_PIN,
     deviceId: process.env.SA_DEVICE_ID,
   },
   user: {

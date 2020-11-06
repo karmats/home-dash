@@ -41,4 +41,17 @@ const getHomeAlarmStatusInfo = (req: ExpressRequest<{ sse?: string }>, res: expr
   }
 };
 
-export default { getHomeAlarmStatusInfo };
+const toggleAlarm = (req: ExpressRequest, res: express.Response) => {
+  res.writeHead(200, DEFAULT_HEADERS);
+  HomeAlarmService.toggleAlarm()
+    .then(status => {
+      res.write(JSON.stringify(status));
+      res.end();
+    })
+    .catch(e => {
+      res.write(JSON.stringify(e));
+      res.end();
+    });
+};
+
+export default { getHomeAlarmStatusInfo, toggleAlarm };
