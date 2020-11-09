@@ -36,6 +36,9 @@ const getHomeAlarmStatus = (): Promise<HomeAlarmInfo> =>
 
 const getHomeAlarmStatusEventSource = (): EventSource => new EventSource(`${getBaseUrl()}/homealarm/status?sse=true`);
 
+const postToggleAlarmStatus = (): Promise<HomeAlarmInfo> =>
+  fetch(`${getBaseUrl()}/homealarm/toggle`, { method: 'POST' }).then(response => response.json());
+
 export default {
   getForecasts,
   getForecastEventSource,
@@ -46,4 +49,5 @@ export default {
   getIndoorTemperaturesEventSource,
   getHomeAlarmStatus,
   getHomeAlarmStatusEventSource,
+  postToggleAlarmStatus,
 };
