@@ -27,7 +27,13 @@ export default function () {
   };
 
   const handleImageClick = () => {
-    setActivate(!activate);
+    if (!activate) {
+      setActivate(true);
+      api.postToggleAlarmStatus().then(info => {
+        setAlarmInfo({ ...info, time: new Date(info.time) });
+        setActivate(false);
+      });
+    }
   };
 
   useEffect(() => {
