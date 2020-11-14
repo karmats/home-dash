@@ -20,7 +20,7 @@ Temperatures retrived from you sector alarm sensors.
 
 ### Home alarm status
 
-Status for your house sector alarm.
+Status for your house sector alarm. Activates partial alarm when touching the house.
 
 ## Available Scripts
 
@@ -57,6 +57,6 @@ GOOGLE_CALENDAR_ID=your_google_calendar_id
 SA_USERNAME=your_sector_alarm_username
 SA_PASSWORD=your_sector_alarm_password
 SA_DEVICE_ID=your_sector_alarm_device_id
-SA_PIN=your_sector_alarm_pin_code
+SA_PIN=your_sector_alarm_pin_code(if you want partial alarm activatation)
 
-USER_LOCATION=your_weather_location
+USER_LOCATION=your_weather_location(lat,lon)
