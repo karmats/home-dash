@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Spinner from '../../components/Spinner/Spinner';
 import { SseData, CalendarEvent } from '../../../shared/types';
 import api from '../../apis/Api';
+import { useRefresh } from '../../hooks';
 import './Calendar.css';
 import * as util from './Calendar.utils';
 
@@ -91,6 +92,14 @@ const MonthHeader = ({ month }: MonthHeaderProps) => (
 
 export default () => {
   const [events, setEvents] = useState<EventsByDate>({});
+  const refreshCalendar = useRefresh<CalendarEvent[], number[]>(api.getNextCalendarEvents, EVENTS_TO_SHOW);
+
+  const handleClick = () => {
+    refreshCalendar().then(data => {
+      setEvents(calendarEventsToEventsByDate(data));
+    });
+  };
+
   useEffect(() => {
     const eventSource = api.getNextCalendarEventsEventSource(EVENTS_TO_SHOW);
     if (eventSource) {
@@ -111,7 +120,7 @@ export default () => {
   }, []);
   const eventKeys = Object.keys(events);
   return eventKeys.length ? (
-    <div className="Calendar-main">
+    <div className="Calendar-main" onClick={handleClick}>
       {eventKeys.map((d, idx, dates) => {
         const weekday = <Weekday key={d} date={new Date(d)} events={events[d]} />;
         const curr = new Date(d);

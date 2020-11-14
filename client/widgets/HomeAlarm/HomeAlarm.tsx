@@ -4,11 +4,13 @@ import Spinner from '../../components/Spinner/Spinner';
 import { HomeAlarmInfo, ArmedStatus, SseData } from '../../../shared/types';
 import api from '../../apis/Api';
 import * as util from '../../utils/DateUtils';
+import { useRefresh } from '../../hooks';
 import './HomeAlarm.css';
 
 export default function () {
   const [alarmInfo, setAlarmInfo] = useState<HomeAlarmInfo>();
   const [activate, setActivate] = useState<boolean>(false);
+  const refreshStatus = useRefresh<HomeAlarmInfo>(api.getHomeAlarmStatus);
 
   const armedStatusClassName = (status: ArmedStatus): string => {
     if (activate) {
@@ -26,7 +28,15 @@ export default function () {
     }
   };
 
-  const handleImageClick = () => {
+  const handleClick = () => {
+    refreshStatus().then(data => {
+      setAlarmInfo(data);
+    });
+  };
+
+  const handleImageClick = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (!activate) {
       setActivate(true);
       api.postToggleAlarmStatus().then(info => {
@@ -57,7 +67,7 @@ export default function () {
     };
   }, []);
   return alarmInfo ? (
-    <div className="HomeAlarm-main">
+    <div className="HomeAlarm-main" onClick={handleClick}>
       <ReactSVG
         role="img"
         onClick={handleImageClick}

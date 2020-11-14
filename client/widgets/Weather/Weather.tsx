@@ -3,6 +3,7 @@ import { ReactSVG } from 'react-svg';
 import { Forecast, SseData } from '../../../shared/types';
 import api from '../../apis/Api';
 import Spinner from '../../components/Spinner/Spinner';
+import { useRefresh } from '../../hooks';
 import * as util from '../../utils/DateUtils';
 import './Weather.css';
 
@@ -72,6 +73,13 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
 
 export default function () {
   const [forecasts, setForecasts] = useState<Forecast[]>([]);
+  const refreshForecasts = useRefresh<Forecast[]>(api.getForecasts);
+
+  const handleClick = () => {
+    refreshForecasts().then(data => {
+      setForecasts(data);
+    });
+  };
 
   useEffect(() => {
     const eventSource = api.getForecastEventSource();
@@ -92,7 +100,7 @@ export default function () {
     };
   }, []);
   return (
-    <div>
+    <div onClick={handleClick}>
       {forecasts.length ? (
         <>
           <MainWeather forecast={forecasts[0]} />
