@@ -1,17 +1,15 @@
 import { useEffect, useState } from 'react';
 import { SseData } from '../../shared/types';
 
-export type EventSourceConfig<T, P extends Array<unknown> = [], R = T> = {
-  apiCall: (...params: P) => EventSource;
-  params: P;
+export type EventSourceConfig<T, R = T> = {
+  eventSource: EventSource;
   mappingFn?: (result: R) => T;
 };
 
-function useEventSource<T, P extends Array<unknown> = [], R = T>(initialValue: T, config: EventSourceConfig<T, P, R>) {
+function useEventSource<T, R = T>(initialValue: T, config: EventSourceConfig<T, R>) {
   const [value, setValue] = useState<T>(initialValue);
   useEffect(() => {
-    const { apiCall, params, mappingFn } = config;
-    const eventSource = apiCall(...params);
+    const { eventSource, mappingFn } = config;
     if (eventSource) {
       eventSource.onmessage = e => {
         const { result, error }: SseData<R> = JSON.parse(e.data);
@@ -28,8 +26,11 @@ function useEventSource<T, P extends Array<unknown> = [], R = T>(initialValue: T
       }
     };
   }, [config]);
+  const updateValue = (newValue: T) => {
+    setValue(newValue);
+  };
 
-  return value;
+  return { value, updateValue };
 }
 
 export default useEventSource;

@@ -1,4 +1,5 @@
 import useRefresh from './useRefresh';
 import useEventSource from './useEventSource';
+import useEventSourceWithRefresh from './useEventSourceWithRefresh';
 
-export { useRefresh, useEventSource };
+export { useRefresh, useEventSource, useEventSourceWithRefresh };

@@ -1,15 +1,14 @@
 import { useState } from 'react';
 
-function useRefresh<T, P extends Array<unknown> = []>(asyncFn: (...params: P) => Promise<T>, ...params: P) {
+function useRefresh<T, P extends Array<unknown> = [], R = T>(asyncFn: (...params: P) => Promise<R>, ...params: P) {
   const [refresh, setRefresh] = useState<boolean>(false);
 
-  const refreshData = () => {
+  const refreshData = async () => {
     if (!refresh) {
       setRefresh(true);
-      return asyncFn(...params).then(result => {
-        setRefresh(false);
-        return result;
-      });
+      const result = await asyncFn(...params);
+      setRefresh(false);
+      return result;
     } else {
       return Promise.reject('Refresh already in progress');
     }
