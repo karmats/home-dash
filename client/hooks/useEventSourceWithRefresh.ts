@@ -1,5 +1,5 @@
+import { useState } from 'react';
 import useEventSource, { EventSourceConfig } from './useEventSource';
-import useRefresh from './useRefresh';
 
 function useEventSourceWithRefresh<T, P extends Array<unknown> = [], R = T>(
   initialValue: T,
@@ -8,14 +8,18 @@ function useEventSourceWithRefresh<T, P extends Array<unknown> = [], R = T>(
   ...params: P
 ) {
   const { value, updateValue } = useEventSource<T, R>(initialValue, eventSourceConfig);
-  const refreshValue = useRefresh<T, P, R>(asyncFn, ...params);
+  const [refresh, setRefresh] = useState<boolean>(false);
   const { mappingFn } = eventSourceConfig;
 
-  const refreshData = () => {
-    refreshValue().then(data => {
-      updateValue(mappingFn ? mappingFn(data) : ((data as unknown) as T));
-    });
+  const refreshData = async () => {
+    if (!refresh) {
+      setRefresh(true);
+      const result = await asyncFn(...params);
+      setRefresh(false);
+      updateValue(mappingFn ? mappingFn(result) : ((result as unknown) as T));
+    }
   };
+
   return { data: value, refreshData, updateData: updateValue };
 }
 
