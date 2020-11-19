@@ -1,16 +1,18 @@
 import 'jest';
 import React from 'react';
-import { render, cleanup, waitFor } from '@testing-library/react';
-import { WeatherSymbol, Forecast, SseData } from '../../../shared/types';
+import { render, cleanup } from '@testing-library/react';
+import { WeatherSymbol, Forecast } from '../../../shared/types';
 import Weather from './Weather';
-import { act } from 'react-dom/test-utils';
 
 // Mocks
 jest.mock('react-svg');
 
-let mockGetForecastEventSource: any = new EventSource('mock-url');
-jest.mock('../../apis/Api', () => ({
-  getForecastEventSource: () => mockGetForecastEventSource,
+let mockUseEventSourceWithRefresh = {
+  data: [] as Forecast[],
+  refreshData: () => {},
+};
+jest.mock('../../hooks', () => ({
+  useEventSourceWithRefresh: () => mockUseEventSourceWithRefresh,
 }));
 
 jest.useFakeTimers();
@@ -39,26 +41,20 @@ describe('Weather', () => {
       expect(indicator).toBeDefined();
     });
     it('renders main weather and comming weather', async () => {
-      const smhiData: SseData<Forecast[]> = {
-        result: Array.from(new Array(10)).map((_, idx) => ({
-          symbol: WeatherSymbol.CLEAR_SKY,
-          degrees: idx,
-          precipitation: idx * 10,
-          windSpeed: idx,
-          windDirection: idx * 10,
-          time: Date.now(),
-        })),
+      const smhiData: Forecast[] = Array.from(new Array(10)).map((_, idx) => ({
+        symbol: WeatherSymbol.CLEAR_SKY,
+        degrees: idx,
+        precipitation: idx * 10,
+        windSpeed: idx,
+        windDirection: idx * 10,
+        time: Date.now(),
+      }));
+      mockUseEventSourceWithRefresh = {
+        data: smhiData,
+        refreshData: () => {},
       };
 
-      await act(async () => {
-        render(<Weather />);
-      });
       const { getByText } = render(<Weather />);
-      await waitFor(() => {
-        mockGetForecastEventSource.onmessage!({
-          data: JSON.stringify(smhiData),
-        } as MessageEvent);
-      });
       // Main weather
       expect(getByText('0°')).toBeDefined();
       expect(getByText('0 mm/h')).toBeDefined();

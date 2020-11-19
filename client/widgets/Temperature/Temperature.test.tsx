@@ -1,14 +1,16 @@
 import 'jest';
 import React from 'react';
-import { cleanup, render, waitFor } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import TemperatureComponent from './Temperature';
-import { Temperature, SseData } from '../../../shared/types';
+import { Temperature } from '../../../shared/types';
 
-let mockIndoorTemperatureEventSource = new EventSource('mock-url');
-jest.mock('../../apis/Api', () => ({
-  getIndoorTemperaturesEventSource: () => mockIndoorTemperatureEventSource,
+let mockUseEventSourceWithRefresh = {
+  data: [] as Temperature[],
+  refreshData: () => {},
+};
+jest.mock('../../hooks', () => ({
+  useEventSourceWithRefresh: () => mockUseEventSourceWithRefresh,
 }));
-
 describe('Temperature', () => {
   describe('Component', () => {
     afterEach(cleanup);
@@ -23,27 +25,24 @@ describe('Temperature', () => {
     });
 
     it('renders temperatures', async () => {
-      const tempData: SseData<Temperature[]> = {
-        result: [
-          {
-            location: 'Kitchen',
-            value: 22,
-            scale: 'C',
-          },
-          {
-            location: 'Living room',
-            value: 28,
-            scale: 'C',
-          },
-        ],
+      const tempData: Temperature[] = [
+        {
+          location: 'Kitchen',
+          value: 22,
+          scale: 'C',
+        },
+        {
+          location: 'Living room',
+          value: 28,
+          scale: 'C',
+        },
+      ];
+      mockUseEventSourceWithRefresh = {
+        ...mockUseEventSourceWithRefresh,
+        data: tempData,
       };
 
       const { getByText } = render(<TemperatureComponent />);
-      await waitFor(() => {
-        mockIndoorTemperatureEventSource.onmessage!({
-          data: JSON.stringify(tempData),
-        } as MessageEvent);
-      });
       expect(getByText('Kitchen')).toBeDefined();
       expect(getByText('22°')).toBeDefined();
       expect(getByText('Living room')).toBeDefined();
@@ -51,37 +50,34 @@ describe('Temperature', () => {
     });
 
     it('renders labeled temperatures', async () => {
-      const tempData: SseData<Temperature[]> = {
-        result: [
-          {
-            location: 'Kitchen',
-            value: 28,
-            scale: 'C',
-          },
-          {
-            location: 'Bedroom',
-            value: 22,
-            scale: 'C',
-          },
-          {
-            location: 'Living room',
-            value: 18,
-            scale: 'C',
-          },
-          {
-            location: 'Basement',
-            value: 12,
-            scale: 'C',
-          },
-        ],
+      const tempData: Temperature[] = [
+        {
+          location: 'Kitchen',
+          value: 28,
+          scale: 'C',
+        },
+        {
+          location: 'Bedroom',
+          value: 22,
+          scale: 'C',
+        },
+        {
+          location: 'Living room',
+          value: 18,
+          scale: 'C',
+        },
+        {
+          location: 'Basement',
+          value: 12,
+          scale: 'C',
+        },
+      ];
+      mockUseEventSourceWithRefresh = {
+        ...mockUseEventSourceWithRefresh,
+        data: tempData,
       };
 
       const { getByLabelText } = render(<TemperatureComponent />);
-      await waitFor(() => {
-        mockIndoorTemperatureEventSource.onmessage!({
-          data: JSON.stringify(tempData),
-        } as MessageEvent);
-      });
       expect(getByLabelText('hot').textContent).toBe('28°');
       expect(getByLabelText('warm').textContent).toBe('22°');
       expect(getByLabelText('cold').textContent).toBe('18°');
