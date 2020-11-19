@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Spinner from '../../components/Spinner/Spinner';
-import { SseData, CalendarEvent } from '../../../shared/types';
+import { CalendarEvent } from '../../../shared/types';
 import api from '../../apis/Api';
-import { useRefresh } from '../../hooks';
+import { useEventSourceWithRefresh } from '../../hooks';
 import './Calendar.css';
 import * as util from './Calendar.utils';
 
@@ -90,37 +90,20 @@ const MonthHeader = ({ month }: MonthHeaderProps) => (
   </div>
 );
 
+const calendarEventSourceConfig = {
+  eventSource: api.getNextCalendarEventsEventSource(EVENTS_TO_SHOW),
+  mappingFn: calendarEventsToEventsByDate,
+};
 export default () => {
-  const [events, setEvents] = useState<EventsByDate>({});
-  const refreshCalendar = useRefresh<CalendarEvent[], number[]>(api.getNextCalendarEvents, EVENTS_TO_SHOW);
+  const { data: events, refreshData: refreshEvents } = useEventSourceWithRefresh<
+    EventsByDate,
+    number[],
+    CalendarEvent[]
+  >({}, calendarEventSourceConfig, api.getNextCalendarEvents, EVENTS_TO_SHOW);
 
-  const handleClick = () => {
-    refreshCalendar().then(data => {
-      setEvents(calendarEventsToEventsByDate(data));
-    });
-  };
-
-  useEffect(() => {
-    const eventSource = api.getNextCalendarEventsEventSource(EVENTS_TO_SHOW);
-    if (eventSource) {
-      eventSource.onmessage = e => {
-        const { result, error }: SseData<CalendarEvent[]> = JSON.parse(e.data);
-        if (result) {
-          setEvents(calendarEventsToEventsByDate(result));
-        } else if (error) {
-          console.error(error);
-        }
-      };
-    }
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
-  }, []);
   const eventKeys = Object.keys(events);
   return eventKeys.length ? (
-    <div className="Calendar-main" onClick={handleClick}>
+    <div className="Calendar-main" onClick={refreshEvents}>
       {eventKeys.map((d, idx, dates) => {
         const weekday = <Weekday key={d} date={new Date(d)} events={events[d]} />;
         const curr = new Date(d);

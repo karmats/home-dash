@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { ReactSVG } from 'react-svg';
-import { Forecast, SseData } from '../../../shared/types';
+import { Forecast } from '../../../shared/types';
 import api from '../../apis/Api';
 import Spinner from '../../components/Spinner/Spinner';
-import { useRefresh } from '../../hooks';
+import { useEventSourceWithRefresh } from '../../hooks';
 import * as util from '../../utils/DateUtils';
 import './Weather.css';
 
@@ -71,36 +71,17 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
   </div>
 );
 
+const forecastEventSourceConfig = {
+  eventSource: api.getForecastEventSource(),
+};
 export default function () {
-  const [forecasts, setForecasts] = useState<Forecast[]>([]);
-  const refreshForecasts = useRefresh<Forecast[]>(api.getForecasts);
-
-  const handleClick = () => {
-    refreshForecasts().then(data => {
-      setForecasts(data);
-    });
-  };
-
-  useEffect(() => {
-    const eventSource = api.getForecastEventSource();
-    if (eventSource) {
-      eventSource.onmessage = e => {
-        const { result, error }: SseData<Forecast[]> = JSON.parse(e.data);
-        if (result) {
-          setForecasts(result);
-        } else if (error) {
-          console.error(error);
-        }
-      };
-    }
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
-  }, []);
+  const { data: forecasts, refreshData: refreshForecasts } = useEventSourceWithRefresh<Forecast[]>(
+    [],
+    forecastEventSourceConfig,
+    api.getForecasts
+  );
   return (
-    <div onClick={handleClick}>
+    <div onClick={refreshForecasts}>
       {forecasts.length ? (
         <>
           <MainWeather forecast={forecasts[0]} />

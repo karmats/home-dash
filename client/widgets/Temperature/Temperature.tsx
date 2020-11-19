@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Spinner from '../../components/Spinner/Spinner';
-import { Temperature, SseData } from '../../../shared/types';
+import { Temperature } from '../../../shared/types';
 import api from '../../apis/Api';
-import { useRefresh } from '../../hooks';
+import { useEventSourceWithRefresh } from '../../hooks';
 import './Temperature.css';
 
 const getTemperatureLabel = (temperature: number) => {
@@ -26,38 +26,18 @@ const TemperatureText = ({ temperature }: { temperature: number }) => {
   );
 };
 
+const temperatureEventSourceConfig = {
+  eventSource: api.getIndoorTemperaturesEventSource(),
+};
 export default function () {
-  const [temperatures, setTemperatures] = useState<Temperature[]>([]);
-  const refreshTemperatures = useRefresh<Temperature[]>(api.getIndoorTemperatures);
+  const { data: temperatures, refreshData: refreshTemperatures } = useEventSourceWithRefresh<Temperature[]>(
+    [],
+    temperatureEventSourceConfig,
+    api.getIndoorTemperatures
+  );
 
-  const handleClick = () => {
-    refreshTemperatures().then(data => {
-      setTemperatures(data);
-    });
-  };
-
-  useEffect(() => {
-    const eventSource = api.getIndoorTemperaturesEventSource();
-    if (eventSource) {
-      eventSource.onmessage = e => {
-        if (e.data) {
-          const { result, error }: SseData<Temperature[]> = JSON.parse(e.data);
-          if (result) {
-            setTemperatures(result);
-          } else if (error) {
-            console.error(error);
-          }
-        }
-      };
-    }
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
-  }, []);
   return temperatures.length ? (
-    <div className="Temperature-main" onClick={handleClick}>
+    <div className="Temperature-main" onClick={refreshTemperatures}>
       {temperatures.map(t => (
         <div key={t.location} className="Temperature-box">
           <span>{t.location}</span>

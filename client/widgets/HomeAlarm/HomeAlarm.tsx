@@ -1,16 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ReactSVG } from 'react-svg';
 import Spinner from '../../components/Spinner/Spinner';
-import { HomeAlarmInfo, ArmedStatus, SseData } from '../../../shared/types';
+import { HomeAlarmInfo, ArmedStatus } from '../../../shared/types';
 import api from '../../apis/Api';
 import * as util from '../../utils/DateUtils';
-import { useRefresh } from '../../hooks';
+import { useEventSourceWithRefresh } from '../../hooks';
 import './HomeAlarm.css';
 
+const homeAlarmEventSourceConfig = {
+  eventSource: api.getHomeAlarmStatusEventSource(),
+};
 export default function () {
-  const [alarmInfo, setAlarmInfo] = useState<HomeAlarmInfo>();
   const [activate, setActivate] = useState<boolean>(false);
-  const refreshStatus = useRefresh<HomeAlarmInfo>(api.getHomeAlarmStatus);
+  const { data: alarmInfo, refreshData: refreshAlarmInfo, updateData: updateAlarmInfo } = useEventSourceWithRefresh<
+    HomeAlarmInfo
+  >({ online: true, status: 'unknown', time: 0 }, homeAlarmEventSourceConfig, api.getHomeAlarmStatus);
 
   const armedStatusClassName = (status: ArmedStatus): string => {
     if (activate) {
@@ -28,46 +32,20 @@ export default function () {
     }
   };
 
-  const handleClick = () => {
-    refreshStatus().then(data => {
-      setAlarmInfo(data);
-    });
-  };
-
   const handleImageClick = (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
     if (!activate) {
       setActivate(true);
       api.postToggleAlarmStatus().then(info => {
-        setAlarmInfo({ ...info, time: new Date(info.time) });
+        updateAlarmInfo({ ...info, time: new Date(info.time) });
         setActivate(false);
       });
     }
   };
 
-  useEffect(() => {
-    const eventSource = api.getHomeAlarmStatusEventSource();
-    if (eventSource) {
-      eventSource.onmessage = e => {
-        if (e.data) {
-          const { result, error }: SseData<HomeAlarmInfo> = JSON.parse(e.data);
-          if (result) {
-            setAlarmInfo({ ...result, time: new Date(result.time) });
-          } else if (error) {
-            console.error(error);
-          }
-        }
-      };
-    }
-    return () => {
-      if (eventSource) {
-        eventSource.close();
-      }
-    };
-  }, []);
-  return alarmInfo ? (
-    <div className="HomeAlarm-main" onClick={handleClick}>
+  return alarmInfo && alarmInfo.status !== 'unknown' ? (
+    <div className="HomeAlarm-main" onClick={refreshAlarmInfo}>
       <ReactSVG
         role="img"
         onClick={handleImageClick}
