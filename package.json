@@ -39,6 +39,7 @@
     "mini-css-extract-plugin": "^1.0.0",
     "nodemon": "^2.0.4",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
+    "parcel-bundler": "^1.12.4",
     "pnp-webpack-plugin": "^1.6.4",
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-loader": "^4.0.4",
@@ -75,6 +76,8 @@
   },
   "scripts": {
     "start": "concurrently --kill-others-on-fail 'node scripts/start.js' 'npm run server'",
+    "start:parcel": "parcel client/index.html",
+    "start:parcel-server": "concurrently --kill-others-on-fail 'parcel client/index.html' 'npm run server'",
     "server": "concurrently --kill-others-on-fail 'npm run build:server -- -w' 'nodemon build/server/server.js'",
     "build:server": "tsc -p tsconfig.server.json",
     "build:client": "node scripts/build.js",
