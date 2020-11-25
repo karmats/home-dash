@@ -36,7 +36,7 @@ const calendarEventsToEventsByDate = (events: CalendarEvent[]) =>
         ? // Google adds a day for some reason when it's a whole day event, so we need to substract it
           new Date(new Date(event.to.date).getTime() - 1000 * 60 * 60 * 24)
         : new Date(event.to.dateTime!);
-      let currDate = new Date(startDate.getTime());
+      const currDate = new Date(startDate.getTime());
       const eventDates = [util.getDateAsIsoString(currDate)];
       while (!util.isSameDay(currDate, endDate)) {
         currDate.setDate(currDate.getDate() + 1);
