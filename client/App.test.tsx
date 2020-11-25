@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 
 const mockGeolocation = {
-  getCurrentPosition: jest.fn()
+  getCurrentPosition: jest.fn(),
 };
 class EventSourceMock {
   close() {}

@@ -37,7 +37,7 @@ const getCalendarEventsFromRequest = (
         if (sse && comming) {
           // Sse requested, keep connection open and feed with calendar event data
           res.writeHead(200, SSE_HEADERS);
-          
+
           if (!pollHandler) {
             const pollFn = () => CalendarService.getNextCalendarEvents(comming);
             pollHandler = new PollHandler(pollFn, CALENDAR_REFRESH_INTERVAL, {

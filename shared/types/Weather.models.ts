@@ -20,7 +20,7 @@ export enum WeatherSymbol {
   THUNDER = 'thunder',
   LIGHT_SNOWFALL = 'light-snowfall',
   MODERATE_SNOWFALL = 'moderate-snowfall',
-  HEAVY_SNOWFALL = 'heavy-snowfall'
+  HEAVY_SNOWFALL = 'heavy-snowfall',
 }
 
 export interface Forecast {

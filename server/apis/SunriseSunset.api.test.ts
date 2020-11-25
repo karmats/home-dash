@@ -5,7 +5,7 @@ import * as api from './SunriseSunset.api';
 let mockResponse: Promise<any> = Promise.resolve();
 jest.mock('node-fetch', () => ({
   __esModule: true,
-  default: () => mockResponse
+  default: () => mockResponse,
 }));
 const defaultSunriseSunsetData = genereateSunriseSunsetData();
 
@@ -22,7 +22,7 @@ describe('SunriseSunsetApi', () => {
 
   it('throws data if status is not OK', async () => {
     mockResponse = Promise.resolve({
-      json: () => Promise.resolve(genereateSunriseSunsetData('INVALID_REQUEST'))
+      json: () => Promise.resolve(genereateSunriseSunsetData('INVALID_REQUEST')),
     });
     try {
       await api.getSunriseSunset(11.930191, 57.740614);

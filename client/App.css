@@ -1,45 +1,45 @@
 .App {
-  font-size: 16px;
-  display: grid;
-  grid-column-gap: 1rem;
-  grid-row-gap: 1rem;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 25rem auto;
-  padding: 1rem;
+    font-size: 16px;
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-row-gap: 1rem;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 25rem auto;
+    padding: 1rem;
 }
 
 @media only screen and (max-width: 599px) {
-  .App {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-  }
+    .App {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
 }
 
 @media only screen and (min-width: 600px) and (max-width: 991px) {
-  .App {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 23rem 9rem;
-  }
-  .App > div:first-child {
-    grid-column: 1 / span 2;
-  }
-  .App > div:nth-child(2) {
-    grid-column: 3 / span 2;
-  }
-  .App > div:last-child {
-    grid-column: 2 / span 3;
-  }
+    .App {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        grid-template-rows: 23rem 9rem;
+    }
+    .App > div:first-child {
+        grid-column: 1 / span 2;
+    }
+    .App > div:nth-child(2) {
+        grid-column: 3 / span 2;
+    }
+    .App > div:last-child {
+        grid-column: 2 / span 3;
+    }
 }
 
 @media only screen and (min-width: 992px) {
-  .App {
-    grid-template-columns: 1fr 1fr 1fr;
-  }
+    .App {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
 }
 
-.App>* {
-  background-color: var(--box-bg-color);
-  color: var(--box-color);
-  padding: 1rem;
-  text-align: center;
+.App > * {
+    background-color: var(--box-bg-color);
+    color: var(--box-color);
+    padding: 1rem;
+    text-align: center;
 }

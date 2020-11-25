@@ -6,14 +6,14 @@ import * as api from './Smhi.api';
 let mockResponse: Promise<any> = Promise.resolve();
 jest.mock('node-fetch', () => ({
   __esModule: true,
-  default: () => mockResponse
+  default: () => mockResponse,
 }));
 const defaultSmhiData = generateSmhiData();
 
 describe('SmhiApi', () => {
   const sunriseSunset = {
     sunrise: new Date('2019-02-18T08:00:00Z'),
-    sunset: new Date('2019-02-18T20:00:00Z')
+    sunset: new Date('2019-02-18T20:00:00Z'),
   };
   beforeEach(() => {
     mockResponse = Promise.resolve({ json: () => Promise.resolve(defaultSmhiData) });
