@@ -2,9 +2,20 @@
   "name": "home-dash",
   "version": "0.1.0",
   "private": true,
+  "dependencies": {
+    "date-fns": "^2.16.1",
+    "express": "^4.17.1",
+    "express-request-id": "^1.4.1",
+    "form-data": "^3.0.0",
+    "googleapis": "^61.0.0",
+    "node-fetch": "^2.6.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-svg": "^11.1.1",
+    "url-loader": "^4.1.1",
+    "winston": "^3.3.3"
+  },
   "devDependencies": {
-    "@babel/core": "^7.11.6",
-    "@svgr/webpack": "^5.4.0",
     "@testing-library/react": "^11.0.4",
     "@types/express": "^4.17.8",
     "@types/jest": "^26.0.14",
@@ -14,101 +25,49 @@
     "@types/react-dom": "^16.9.8",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
-    "babel-eslint": "^10.1.0",
-    "babel-jest": "^26.5.2",
-    "babel-loader": "^8.1.0",
-    "babel-plugin-named-asset-import": "^0.3.6",
-    "babel-preset-react-app": "^9.1.2",
     "camelcase": "^6.1.0",
     "concurrently": "^5.3.0",
     "dotenv": "^8.2.0",
     "eslint": "^7.11.0",
     "eslint-config-react-app": "^5.2.1",
     "eslint-loader": "^4.0.2",
-    "eslint-plugin-flowtype": "^5.2.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-react": "^7.21.4",
     "eslint-plugin-react-hooks": "^4.1.2",
-    "fs-extra": "^9.0.1",
-    "html-webpack-plugin": "^4.5.0",
-    "jest": "^26.5.3",
+    "jest": "^26.6.3",
     "jest-environment-jsdom-fourteen": "^1.0.1",
-    "jest-resolve": "^26.5.2",
-    "jest-watch-typeahead": "^0.6.1",
-    "mini-css-extract-plugin": "^1.0.0",
     "nodemon": "^2.0.4",
-    "optimize-css-assets-webpack-plugin": "^5.0.4",
     "parcel-bundler": "^1.12.4",
-    "pnp-webpack-plugin": "^1.6.4",
-    "postcss-flexbugs-fixes": "^4.2.1",
-    "postcss-loader": "^4.0.4",
-    "postcss-normalize": "^9.0.0",
-    "postcss-preset-env": "^6.7.0",
-    "postcss-safe-parser": "^5.0.2",
-    "webpack": "^4.44.2",
-    "webpack-dev-server": "^3.11.0",
-    "webpack-manifest-plugin": "^2.2.0",
-    "workbox-webpack-plugin": "^5.1.4"
-  },
-  "dependencies": {
-    "css-loader": "^4.3.0",
-    "date-fns": "^2.16.1",
-    "express": "^4.17.1",
-    "express-request-id": "^1.4.1",
-    "file-loader": "^6.1.1",
-    "form-data": "^3.0.0",
-    "googleapis": "^61.0.0",
-    "node-fetch": "^2.6.1",
-    "react": "^17.0.1",
-    "react-app-polyfill": "^2.0.0",
-    "react-dev-utils": "^11.0.0",
-    "react-dom": "^17.0.1",
-    "react-svg": "^11.1.1",
-    "resolve": "^1.17.0",
-    "sass-loader": "^10.0.3",
-    "style-loader": "^2.0.0",
-    "terser-webpack-plugin": "^4.2.3",
-    "ts-pnp": "^1.2.0",
-    "typescript": "^4.0.3",
-    "url-loader": "^4.1.1",
-    "winston": "^3.3.3"
+    "ts-jest": "^26.4.4",
+    "typescript": "^4.1.2"
   },
   "scripts": {
-    "start": "concurrently --kill-others-on-fail 'node scripts/start.js' 'npm run server'",
-    "start:parcel": "parcel client/index.html",
-    "start:parcel-server": "concurrently --kill-others-on-fail 'parcel client/index.html' 'npm run server'",
-    "server": "concurrently --kill-others-on-fail 'npm run build:server -- -w' 'nodemon build/server/server.js'",
-    "build:server": "tsc -p tsconfig.server.json",
-    "build:client": "node scripts/build.js",
+    "start": "concurrently --kill-others-on-fail 'npm run client' 'npm run server'",
+    "client": "parcel client/index.html -p 3000",
+    "preserver": "npm run build:server",
+    "server": "nodemon build/server/server.js",
+    "build:server": "rm -rf build/server && tsc -p tsconfig.server.json",
+    "prebuild:client": "rm -rf build/client",
+    "build:client": "parcel build client/index.html --out-dir build/client",
+    "postbuild:client": "cp -r public/svgs build/client",
     "build": "npm run build:client && npm run build:server",
-    "test": "node scripts/test.js"
+    "test": "jest"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ],
   "jest": {
     "collectCoverageFrom": [
-      "client/**/*.{js,jsx,ts,tsx}",
+      "client/**/*.{ts,tsx}",
       "!client/**/*.d.ts"
     ],
-    "setupFiles": [
-      "react-app-polyfill/jsdom"
-    ],
+    "preset": "ts-jest",
     "setupFilesAfterEnv": [
       "<rootDir>/client/setupTests.ts"
     ],
     "silent": false,
+    "testEnvironment": "jest-environment-jsdom",
     "testRegex": "((\\.|/)test)\\.tsx?$",
-    "testEnvironment": "jest-environment-jsdom-fourteen",
     "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/babel-jest",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
       "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
     },
@@ -118,29 +77,8 @@
     ],
     "modulePaths": [],
     "moduleNameMapper": {
-      "^react-native$": "react-native-web",
       "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
-    },
-    "moduleFileExtensions": [
-      "web.js",
-      "js",
-      "web.ts",
-      "ts",
-      "web.tsx",
-      "tsx",
-      "json",
-      "web.jsx",
-      "jsx",
-      "node"
-    ],
-    "watchPlugins": [
-      "jest-watch-typeahead/filename",
-      "jest-watch-typeahead/testname"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "react-app"
-    ]
+    }
+    
   }
 }

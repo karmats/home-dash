@@ -23,7 +23,7 @@ describe('Weather', () => {
   describe('Models', () => {
     it('has all weather symbol files', () => {
       Object.keys(WeatherSymbol).forEach(symbol => {
-        const fileName = `${WeatherSymbol[symbol]}.svg`;
+        const fileName = `${(WeatherSymbol as any)[symbol]}.svg`;
         expect(require(`${SVG_ROOT}/animated/${fileName}`)).toBeDefined();
         expect(require(`${SVG_ROOT}/static/${fileName}`)).toBeDefined();
       });
