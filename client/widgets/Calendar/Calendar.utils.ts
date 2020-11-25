@@ -38,7 +38,7 @@ export const getCurrentWeekStartAndEnd = (startOnMonday = true): { from: Date; t
   to.setDate(now.getDate() - daysPassed + 6);
   return {
     from,
-    to
+    to,
   };
 };
 

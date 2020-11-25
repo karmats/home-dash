@@ -5,10 +5,10 @@
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto auto;
 
-    --hot-color: #F44336;
-    --warm-color: #FFA726;
-    --cold-color: #81D4FA;
-    --chilly-color: #00B0FF;
+    --hot-color: #f44336;
+    --warm-color: #ffa726;
+    --cold-color: #81d4fa;
+    --chilly-color: #00b0ff;
 }
 .Temperature-box {
     padding: 1rem;

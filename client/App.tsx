@@ -5,7 +5,7 @@ import Calendar from './widgets/Calendar';
 import Temperature from './widgets/Temperature';
 import HomeAlarm from './widgets/HomeAlarm';
 
-export default () => {
+export default function () {
   return (
     <div className="App">
       <Weather />
@@ -14,4 +14,4 @@ export default () => {
       <Temperature />
     </div>
   );
-};
+}

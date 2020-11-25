@@ -1,6 +1,7 @@
 node_modules/
 build/
 dist/
+.cache/
 *.js
 *.test.ts
 *.test.tsx

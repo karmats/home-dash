@@ -1,6 +1,6 @@
 # Home Dashboard [![Build Status](https://travis-ci.org/karmats/home-dash.svg?branch=master)](https://travis-ci.org/karmats/home-dash) [![Dependencies](https://david-dm.org/karmats/home-dash.svg)](https://david-dm.org/karmats/home-dash)
 
-![Example](/public/example/application-screenshot.png "Dashboard example")
+![Example](/public/example/application-screenshot.png 'Dashboard example')
 
 ## Available Widgets
 
@@ -60,3 +60,4 @@ SA_DEVICE_ID=your_sector_alarm_device_id
 SA_PIN=your_sector_alarm_pin_code(if you want partial alarm activatation)
 
 USER_LOCATION=your_weather_location(lat,lon)
+```

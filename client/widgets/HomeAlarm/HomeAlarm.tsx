@@ -12,9 +12,15 @@ const homeAlarmEventSourceConfig = {
 };
 export default function () {
   const [activate, setActivate] = useState<boolean>(false);
-  const { data: alarmInfo, refreshData: refreshAlarmInfo, updateData: updateAlarmInfo } = useEventSourceWithRefresh<
-    HomeAlarmInfo
-  >({ online: true, status: 'unknown', time: 0 }, homeAlarmEventSourceConfig, api.getHomeAlarmStatus);
+  const {
+    data: alarmInfo,
+    refreshData: refreshAlarmInfo,
+    updateData: updateAlarmInfo,
+  } = useEventSourceWithRefresh<HomeAlarmInfo>(
+    { online: true, status: 'unknown', time: 0 },
+    homeAlarmEventSourceConfig,
+    api.getHomeAlarmStatus
+  );
 
   const armedStatusClassName = (status: ArmedStatus): string => {
     if (activate) {
