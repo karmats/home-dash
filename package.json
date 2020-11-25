@@ -45,21 +45,15 @@
     "client": "parcel client/index.html -p 3000",
     "preserver": "npm run build:server",
     "server": "nodemon build/server/server.js",
-    "build:server": "rm -rf build/server && tsc -p tsconfig.server.json",
+    "prebuild:server": "rm -rf build/server",
+    "build:server": "tsc -p tsconfig.server.json",
     "prebuild:client": "rm -rf build/client",
     "build:client": "parcel build client/index.html --out-dir build/client",
     "postbuild:client": "cp -r public/svgs build/client",
     "build": "npm run build:client && npm run build:server",
     "test": "jest"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "jest": {
-    "collectCoverageFrom": [
-      "client/**/*.{ts,tsx}",
-      "!client/**/*.d.ts"
-    ],
     "preset": "ts-jest",
     "setupFilesAfterEnv": [
       "<rootDir>/client/setupTests.ts"
@@ -70,14 +64,6 @@
     "transform": {
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
       "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
-    },
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$",
-      "^.+\\.module\\.(css|sass|scss)$"
-    ],
-    "modulePaths": [],
-    "moduleNameMapper": {
-      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
     }
     
   }

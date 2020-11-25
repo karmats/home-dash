@@ -12,6 +12,5 @@
     "resolveJsonModule": true,
     "jsx": "react"
   },
-  "include": ["client"],
-  "exclude": ["client/**/*.test.ts"]
+  "include": ["client"]
 }
