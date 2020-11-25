@@ -6,7 +6,7 @@ import { getForecasts, getSunriseSunset } from '../../apis';
 const SUNRISE_SUNSET_REFRESH_INTERVAL = 24 * 60 * 60 * 1000;
 
 let sunriseSunset: SunriseSunset;
-let sunriseSunsetLastUpdated = new Date(0);
+const sunriseSunsetLastUpdated = new Date(0);
 
 const shouldRefreshSunriseSunset = () =>
   !sunriseSunset || Date.now() - sunriseSunsetLastUpdated.getTime() > SUNRISE_SUNSET_REFRESH_INTERVAL;

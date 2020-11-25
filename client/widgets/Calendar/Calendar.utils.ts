@@ -29,7 +29,7 @@ export const getWeekDates = (date: Date, startOnMonday = true): Date[] => {
  */
 export const getCurrentWeekStartAndEnd = (startOnMonday = true): { from: Date; to: Date } => {
   const now = new Date(Date.now());
-  let daysPassed = getDaysPassedSinceWeekStart(now, startOnMonday);
+  const daysPassed = getDaysPassedSinceWeekStart(now, startOnMonday);
 
   const from = new Date(now.getTime());
   from.setDate(now.getDate() - daysPassed);
