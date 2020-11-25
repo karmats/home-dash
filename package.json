@@ -56,14 +56,14 @@
   "jest": {
     "preset": "ts-jest",
     "setupFilesAfterEnv": [
-      "<rootDir>/client/setupTests.ts"
+      "<rootDir>/jest/config/setupTests.ts"
     ],
     "silent": false,
     "testEnvironment": "jest-environment-jsdom",
     "testRegex": "((\\.|/)test)\\.tsx?$",
     "transform": {
-      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+      "^.+\\.css$": "<rootDir>/jest/transformers/cssTransform.js",
+      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/jest/transformers/fileTransform.js"
     }
     
   }
