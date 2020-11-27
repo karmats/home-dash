@@ -6,17 +6,22 @@ function useEventSourceWithRefresh<T, P extends Array<unknown> = [], R = T>(
   eventSourceConfig: EventSourceConfig<T, R>,
   asyncFn: (...params: P) => Promise<R>,
   ...params: P
-) {
+): {
+  data: T;
+  refreshData: () => void;
+  updateData: (newValue: T) => void;
+} {
   const { value, updateValue } = useEventSource<T, R>(initialValue, eventSourceConfig);
   const [refresh, setRefresh] = useState<boolean>(false);
   const { mappingFn } = eventSourceConfig;
 
-  const refreshData = async () => {
+  const refreshData = () => {
     if (!refresh) {
       setRefresh(true);
-      const result = await asyncFn(...params);
-      setRefresh(false);
-      updateValue(mappingFn ? mappingFn(result) : ((result as unknown) as T));
+      asyncFn(...params).then(result => {
+        setRefresh(false);
+        updateValue(mappingFn ? mappingFn(result) : ((result as unknown) as T));
+      });
     }
   };
 
