@@ -14,7 +14,7 @@ export type EventDataHandler<T> = {
 const HEARTBEAT_INTERVAL = 30 * 1000;
 
 export class EventDataPollerService<R> {
-  timer: any;
+  timer: unknown;
   handlers: EventDataHandler<R>[] = [];
   lastResult?: R;
   constructor(private pollFn: () => Promise<R>, interval: number, wait = 0) {
@@ -36,13 +36,17 @@ export class EventDataPollerService<R> {
       this._fetchData();
     }
   }
-  registerHandler(handler: EventDataHandler<R>) {
+  registerHandler(handler: EventDataHandler<R>): void {
     this.handlers = this.handlers.concat(handler);
     if (this.lastResult) {
       handler.data(this.lastResult);
     }
   }
-  finish(handlerId: string) {
+  reportData(data: R): void {
+    this.handlers.forEach(h => h.data(data));
+    this.lastResult = data;
+  }
+  finish(handlerId: string): void {
     const handler = this.handlers.find(h => h.id === handlerId);
     this.handlers = this.handlers.filter(h => h.id !== handlerId);
     if (handler && handler.complete) {
@@ -50,7 +54,7 @@ export class EventDataPollerService<R> {
     }
   }
 
-  private _fetchData() {
+  private _fetchData(): void {
     this.pollFn().then(
       result => {
         this.handlers.forEach(h => h.data(result));

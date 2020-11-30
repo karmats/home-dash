@@ -11,7 +11,7 @@ const logger = getLogger('HomeAlarmController');
 const HOME_ALARM_REFRESH_INTERVAL = 60 * 60 * 1000;
 
 let pollHandler: PollHandler<HomeAlarmInfo>;
-const getHomeAlarmStatusInfo = (req: ExpressRequest<{ sse?: string }>, res: express.Response) => {
+const getHomeAlarmStatusInfo = (req: ExpressRequest<{ sse?: string }>, res: express.Response): void => {
   const { sse } = req.query;
   if (sse) {
     // Sse requested, keep connection open and feed with temperature data
@@ -31,6 +31,9 @@ const getHomeAlarmStatusInfo = (req: ExpressRequest<{ sse?: string }>, res: expr
     res.writeHead(200, DEFAULT_HEADERS);
     HomeAlarmService.getAlarmStatus()
       .then(status => {
+        if (pollHandler) {
+          pollHandler.reportData(status);
+        }
         res.write(JSON.stringify(status));
         res.end();
       })
@@ -41,10 +44,13 @@ const getHomeAlarmStatusInfo = (req: ExpressRequest<{ sse?: string }>, res: expr
   }
 };
 
-const toggleAlarm = (req: ExpressRequest, res: express.Response) => {
+const toggleAlarm = (req: ExpressRequest, res: express.Response): void => {
   res.writeHead(200, DEFAULT_HEADERS);
   HomeAlarmService.toggleAlarm()
     .then(status => {
+      if (pollHandler) {
+        pollHandler.reportData(status);
+      }
       res.write(JSON.stringify(status));
       res.end();
     })

@@ -16,7 +16,7 @@ let pollHandler: PollHandler<ReadonlyArray<CalendarEvent>>;
 const getCalendarEventsFromRequest = (
   req: ExpressRequest<{ from: string; to: string; next: number; sse?: string }>,
   res: express.Response
-) => {
+): void => {
   const { from, to, next, sse } = req.query;
   if ((next && !isNaN(next)) || (from && DATE_REGEX.test(from) && to && DATE_REGEX.test(to))) {
     const dateFrom = from ? new Date(from) : null;
@@ -54,6 +54,9 @@ const getCalendarEventsFromRequest = (
             : CalendarService.getCalendarEventsByDates(dateFrom!, dateTo!);
           request.then(
             events => {
+              if (pollHandler && comming) {
+                pollHandler.reportData(events);
+              }
               res.writeHead(200, DEFAULT_HEADERS);
               res.write(JSON.stringify(events));
               res.end();

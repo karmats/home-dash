@@ -13,7 +13,7 @@ const TEMPERATURES_REFRESH_INTERVAL = 2 * 60 * 60 * 1000;
 const REQUEST_WAIT = 5 * 1000;
 
 let pollHandler: PollHandler<Temperature[]>;
-const getIndoorTemperatures = (req: ExpressRequest<{ sse?: string }>, res: express.Response) => {
+const getIndoorTemperatures = (req: ExpressRequest<{ sse?: string }>, res: express.Response): void => {
   const { sse } = req.query;
   if (sse) {
     // Sse requested, keep connection open and feed with temperature data
@@ -37,6 +37,9 @@ const getIndoorTemperatures = (req: ExpressRequest<{ sse?: string }>, res: expre
   } else {
     TemperatureService.getIndoorTemperatures()
       .then(temperatures => {
+        if (pollHandler) {
+          pollHandler.reportData(temperatures);
+        }
         res.writeHead(200, DEFAULT_HEADERS);
         res.write(JSON.stringify(temperatures));
         res.end();

@@ -11,7 +11,7 @@ const logger = getLogger('WeatherController');
 const FORECAST_REFRESH_INTERVAL = 20 * 60 * 1000;
 
 let pollHandler: PollHandler<Forecast[]>;
-const getForecastsFromRequest = (req: ExpressRequest<{ sse?: string }>, res: express.Response) => {
+const getForecastsFromRequest = (req: ExpressRequest<{ sse?: string }>, res: express.Response): void => {
   const { sse } = req.query;
   if (sse) {
     // Sse requested, keep connection open and feed with weather data
@@ -30,6 +30,9 @@ const getForecastsFromRequest = (req: ExpressRequest<{ sse?: string }>, res: exp
   } else {
     WeatherService.getWeatherForecasts()
       .then(forecasts => {
+        if (pollHandler) {
+          pollHandler.reportData(forecasts);
+        }
         res.writeHead(200, DEFAULT_HEADERS);
         res.write(JSON.stringify(forecasts));
         res.end();

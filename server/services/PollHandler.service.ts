@@ -20,15 +20,19 @@ export class PollHandler<R> {
     this.pollerService = new EventDataPollerService(pollFunction, interval, requestWailt);
   }
 
-  unregisterPollerService(res: express.Response, req: ExpressRequest) {
+  unregisterPollerService(res: express.Response, req: ExpressRequest): void {
     res.end();
     this.pollerService.finish(req.id);
   }
 
-  registerPollerService = (res: express.Response, req: ExpressRequest) => {
+  registerPollerService = (res: express.Response, req: ExpressRequest): void => {
     const handler: EventDataHandler<R> = this.createHandler(res, req);
     this.pollerService.registerHandler(handler);
   };
+
+  reportData(data: R): void {
+    this.pollerService.reportData(data);
+  }
 
   private createHandler(res: express.Response, req: ExpressRequest): EventDataHandler<R> {
     return {
