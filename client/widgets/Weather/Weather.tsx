@@ -10,6 +10,11 @@ import './Weather.css';
 // Every 10 second
 const TIME_REFRESH_INTERVAL = 10 * 1000;
 
+const toInteger = (dec: number) => {
+  const integer = dec.toFixed(0);
+  return integer === '-0' ? '0' : integer;
+};
+
 type WeatherProps = {
   forecast: Forecast;
 };
@@ -37,7 +42,7 @@ const MainWeather = ({ forecast }: WeatherProps) => {
         src={`./svgs/animated/${forecast.symbol}.svg`}
       />
       <div>
-        <p className="Weather-main--strong">{forecast.degrees.toFixed(0)}°</p>
+        <p className="Weather-main--strong">{toInteger(forecast.degrees)}°</p>
         <div className="Weather-main--weak">
           <ReactSVG
             beforeInjection={svg => {
@@ -46,7 +51,7 @@ const MainWeather = ({ forecast }: WeatherProps) => {
             src={'./svgs/static/wind.svg'}
             wrapper="span"
           />
-          <span>{`${forecast.windSpeed.toFixed(0)} m/s`}</span>
+          <span>{`${toInteger(forecast.windSpeed)} m/s`}</span>
           <ReactSVG src={'./svgs/static/precipitation.svg'} wrapper="span" />
           <span>{`${forecast.precipitation} mm/h`}</span>
         </div>
@@ -61,7 +66,7 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
     <div className="Weather-comming--weak">
       <div className="Weather-comming--weak__details">
         <ReactSVG src={'./svgs/static/temperature.svg'} wrapper="span" />
-        <span>{forecast.degrees.toFixed(0)}°</span>
+        <span>{toInteger(forecast.degrees)}°</span>
       </div>
       <div className="Weather-comming--weak__details">
         <ReactSVG src={'./svgs/static/precipitation.svg'} wrapper="span" />
@@ -74,7 +79,7 @@ const CommingWeather = ({ forecast }: WeatherProps) => (
 const forecastEventSourceConfig = {
   eventSource: api.getForecastEventSource(),
 };
-export default function () {
+export default function (): JSX.Element {
   const { data: forecasts, refreshData: refreshForecasts } = useEventSourceWithRefresh<Forecast[]>(
     [],
     forecastEventSourceConfig,

@@ -63,5 +63,23 @@ describe('Weather', () => {
       expect(getByText('8°')).toBeDefined();
       expect(getByText('80')).toBeDefined();
     });
+    it('does not render -0', async () => {
+      const smhiData: Forecast[] = Array.from(new Array(10)).map((_, idx) => ({
+        symbol: WeatherSymbol.CLEAR_SKY,
+        degrees: idx - 0.2,
+        precipitation: idx * 10,
+        windSpeed: idx,
+        windDirection: idx * 10,
+        time: Date.now(),
+      }));
+      mockUseEventSourceWithRefresh = {
+        data: smhiData,
+        refreshData: () => {},
+      };
+
+      const { getByText, queryAllByText } = render(<Weather />);
+      expect(queryAllByText('-0°')).toHaveLength(0);
+      expect(getByText('0°')).toBeDefined();
+    });
   });
 });
