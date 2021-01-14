@@ -10,6 +10,15 @@ const BASE_URL = 'https://mypagesapi.sectoralarm.net';
 const REQUEST_VERIFICATON_TOKEN_NAME = '__RequestVerificationToken';
 const SESSION_META_PATH = 'sa-meta.json';
 
+type SectorAlarmInfo = {
+  ArmedStatus: string;
+  IsOnline: boolean;
+  PanelTime: string;
+};
+type SectorAlarmTemperature = {
+  Label: string;
+  Temprature: string;
+};
 type SectorAlarmMeta = {
   version: string;
   cookie: string;
@@ -156,7 +165,7 @@ export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
       .then(json => {
         if (json.length) {
           return json
-            .map((j: any) => ({
+            .map((j: SectorAlarmInfo) => ({
               status: armedStatusToAlarmStatus(j.ArmedStatus),
               online: j.IsOnline,
               time: sectorAlarmDateToMs(j.PanelTime),
@@ -181,7 +190,7 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
     })
       .then(response => response.json())
       .then(json => {
-        return json.map((j: any) => ({
+        return json.map((j: SectorAlarmTemperature) => ({
           location: j.Label,
           value: +j.Temprature,
           scale: 'C',
@@ -190,9 +199,12 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
   });
 };
 
-/** Toggle alarm. If alarm is off, partial alarm is set. Otherwise the alarm turns off */
+/** Toggle alarm. If alarm is off, partial alarm is set. If alarm is set to full, nothing is done. Otherwise the alarm turns off */
 export const toggleAlarm = async (): Promise<HomeAlarmInfo> => {
   return getAlarmStatus().then(async info => {
+    if (info.status === 'full') {
+      return info;
+    }
     const armCmd = info.status === 'off' ? 'Partial' : 'Disarm';
     return getSessionMeta().then(async meta => {
       return fetch(`${BASE_URL}/Panel/ArmPanel`, {
