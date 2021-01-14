@@ -190,9 +190,12 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
   });
 };
 
-/** Toggle alarm. If alarm is off, partial alarm is set. Otherwise the alarm turns off */
+/** Toggle alarm. If alarm is off, partial alarm is set. If alarm is set to full, nothing is done. Otherwise the alarm turns off */
 export const toggleAlarm = async (): Promise<HomeAlarmInfo> => {
   return getAlarmStatus().then(async info => {
+    if (info.status === 'full') {
+      return info;
+    }
     const armCmd = info.status === 'off' ? 'Partial' : 'Disarm';
     return getSessionMeta().then(async meta => {
       return fetch(`${BASE_URL}/Panel/ArmPanel`, {
