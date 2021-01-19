@@ -10,6 +10,15 @@ const BASE_URL = 'https://mypagesapi.sectoralarm.net';
 const REQUEST_VERIFICATON_TOKEN_NAME = '__RequestVerificationToken';
 const SESSION_META_PATH = 'sa-meta.json';
 
+type SectorAlarmInfo = {
+  ArmedStatus: string;
+  IsOnline: boolean;
+  PanelTime: string;
+};
+type SectorAlarmTemperature = {
+  Label: string;
+  Temprature: string;
+};
 type SectorAlarmMeta = {
   version: string;
   cookie: string;
@@ -156,7 +165,7 @@ export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
       .then(json => {
         if (json.length) {
           return json
-            .map((j: any) => ({
+            .map((j: SectorAlarmInfo) => ({
               status: armedStatusToAlarmStatus(j.ArmedStatus),
               online: j.IsOnline,
               time: sectorAlarmDateToMs(j.PanelTime),
@@ -181,11 +190,15 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
     })
       .then(response => response.json())
       .then(json => {
-        return json.map((j: any) => ({
-          location: j.Label,
-          value: +j.Temprature,
-          scale: 'C',
-        }));
+        if (json && json.length) {
+          return json.map((j: SectorAlarmTemperature) => ({
+            location: j.Label,
+            value: +j.Temprature,
+            scale: 'C',
+          }));
+        } else {
+          throw new Error(`Failed to retrieve temparatures got response '${JSON.stringify(json)}'`);
+        }
       });
   });
 };
