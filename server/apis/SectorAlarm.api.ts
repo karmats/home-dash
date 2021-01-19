@@ -190,11 +190,15 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
     })
       .then(response => response.json())
       .then(json => {
-        return json.map((j: SectorAlarmTemperature) => ({
-          location: j.Label,
-          value: +j.Temprature,
-          scale: 'C',
-        }));
+        if (json && json.length) {
+          return json.map((j: SectorAlarmTemperature) => ({
+            location: j.Label,
+            value: +j.Temprature,
+            scale: 'C',
+          }));
+        } else {
+          throw new Error(`Failed to retrieve temparatures got response '${JSON.stringify(json)}'`);
+        }
       });
   });
 };
