@@ -80,5 +80,14 @@ describe('Calendar', () => {
     it('is not today', () => {
       expect(util.isToday(new Date('2019-01-10'))).toBe(false);
     });
+    it('returns todays date when date is in past', () => {
+      const past = new Date('2020-01-01T20:00:00');
+      const notPast = util.getNotPastDate(past);
+      expect(notPast).not.toBe(past);
+    });
+    it('returns the date when date is in the future', () => {
+      const future = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
+      expect(util.getNotPastDate(future)).toBe(future);
+    });
   });
 });

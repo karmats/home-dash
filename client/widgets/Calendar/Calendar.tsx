@@ -18,8 +18,8 @@ type MonthHeaderProps = {
   month: string;
 };
 type CalendarClientEvent = {
-  from: Date;
-  to: Date;
+  from: Date | null;
+  to: Date | null;
   isAllDay: boolean;
   summary: string;
 };
@@ -36,23 +36,27 @@ const calendarEventsToEventsByDate = (events: CalendarEvent[]) =>
         ? // Google adds a day for some reason when it's a whole day event, so we need to substract it
           new Date(new Date(event.to.date).getTime() - 1000 * 60 * 60 * 24)
         : new Date(event.to.dateTime!);
-      const currDate = new Date(startDate.getTime());
+      const currDate = util.getNotPastDate(new Date(startDate.getTime()));
       const eventDates = [util.getDateAsIsoString(currDate)];
       while (!util.isSameDay(currDate, endDate)) {
         currDate.setDate(currDate.getDate() + 1);
         eventDates.push(util.getDateAsIsoString(currDate));
       }
-      const toCalendarClientEvent = () => ({
-        isAllDay: fromIsAllDay,
-        from: startDate,
-        to: endDate,
+      const toCalendarClientEvent = (isAllDay: boolean, from: Date | null, to: Date | null) => ({
+        isAllDay,
+        from,
+        to,
         summary: event.summary,
       });
       eventDates.forEach(date => {
+        const start = !util.isSameDay(new Date(date), startDate) ? null : startDate;
+        const end = !util.isSameDay(new Date(date), endDate) ? null : endDate;
+        const isAllDay =
+          fromIsAllDay || (!util.isSameDay(new Date(date), startDate) && !util.isSameDay(new Date(date), endDate));
         if (!acc[date]) {
-          acc[date] = [toCalendarClientEvent()];
+          acc[date] = [toCalendarClientEvent(isAllDay, start, end)];
         } else {
-          acc[date].push(toCalendarClientEvent());
+          acc[date].push(toCalendarClientEvent(isAllDay, start, end));
         }
       });
       return acc;
@@ -62,10 +66,14 @@ const calendarEventsToEventsByDate = (events: CalendarEvent[]) =>
     } as EventsByDate
   );
 const eventToString = (event: CalendarClientEvent) => {
-  if (event.isAllDay) {
-    return event.summary;
+  if (event.from && event.to && !event.isAllDay) {
+    return `${util.getDateAsTimeString(event.from)} - ${util.getDateAsTimeString(event.to)} ${event.summary}`;
+  } else if (!event.from && event.to) {
+    return `Slutar ${util.getDateAsTimeString(event.to)} ${event.summary}`;
+  } else if (!event.to && event.from) {
+    return `${util.getDateAsTimeString(event.from)} ${event.summary}`;
   }
-  return `${util.getDateAsTimeString(event.from)} - ${util.getDateAsTimeString(event.to)} ${event.summary}`;
+  return event.summary;
 };
 
 const Weekday = ({ date, events }: WeekdayProps) => (
@@ -76,7 +84,14 @@ const Weekday = ({ date, events }: WeekdayProps) => (
     </div>
     <div className="Calendar-weekday--event">
       {events.length ? (
-        events.map(e => <div key={`${e.from.toISOString()}_${e.to.toISOString()}`}>{eventToString(e)}</div>)
+        events.map(e => (
+          <div
+            key={`${e.from ? e.from.toISOString() : 'from_na'}_${e.summary.split(' ').join('_').toLowerCase()}_${
+              e.to ? e.to.toISOString() : 'to_na'
+            }`}>
+            {eventToString(e)}
+          </div>
+        ))
       ) : (
         <div>Inga planer</div>
       )}

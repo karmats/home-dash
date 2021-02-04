@@ -80,9 +80,25 @@ export const getMonthName = (date: Date, locale: string) => date.toLocaleString(
  */
 export const getWeekdayName = (date: Date, locale: string) => date.toLocaleString(locale, { weekday: 'short' });
 
+/**
+ * Check if a date is today
+ * @param date
+ */
 export const isToday = (date: Date) => {
   const now = new Date();
   return (
     now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate()
   );
+};
+
+/**
+ * Returns todays date if supplied date is in the past, otherwise returns the date
+ * @param date
+ */
+export const getNotPastDate = (date: Date) => {
+  const now = new Date();
+  if (date.getTime() < now.getTime()) {
+    return now;
+  }
+  return date;
 };
