@@ -13,10 +13,10 @@ if (fs.existsSync(`${dotenvPath}.local`)) {
 }
 
 if (path) {
-  const conf = config({
+  config({
     path,
   });
-  logger.debug(`Starting with config from path ${path}:  ${JSON.stringify(conf)}`);
+  logger.debug(`Loaded config from path ${path}}`);
 } else {
   throw new Error('Provide a ".env" or ".env.local" file in the root of the project to run the application');
 }
