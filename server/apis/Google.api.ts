@@ -36,7 +36,7 @@ export const getCalendarEvents = (request: CalendarEventRequest): Promise<Readon
 /**
  * Check if application is connected to google
  */
-export const isConnected = async () => {
+export const isConnected = async (): Promise<boolean> => {
   return getAuthToken()
     .then(async token => {
       oAuth2Client.setCredentials(token);
@@ -125,11 +125,12 @@ const listEvents = async (request: CalendarEventRequest): Promise<ReadonlyArray<
     .then(res => {
       const events = res?.data?.items;
       if (events && events.length) {
+        logger.debug(`Got ${events.length} calendar events.`);
         return events.map(event => {
           return {
             from: { date: event?.start?.date, dateTime: event?.start?.dateTime },
             to: { date: event?.end?.date, dateTime: event?.end?.dateTime },
-            summary: event.summary!,
+            summary: event.summary || '',
           };
         });
       }

@@ -2,30 +2,25 @@ import express from 'express';
 import { ExpressRequest } from '../models';
 import { EventDataPollerService, EventDataHandler } from './EventDataPoller.service';
 import { resultToSseData, heartbeatData, errorToSseData } from '../utils';
+import { getLogger } from '../logger';
 
-type Loggers<D> = {
-  data: (data: D) => void;
-  error: (error: any) => void;
-};
+const logger = getLogger('PollHandler');
 
 export class PollHandler<R> {
   private pollerService: EventDataPollerService<R>;
 
-  constructor(
-    pollFunction: () => Promise<R>,
-    interval: number,
-    private readonly loggers?: Loggers<R>,
-    requestWailt = 0
-  ) {
+  constructor(pollFunction: () => Promise<R>, interval: number, requestWailt = 0) {
     this.pollerService = new EventDataPollerService(pollFunction, interval, requestWailt);
   }
 
   unregisterPollerService(res: express.Response, req: ExpressRequest): void {
+    logger.debug(`Unregistering listener with ip '${req.ip}' and id '${req.id}'.`);
     res.end();
     this.pollerService.finish(req.id);
   }
 
   registerPollerService = (res: express.Response, req: ExpressRequest): void => {
+    logger.debug(`Registering new listener with ip '${req.ip}' and id '${req.id}'.`);
     const handler: EventDataHandler<R> = this.createHandler(res, req);
     this.pollerService.registerHandler(handler);
   };
@@ -38,18 +33,12 @@ export class PollHandler<R> {
     return {
       id: req.id,
       data: result => {
-        if (this.loggers) {
-          this.loggers.data(result);
-        }
         res.write(resultToSseData(result));
       },
       heartbeat: heartbeat => {
         res.write(heartbeatData(heartbeat.time));
       },
       error: err => {
-        if (this.loggers) {
-          this.loggers.error(err);
-        }
         res.write(errorToSseData(err));
       },
     };

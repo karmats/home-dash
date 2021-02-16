@@ -2,11 +2,9 @@ import express from 'express';
 import WeatherService from './Weather.service';
 import { DEFAULT_HEADERS, SSE_HEADERS } from '../../utils';
 import { Forecast } from '../../../shared/types';
-import { getLogger } from '../../logger';
 import { ExpressRequest } from '../../models';
 import { PollHandler } from '../../services';
 
-const logger = getLogger('WeatherController');
 // Every 20 minute
 const FORECAST_REFRESH_INTERVAL = 20 * 60 * 1000;
 
@@ -19,10 +17,7 @@ const getForecastsFromRequest = (req: ExpressRequest<{ sse?: string }>, res: exp
 
     if (!pollHandler) {
       const pollFn = () => WeatherService.getWeatherForecasts();
-      pollHandler = new PollHandler(pollFn, FORECAST_REFRESH_INTERVAL, {
-        data: d => logger.debug(`Got ${d.length} forecasts`),
-        error: err => logger.error(`Failed to get forecasts: ${JSON.stringify(err)}`),
-      });
+      pollHandler = new PollHandler(pollFn, FORECAST_REFRESH_INTERVAL);
     }
     pollHandler.registerPollerService(res, req);
 

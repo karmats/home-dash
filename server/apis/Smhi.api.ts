@@ -99,9 +99,20 @@ export const getForecasts = async (lat: number, lon: number, sunriseSunset: Sunr
     `${BASE_URL}/api/category/pmp3g/version/2/geotype/point/lon/${lon.toFixed(4)}/lat/${lat.toFixed(4)}/data.json`
   )
     .then(response => response.json())
-    .then((data: SmhiData) => data.timeSeries.map(t => smhiTimeSerieToForecast(t, sunriseSunset)))
+    .then((data: SmhiData) => {
+      if (data && data.timeSeries && data.timeSeries.length) {
+        const result = data.timeSeries.map(t => smhiTimeSerieToForecast(t, sunriseSunset));
+        logger.debug(`Got ${result.length} forecasts.`);
+        return result;
+      } else {
+        const error = 'Failed to fetch forecasts, expected at least 1 forecast';
+        logger.error(error);
+        throw new Error(error);
+      }
+    })
     .catch(e => {
       // FIXME Return cache?
+      logger.error(`Failed to fetch forecasts: ${JSON.stringify(e)}`);
       throw e;
     });
 };

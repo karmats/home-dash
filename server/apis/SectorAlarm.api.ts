@@ -163,16 +163,20 @@ export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
     })
       .then(response => response.json())
       .then(json => {
-        if (json.length) {
-          return json
+        if (json && json.length) {
+          const info = json
             .map((j: SectorAlarmInfo) => ({
               status: armedStatusToAlarmStatus(j.ArmedStatus),
               online: j.IsOnline,
               time: sectorAlarmDateToMs(j.PanelTime),
             }))
             .pop();
+          logger.debug(`Got alarm info status '${info.status}'`);
+          return info;
         } else {
-          throw new Error('Expected at least one alarm, got zero');
+          const error = 'Expected at least one alarm, got zero';
+          logger.error(error);
+          throw new Error(error);
         }
       });
   });
@@ -197,7 +201,9 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
             scale: 'C',
           }));
         } else {
-          throw new Error(`Failed to retrieve temparatures got response '${JSON.stringify(json)}'`);
+          const error = `Failed to retrieve temparatures got response '${JSON.stringify(json)}'`;
+          logger.error(error);
+          throw new Error(error);
         }
       });
   });

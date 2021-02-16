@@ -5,9 +5,7 @@ import { DEFAULT_HEADERS, SSE_HEADERS } from '../../utils';
 import { PollHandler } from '../../services';
 import { CalendarEvent } from '../../../shared/types';
 import { ExpressRequest } from '../../models';
-import { getLogger } from '../../logger';
 
-const logger = getLogger('CalendarController');
 // Every hour
 const CALENDAR_REFRESH_INTERVAL = 60 * 60 * 1000;
 const DATE_REGEX = /\d{4}-\d{2}-\d{2}/;
@@ -40,10 +38,7 @@ const getCalendarEventsFromRequest = (
 
           if (!pollHandler) {
             const pollFn = () => CalendarService.getNextCalendarEvents(comming);
-            pollHandler = new PollHandler(pollFn, CALENDAR_REFRESH_INTERVAL, {
-              data: d => logger.debug(`Got ${d.length} calendar events`),
-              error: err => logger.error(`Failed to get calendar events ${JSON.stringify(err)}`),
-            });
+            pollHandler = new PollHandler(pollFn, CALENDAR_REFRESH_INTERVAL);
           }
           pollHandler.registerPollerService(res, req);
 

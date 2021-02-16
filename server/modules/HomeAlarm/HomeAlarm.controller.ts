@@ -2,11 +2,9 @@ import express from 'express';
 import HomeAlarmService from './HomeAlarm.service';
 import { DEFAULT_HEADERS, SSE_HEADERS } from '../../utils';
 import { HomeAlarmInfo } from '../../../shared/types';
-import { getLogger } from '../../logger';
 import { ExpressRequest } from '../../models';
 import { PollHandler } from '../../services';
 
-const logger = getLogger('HomeAlarmController');
 // Every hour
 const HOME_ALARM_REFRESH_INTERVAL = 60 * 60 * 1000;
 
@@ -19,10 +17,7 @@ const getHomeAlarmStatusInfo = (req: ExpressRequest<{ sse?: string }>, res: expr
 
     if (!pollHandler) {
       const pollFn = () => HomeAlarmService.getAlarmStatus();
-      pollHandler = new PollHandler(pollFn, HOME_ALARM_REFRESH_INTERVAL, {
-        data: d => logger.debug(`Got alarm info status '${d.status}'`),
-        error: err => logger.error(`Failed to get alarm info: ${JSON.stringify(err)}`),
-      });
+      pollHandler = new PollHandler(pollFn, HOME_ALARM_REFRESH_INTERVAL);
     }
     pollHandler.registerPollerService(res, req);
 

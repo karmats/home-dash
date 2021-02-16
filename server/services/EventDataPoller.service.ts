@@ -6,7 +6,7 @@ export type EventDataHandler<T> = {
   id?: string;
   data: (value: T) => void;
   heartbeat: (heartBeat: Heartbeat) => void;
-  error: (error: any) => void;
+  error: (error: unknown) => void;
   complete?: () => void;
 };
 
@@ -61,7 +61,7 @@ export class EventDataPollerService<R> {
         this.lastResult = result;
       },
       error => {
-        this.handlers.forEach(h => h.data(error));
+        this.handlers.forEach(h => h.error(error));
       }
     );
   }
