@@ -60,7 +60,7 @@ export const authenticateSectorAlarm = async (): Promise<SectorAlarmMeta> => {
         content += data;
       });
       response.body.on('end', () => {
-        const versionRegex = /<script src="\/Scripts\/main.js\?(v\d*_\d*_\d*)"/g;
+        const versionRegex = /<script src="\/Scripts\/main.js\?(v.*)"/g;
         const cookie = response.headers.get('set-cookie');
         const versionResult = versionRegex.exec(content);
         const version = versionResult ? versionResult[1] : null;
