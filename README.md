@@ -28,12 +28,13 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.<br>
+Runs the app in the development mode. Both client and server.
+
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ### `npm run server`
 
-Starts the node server on port 4000.
+Starts the node server only on port 4000.
 
 ### `npm test`
 
