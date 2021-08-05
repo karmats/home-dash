@@ -178,6 +178,10 @@ export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
           logger.error(error);
           throw new Error(error);
         }
+      })
+      .catch(e => {
+        logger.error(`Get alarm status failed: "${e.toString()}"`);
+        throw e;
       });
   });
 };
@@ -205,6 +209,10 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
           logger.error(error);
           throw new Error(error);
         }
+      })
+      .catch(e => {
+        logger.error(`Get temperatures failed: "${e.toString()}"`);
+        throw e;
       });
   });
 };
