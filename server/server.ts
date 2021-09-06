@@ -6,6 +6,7 @@ import { WeatherController } from './modules/Weather';
 import { CalendarController } from './modules/Calendar';
 import { TemperatureController } from './modules/Temperature';
 import { HomeAlarmController } from './modules/HomeAlarm';
+import { NewsController } from './modules/News';
 import { getLogger } from './logger';
 
 const hostname = '0.0.0.0';
@@ -21,6 +22,7 @@ app.get('/', function (_, res) {
 });
 app.get('/weather', WeatherController.getForecastsFromRequest);
 app.get('/calendar', CalendarController.getCalendarEventsFromRequest);
+app.get('/news', NewsController.getLatestNews);
 app.get('/temperatures/indoor', TemperatureController.getIndoorTemperatures);
 app.get('/homealarm/status', HomeAlarmController.getHomeAlarmStatusInfo);
 app.post('/homealarm/toggle', HomeAlarmController.toggleAlarm);
