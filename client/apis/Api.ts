@@ -1,4 +1,4 @@
-import { Forecast, CalendarEvent, Temperature, HomeAlarmInfo } from '../../shared/types';
+import { Forecast, CalendarEvent, Temperature, HomeAlarmInfo, News } from '../../shared/types';
 
 const API_PORT = 4000;
 
@@ -39,6 +39,10 @@ const getHomeAlarmStatusEventSource = (): EventSource => new EventSource(`${getB
 const postToggleAlarmStatus = (): Promise<HomeAlarmInfo> =>
   fetch(`${getBaseUrl()}/homealarm/toggle`, { method: 'POST' }).then(response => response.json());
 
+const getLatestNews = (): Promise<News> => fetch(`${getBaseUrl()}/news`).then(response => response.json());
+
+const getLatestNewsEventSource = (): EventSource => new EventSource(`${getBaseUrl()}/news?sse=true`);
+
 export default {
   getForecasts,
   getForecastEventSource,
@@ -50,4 +54,6 @@ export default {
   getHomeAlarmStatus,
   getHomeAlarmStatusEventSource,
   postToggleAlarmStatus,
+  getLatestNews,
+  getLatestNewsEventSource,
 };
