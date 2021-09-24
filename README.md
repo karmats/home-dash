@@ -16,11 +16,15 @@ Calendar showing your next 20 events retrieved from your google calendar.
 
 ### Temperature
 
-Temperatures retrived from you sector alarm sensors.
+Temperatures retrived from your sector alarm sensors.
 
 ### Home alarm status
 
 Status for your house sector alarm. Activates partial alarm when touching the house.
+
+### News (WIP)
+
+Latest news retrieved from Dagens Nyheter.
 
 ## Available Scripts
 
