@@ -45,7 +45,7 @@
   },
   "scripts": {
     "preinstall": "npx npm-force-resolutions",
-    "start": "concurrently --kill-others-on-fail 'npm run client' 'npm run server'",
+    "start": "concurrently --kill-others-on-fail \"npm:client\" \"npm:server\"",
     "client": "parcel client/index.html -p 3000",
     "preserver": "npm run build:server",
     "server": "nodemon build/server/server.js",
