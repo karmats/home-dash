@@ -2,6 +2,7 @@
   "name": "home-dash",
   "version": "0.1.0",
   "private": true,
+  "browserslist": "> 0.25%, not dead",
   "dependencies": {
     "date-fns": "^2.23.0",
     "express": "^4.17.1",
@@ -17,6 +18,8 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "@parcel/packager-raw-url": "^2.0.0",
+    "@parcel/transformer-webmanifest": "^2.0.0",
     "@testing-library/react": "^12.0.0",
     "@types/express": "^4.17.13",
     "@types/jest": "^26.0.24",
@@ -35,7 +38,7 @@
     "jest": "^27.0.6",
     "jest-environment-jsdom-fourteen": "^1.0.1",
     "nodemon": "^2.0.12",
-    "parcel-bundler": "^1.9.4",
+    "parcel": "^2.0.0",
     "prettier": "^2.3.2",
     "ts-jest": "^27.0.4",
     "typescript": "^4.3.5"
@@ -52,7 +55,7 @@
     "prebuild:server": "rm -rf build/server",
     "build:server": "tsc -p tsconfig.server.json",
     "prebuild:client": "rm -rf build/client",
-    "build:client": "parcel build client/index.html --out-dir build/client",
+    "build:client": "parcel build client/index.html --dist-dir build/client",
     "postbuild:client": "cp -r public/svgs build/client",
     "build": "npm run build:client && npm run build:server",
     "test": "jest",

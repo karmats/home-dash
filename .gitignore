@@ -15,7 +15,7 @@
 .env
 .env.local
 
-*.cache
+.parcel-cache
 *.log
 .vscode
 google-token.json
