@@ -1,3 +1,22 @@
 .News-main {
-    list-style: none;
+    display: flex;
+    flex-direction: column;
+}
+.News-header {
+    font-size: 1rem;
+    margin-top: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.News-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+.News-image {
+    width: 35%;
+}
+.News-description {
+    font-size: 0.5rem;
 }
