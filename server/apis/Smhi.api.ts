@@ -98,7 +98,7 @@ export const getForecasts = async (lat: number, lon: number, sunriseSunset: Sunr
   return fetch(
     `${BASE_URL}/api/category/pmp3g/version/2/geotype/point/lon/${lon.toFixed(4)}/lat/${lat.toFixed(4)}/data.json`
   )
-    .then(response => response.json())
+    .then(response => response.json() as Promise<SmhiData>)
     .then((data: SmhiData) => {
       if (data && data.timeSeries && data.timeSeries.length) {
         const result = data.timeSeries.map(t => smhiTimeSerieToForecast(t, sunriseSunset));

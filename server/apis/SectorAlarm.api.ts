@@ -56,20 +56,24 @@ export const authenticateSectorAlarm = async (): Promise<SectorAlarmMeta> => {
   return fetch(`${BASE_URL}/User/Login`).then(response => {
     return new Promise<SectorAlarmMeta>((resolve, reject) => {
       let content = '';
-      response.body.on('data', data => {
-        content += data;
-      });
-      response.body.on('end', () => {
-        const versionRegex = /<script src="\/Scripts\/main.js\?(v.*)"/g;
-        const cookie = response.headers.get('set-cookie');
-        const versionResult = versionRegex.exec(content);
-        const version = versionResult ? versionResult[1] : null;
-        if (version && cookie) {
-          resolve({ cookie, version });
-        } else {
-          reject('Failed to retrieve session meta.');
-        }
-      });
+      if (response.body) {
+        response.body.on('data', data => {
+          content += data;
+        });
+        response.body.on('end', () => {
+          const versionRegex = /<script src="\/Scripts\/main.js\?(v.*)"/g;
+          const cookie = response.headers.get('set-cookie');
+          const versionResult = versionRegex.exec(content);
+          const version = versionResult ? versionResult[1] : null;
+          if (version && cookie) {
+            resolve({ cookie, version });
+          } else {
+            reject('Failed to retrieve session meta.');
+          }
+        });
+      } else {
+        reject('Response did not have a body');
+      }
     }).then(
       meta =>
         new Promise((resolve, reject) => {
@@ -157,21 +161,21 @@ const getSessionMeta = (): Promise<SectorAlarmMeta> => {
  * Get house alarm status. If there are more than one alarm registered only the first will be returned.
  */
 export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
-  return getSessionMeta().then(async meta => {
+  return getSessionMeta().then(meta => {
     return fetch(`${BASE_URL}/Panel/GetPanelList`, {
       headers: headers(meta.cookie),
     })
-      .then(response => response.json())
+      .then(response => response.json() as Promise<SectorAlarmInfo[]>)
       .then(json => {
         if (json && json.length) {
           const info = json
-            .map((j: SectorAlarmInfo) => ({
+            .map(j => ({
               status: armedStatusToAlarmStatus(j.ArmedStatus),
               online: j.IsOnline,
               time: sectorAlarmDateToMs(j.PanelTime),
             }))
-            .pop();
-          logger.debug(`Got alarm info status '${info.status}'`);
+            .pop() as HomeAlarmInfo;
+          logger.debug(`Got alarm info status '${info?.status}'`);
           return info;
         } else {
           const error = 'Expected at least one alarm, got zero';
@@ -190,16 +194,16 @@ export const getAlarmStatus = async (): Promise<HomeAlarmInfo> => {
  * Get temperatures from sensors in the house
  */
 export const getTemperatures = async (): Promise<Temperature[]> => {
-  return getSessionMeta().then(async meta => {
+  return getSessionMeta().then(meta => {
     return fetch(`${BASE_URL}/Panel/GetTempratures`, {
       method: 'POST',
       body: JSON.stringify({ id: config.sectoralarm.deviceId, Version: meta.version }),
       headers: headers(meta.cookie),
     })
-      .then(response => response.json())
+      .then(response => response.json() as Promise<SectorAlarmTemperature[]>)
       .then(json => {
         if (json && json.length) {
-          return json.map((j: SectorAlarmTemperature) => ({
+          return json.map<Temperature>(j => ({
             location: j.Label,
             value: +j.Temprature,
             scale: 'C',
@@ -235,7 +239,7 @@ export const toggleAlarm = async (): Promise<HomeAlarmInfo> => {
         }),
         headers: headers(meta.cookie),
       })
-        .then(response => response.json())
+        .then(response => response.json() as Promise<{ panelData: SectorAlarmInfo }>)
         .then(json => ({
           status: armedStatusToAlarmStatus(json.panelData.ArmedStatus),
           online: json.panelData.IsOnline,

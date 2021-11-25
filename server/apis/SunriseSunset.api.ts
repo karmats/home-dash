@@ -14,8 +14,8 @@ const BASE_URL = 'https://api.sunrise-sunset.org';
 
 export const getSunriseSunset = (lat: number, lon: number): Promise<SunriseSunset> =>
   fetch(`${BASE_URL}/json?lat=${lat}&lng=${lon}&formatted=0`)
-    .then(response => response.json())
-    .then((data: SunriseSunsetData) => {
+    .then(response => response.json() as Promise<SunriseSunsetData>)
+    .then(data => {
       if (data.status === 'OK') {
         return { sunrise: new Date(data.results.sunrise), sunset: new Date(data.results.sunset) };
       }
