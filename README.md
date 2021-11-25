@@ -1,4 +1,4 @@
-# Home Dashboard [![Build Status](https://travis-ci.org/karmats/home-dash.svg?branch=master)](https://travis-ci.org/karmats/home-dash) [![Dependencies](https://david-dm.org/karmats/home-dash.svg)](https://david-dm.org/karmats/home-dash)
+# Home Dashboard [![Build](https://github.com/karmats/home-dash/actions/workflows/nodejs.yml/badge.svg)](https://github.com/karmats/home-dash/actions/workflows/nodejs.yml)
 
 ![Example](/public/example/application-screenshot.png 'Dashboard example')
 
