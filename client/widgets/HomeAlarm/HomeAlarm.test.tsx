@@ -48,7 +48,7 @@ describe('HomeAlarm', () => {
       expect(indicator).toBeDefined();
     });
 
-    it('renders home alarm status', async () => {
+    it('renders home alarm status', () => {
       const alarmData = createAlarmData();
       mockUseEventSourceWithRefresh = {
         ...mockUseEventSourceWithRefresh,

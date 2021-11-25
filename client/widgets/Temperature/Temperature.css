@@ -20,6 +20,7 @@
 
 .Temperature-box > span {
     margin-left: 0.5rem;
+    white-space: nowrap;
 }
 
 .Temperature-box > span.hot {

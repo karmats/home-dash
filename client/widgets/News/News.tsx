@@ -5,7 +5,7 @@ import api from '../../apis/Api';
 import { useEventSourceWithRefresh } from '../../hooks';
 import './News.css';
 
-// Every 10 second
+// Every 5 second
 const TIME_REFRESH_INTERVAL = 5 * 1000;
 
 const newsEventSourceConfig = {
@@ -30,11 +30,11 @@ export default function () {
   const content = currentNews?.content || currentNews?.media?.description;
   return currentNews ? (
     <div className="News-main" onClick={refreshNews}>
-      <h1 className="News-header">{currentNews.title}</h1>
+      {currentNews.media ? (
+        <img className="News-image" src={currentNews.media.url} alt={currentNews.media.description}></img>
+      ) : null}
       <div className="News-content">
-        {currentNews.media ? (
-          <img className="News-image" src={currentNews.media.url} alt={currentNews.media.description}></img>
-        ) : null}
+        <h1 className="News-header">{currentNews.title}</h1>
         {content ? <p className="News-description">{content}</p> : null}
       </div>
     </div>

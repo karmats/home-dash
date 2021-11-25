@@ -40,7 +40,7 @@ describe('Weather', () => {
       const indicator = getByText('Loading...');
       expect(indicator).toBeDefined();
     });
-    it('renders main weather and comming weather', async () => {
+    it('renders main weather and comming weather', () => {
       const smhiData: Forecast[] = Array.from(new Array(10)).map((_, idx) => ({
         symbol: WeatherSymbol.CLEAR_SKY,
         degrees: idx,
@@ -63,7 +63,7 @@ describe('Weather', () => {
       expect(getByText('8°')).toBeDefined();
       expect(getByText('80')).toBeDefined();
     });
-    it('does not render -0', async () => {
+    it('does not render -0', () => {
       const smhiData: Forecast[] = Array.from(new Array(10)).map((_, idx) => ({
         symbol: WeatherSymbol.CLEAR_SKY,
         degrees: idx - 0.2,

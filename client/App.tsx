@@ -4,6 +4,7 @@ import Weather from './widgets/Weather';
 import Calendar from './widgets/Calendar';
 import Temperature from './widgets/Temperature';
 import HomeAlarm from './widgets/HomeAlarm';
+import News from './widgets/News';
 
 export default function () {
   return (
@@ -12,6 +13,7 @@ export default function () {
       <Calendar />
       <HomeAlarm />
       <Temperature />
+      <News />
     </div>
   );
 }
