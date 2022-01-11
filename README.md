@@ -66,3 +66,7 @@ SA_PIN=your_sector_alarm_pin_code(if you want partial alarm activatation)
 
 USER_LOCATION=your_weather_location(lat,lon)
 ```
+
+### SSL
+
+To enable SSL, put `certificate.pem` and `key.pem` in the root-folder (along with the `.env`-file). On start the ssl-server will listen on port 4001.
