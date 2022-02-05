@@ -1,10 +1,9 @@
 import express from 'express';
 import { authenticateGoogle } from '../../apis';
-import { ExpressRequest } from '../../models';
 
-const authenticateToGoogle = (req: ExpressRequest<{ code: string }>, res: express.Response) => {
+const authenticateToGoogle = (req: express.Request, res: express.Response) => {
   const { code } = req.query;
-  authenticateGoogle(code);
+  authenticateGoogle(code as string);
   res.redirect('/');
   res.end();
 };

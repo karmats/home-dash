@@ -1,5 +1,4 @@
 import express from 'express';
-import { ExpressRequest } from '../models';
 import { EventDataPollerService, EventDataHandler } from './EventDataPoller.service';
 import { resultToSseData, heartbeatData, errorToSseData } from '../utils';
 import { getLogger } from '../logger';
@@ -13,14 +12,14 @@ export class PollHandler<R> {
     this.pollerService = new EventDataPollerService(pollFunction, interval, requestWailt);
   }
 
-  unregisterPollerService(res: express.Response, req: ExpressRequest): void {
-    logger.debug(`Unregistering listener with ip '${req.ip}' and id '${req.id}'.`);
+  unregisterPollerService(res: express.Response, req: express.Request): void {
+    logger.debug(`Unregistering listener with ip '${req.ip}' and id '${req['id']}'.`);
     res.end();
-    this.pollerService.finish(req.id);
+    this.pollerService.finish(req['id']);
   }
 
-  registerPollerService = (res: express.Response, req: ExpressRequest): void => {
-    logger.debug(`Registering new listener with ip '${req.ip}' and id '${req.id}'.`);
+  registerPollerService = (res: express.Response, req: express.Request): void => {
+    logger.debug(`Registering new listener with ip '${req.ip}' and id '${req['id']}'.`);
     const handler: EventDataHandler<R> = this.createHandler(res, req);
     this.pollerService.registerHandler(handler);
   };
@@ -29,9 +28,9 @@ export class PollHandler<R> {
     this.pollerService.reportData(data);
   }
 
-  private createHandler(res: express.Response, req: ExpressRequest): EventDataHandler<R> {
+  private createHandler(res: express.Response, req: express.Request): EventDataHandler<R> {
     return {
-      id: req.id,
+      id: req['id'],
       data: result => {
         res.write(resultToSseData(result));
       },

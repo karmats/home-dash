@@ -3,7 +3,6 @@ import TemperatureService from './Temperature.service';
 import { DEFAULT_HEADERS, SSE_HEADERS } from '../../utils';
 import { Temperature } from '../../../shared/types';
 import { PollHandler } from '../../services';
-import { ExpressRequest } from '../../models';
 
 // Every other hour
 const TEMPERATURES_REFRESH_INTERVAL = 2 * 60 * 60 * 1000;
@@ -11,7 +10,7 @@ const TEMPERATURES_REFRESH_INTERVAL = 2 * 60 * 60 * 1000;
 const REQUEST_WAIT = 5 * 1000;
 
 let pollHandler: PollHandler<Temperature[]>;
-const getIndoorTemperatures = (req: ExpressRequest<{ sse?: string }>, res: express.Response): void => {
+const getIndoorTemperatures = (req: express.Request<{ sse?: string }>, res: express.Response): void => {
   const { sse } = req.query;
   if (sse) {
     // Sse requested, keep connection open and feed with temperature data

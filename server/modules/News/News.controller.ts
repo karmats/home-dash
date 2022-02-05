@@ -3,13 +3,12 @@ import NewsService from './News.service';
 import { DEFAULT_HEADERS, SSE_HEADERS } from '../../utils';
 import { News } from '../../../shared/types';
 import { PollHandler } from '../../services';
-import { ExpressRequest } from '../../models';
 
 // Every 10 minutes
 const NEWS_REFRESH_INTERVAL = 10 * 60 * 1000;
 
 let pollHandler: PollHandler<News>;
-const getLatestNews = (req: ExpressRequest<{ sse?: string }>, res: express.Response): void => {
+const getLatestNews = (req: express.Request, res: express.Response): void => {
   const { sse } = req.query;
   if (sse) {
     // Sse requested, keep connection open and feed with news data

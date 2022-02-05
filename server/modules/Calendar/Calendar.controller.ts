@@ -4,19 +4,18 @@ import { AuthenticationService } from '../Authentication';
 import { DEFAULT_HEADERS, SSE_HEADERS } from '../../utils';
 import { PollHandler } from '../../services';
 import { CalendarEvent } from '../../../shared/types';
-import { ExpressRequest } from '../../models';
 
 // Every hour
 const CALENDAR_REFRESH_INTERVAL = 60 * 60 * 1000;
 const DATE_REGEX = /\d{4}-\d{2}-\d{2}/;
 
 let pollHandler: PollHandler<ReadonlyArray<CalendarEvent>>;
-const getCalendarEventsFromRequest = (
-  req: ExpressRequest<{ from: string; to: string; next: number; sse?: string }>,
-  res: express.Response
-): void => {
-  const { from, to, next, sse } = req.query;
-  if ((next && !isNaN(next)) || (from && DATE_REGEX.test(from) && to && DATE_REGEX.test(to))) {
+const getCalendarEventsFromRequest = (req: express.Request, res: express.Response): void => {
+  const from = req.query.from as string;
+  const to = req.query.from as string;
+  const next = +req.query.next!;
+  const sse = req.query.sse;
+  if ((next && typeof next === 'number') || (from && DATE_REGEX.test(from) && to && DATE_REGEX.test(to))) {
     const dateFrom = from ? new Date(from) : null;
     if (dateFrom) {
       dateFrom.setHours(0);
@@ -28,7 +27,7 @@ const getCalendarEventsFromRequest = (
       dateTo.setHours(23);
       dateTo.setMinutes(59);
     }
-    const comming = next ? +next : null;
+    const comming = next ? next : null;
 
     AuthenticationService.isConnectedToGoogle().then(ready => {
       if (ready) {
