@@ -29,6 +29,7 @@ jest.mock('./Calendar.service', () => ({
     getNextCalendarEvents: () => Promise.resolve(MOCK_NEXT_CALENDAR_EVENTS),
   },
 }));
+jest.mock('../../services/PollHandler.service', () => ({}));
 
 describe('Calendar server', () => {
   describe('Controller', () => {
