@@ -18,8 +18,6 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
-    "@parcel/packager-raw-url": "^2.0.1",
-    "@parcel/transformer-webmanifest": "^2.0.1",
     "@testing-library/react": "^12.1.2",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.4.0",
@@ -29,6 +27,7 @@
     "@types/react-dom": "^17.0.11",
     "@typescript-eslint/eslint-plugin": "^5.9.0",
     "@typescript-eslint/parser": "^5.9.0",
+    "@vitejs/plugin-react": "^3.0.1",
     "camelcase": "^6.3.0",
     "concurrently": "^7.0.0",
     "dotenv": "^10.0.0",
@@ -38,23 +37,23 @@
     "jest": "^27.4.5",
     "jest-environment-jsdom-fourteen": "^1.0.1",
     "nodemon": "^2.0.15",
-    "parcel": "^2.0.1",
     "prettier": "^2.5.1",
     "ts-jest": "^27.1.2",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.4",
+    "vite": "^4.0.4"
   },
   "resolutions": {
     "node-forge": "0.10.0"
   },
   "scripts": {
     "start": "concurrently --kill-others-on-fail \"npm:client\" \"npm:server\"",
-    "client": "parcel client/index.html -p 3000",
+    "client": "vite",
     "preserver": "npm run build:server",
     "server": "nodemon build/server/server.js",
     "prebuild:server": "rm -rf build/server",
     "build:server": "tsc -p tsconfig.server.json",
     "prebuild:client": "rm -rf build/client",
-    "build:client": "parcel build client/index.html --dist-dir build/client",
+    "build:client": "vite build",
     "postbuild:client": "cp -r public/svgs build/client",
     "build": "npm run build:client && npm run build:server",
     "test": "jest",

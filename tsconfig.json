@@ -12,5 +12,5 @@
     "resolveJsonModule": true,
     "jsx": "react"
   },
-  "include": ["client"]
+  "include": ["client", "vite.config.ts"]
 }
