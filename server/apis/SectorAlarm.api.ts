@@ -53,7 +53,7 @@ const headers = (cookie: string) => ({
  */
 export const authenticateSectorAlarm = async (): Promise<SectorAlarmMeta> => {
   logger.debug('Authenticating to sector alarm');
-  return fetch(`${BASE_URL}/User/Login`).then(response => {
+  return fetch(`${BASE_URL}/User/Login`, { method: 'GET' }).then(response => {
     return new Promise<SectorAlarmMeta>((resolve, reject) => {
       let content = '';
       if (response.body) {
@@ -203,11 +203,14 @@ export const getTemperatures = async (): Promise<Temperature[]> => {
       .then(response => response.json() as Promise<SectorAlarmTemperature[]>)
       .then(json => {
         if (json && json.length) {
-          return json.map<Temperature>(j => ({
-            location: j.Label,
-            value: +j.Temprature,
-            scale: 'C',
-          }));
+          return json.map(
+            j =>
+              ({
+                location: j.Label,
+                value: +j.Temprature,
+                scale: 'C',
+              } as Temperature)
+          );
         } else {
           const error = `Failed to retrieve temparatures got response '${JSON.stringify(json)}'`;
           logger.error(error);
