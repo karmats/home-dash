@@ -5,7 +5,14 @@ export default defineConfig({
   plugins: [react()],
   root: './client',
   logLevel: 'info',
+  publicDir: '../public',
   build: {
-    outDir: './build/client',
+    outDir: '../build/client',
+  },
+  server: {
+    port: 3000,
+    hmr: {
+      port: 3001,
+    },
   },
 });
