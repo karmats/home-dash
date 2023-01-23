@@ -1,21 +1,21 @@
 import './env';
 import express from 'express';
-import addRequestId from 'express-request-id';
 import fs from 'fs';
 import http from 'http';
 import https from 'https';
+import { getLogger } from './logger';
+import { requestID } from './middleware';
 import { GoogleAuthenticatorController, SectorAlarmAuthenticationController } from './modules/Authentication';
-import { WeatherController } from './modules/Weather';
 import { CalendarController } from './modules/Calendar';
-import { TemperatureController } from './modules/Temperature';
 import { HomeAlarmController } from './modules/HomeAlarm';
 import { NewsController } from './modules/News';
-import { getLogger } from './logger';
+import { TemperatureController } from './modules/Temperature';
+import { WeatherController } from './modules/Weather';
 
 const logger = getLogger('server');
 const app = express();
 
-app.use(addRequestId());
+app.use(requestID());
 
 app.get('/', function (_, res) {
   res.send('App is up and running');
