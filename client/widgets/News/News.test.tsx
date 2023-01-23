@@ -1,15 +1,15 @@
-import 'jest';
-import React from 'react';
 import { cleanup, render } from '@testing-library/react';
-import NewsComponent from './News';
+import React from 'react';
+import { vi } from 'vitest';
 import { News } from '../../../shared/types';
+import NewsComponent from './News';
 
 // Mocks
-jest.mock('../../apis/Api', () => ({
+vi.mock('../../apis/Api', () => ({
   __esModule: true,
   default: {
-    getLatestNews: jest.fn(() => Promise.resolve()),
-    getLatestNewsEventSource: jest.fn(),
+    getLatestNews: vi.fn(() => Promise.resolve()),
+    getLatestNewsEventSource: vi.fn(),
   },
 }));
 let mockUseEventSourceWithRefresh = {
@@ -17,11 +17,11 @@ let mockUseEventSourceWithRefresh = {
   refreshData: () => {},
   updateData: () => {},
 };
-jest.mock('../../hooks', () => ({
+vi.mock('../../hooks', () => ({
   useEventSourceWithRefresh: () => mockUseEventSourceWithRefresh,
 }));
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 describe('News', () => {
   describe('Component', () => {

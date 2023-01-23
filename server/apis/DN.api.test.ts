@@ -1,10 +1,11 @@
-import * as api from './DN.api';
 import Parser from 'rss-parser';
+import { vi } from 'vitest';
+import * as api from './DN.api';
 import { generateParsedDnRss } from './test/test.data';
-jest.mock('../logger', () => ({ getLogger: jest.fn(() => ({ error: jest.fn() })) }));
+vi.mock('../logger', () => ({ getLogger: vi.fn(() => ({ error: vi.fn() })) }));
 
 let mockParseURL = Promise.resolve(generateParsedDnRss());
-jest.mock('rss-parser', () => jest.fn().mockImplementation(() => ({ parseURL: jest.fn(() => mockParseURL) })));
+vi.mock('rss-parser', () => ({ default: vi.fn().mockImplementation(() => ({ parseURL: vi.fn(() => mockParseURL) })) }));
 
 describe('DNApi', () => {
   it('fetches rss and converts to news', async () => {

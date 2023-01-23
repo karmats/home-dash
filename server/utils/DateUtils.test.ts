@@ -1,4 +1,3 @@
-import 'jest';
 import { isDay } from './DateUtils';
 
 describe('DateUtils', () => {

@@ -9,7 +9,7 @@
     "express-request-id": "^3.0.0",
     "form-data": "^4.0.0",
     "googleapis": "^110.0.0",
-    "node-fetch": "^3.3.0",
+    "node-fetch": "^2.6.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-svg": "^15.1.21",
@@ -18,9 +18,9 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@types/express": "^4.17.15",
-    "@types/jest": "^29.2.6",
     "@types/node": "^18.11.18",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
@@ -33,13 +33,12 @@
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.6.0",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "jest": "^29.3.1",
-    "jest-environment-jsdom-fourteen": "^1.0.1",
+    "happy-dom": "^8.1.5",
     "nodemon": "^2.0.20",
     "prettier": "^2.8.3",
-    "ts-jest": "^29.0.5",
     "typescript": "^4.9.4",
-    "vite": "^4.0.4"
+    "vite": "^4.0.4",
+    "vitest": "^0.28.1"
   },
   "resolutions": {
     "node-forge": "0.10.0"
@@ -55,21 +54,8 @@
     "build:client": "vite build",
     "postbuild:client": "cp -r public/svgs build/client",
     "build": "npm run build:client && npm run build:server",
-    "test": "jest",
+    "test": "vitest",
     "lint": "eslint ./",
     "format": "prettier ./**/*.{html,json,md,css,ts,tsx} --write"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "setupFilesAfterEnv": [
-      "<rootDir>/jest/config/setupTests.ts"
-    ],
-    "silent": false,
-    "testEnvironment": "jest-environment-jsdom",
-    "testRegex": "((\\.|/)test)\\.tsx?$",
-    "transform": {
-      "^.+\\.css$": "<rootDir>/jest/transformers/cssTransform.js",
-      "^(?!.*\\.(js|jsx|ts|tsx|css|json)$)": "<rootDir>/jest/transformers/fileTransform.js"
-    }
   }
 }
