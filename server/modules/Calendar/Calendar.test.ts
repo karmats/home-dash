@@ -1,6 +1,7 @@
-import CalendarController from './Calendar.controller';
-import { DEFAULT_HEADERS } from '../../utils';
+import { vi } from 'vitest';
 import { CalendarEvent } from '../../../shared/types';
+import { DEFAULT_HEADERS } from '../../utils';
+import CalendarController from './Calendar.controller';
 
 const MOCK_CALENDAR_BY_DATES_EVENTS: CalendarEvent[] = [
   {
@@ -17,19 +18,19 @@ const MOCK_NEXT_CALENDAR_EVENTS: CalendarEvent[] = [
   },
 ];
 
-jest.mock('../Authentication', () => ({
+vi.mock('../Authentication', () => ({
   AuthenticationService: {
     isConnectedToGoogle: () => Promise.resolve(true),
   },
 }));
-jest.mock('./Calendar.service', () => ({
+vi.mock('./Calendar.service', () => ({
   __esModule: true,
   default: {
     getCalendarEventsByDates: () => Promise.resolve(MOCK_CALENDAR_BY_DATES_EVENTS),
     getNextCalendarEvents: () => Promise.resolve(MOCK_NEXT_CALENDAR_EVENTS),
   },
 }));
-jest.mock('../../services/PollHandler.service', () => ({}));
+vi.mock('../../services/PollHandler.service', () => ({}));
 
 describe('Calendar server', () => {
   describe('Controller', () => {

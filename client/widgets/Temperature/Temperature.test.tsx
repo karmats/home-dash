@@ -1,14 +1,14 @@
-import 'jest';
-import React from 'react';
 import { cleanup, render } from '@testing-library/react';
-import TemperatureComponent from './Temperature';
+import React from 'react';
+import { vi } from 'vitest';
 import { Temperature } from '../../../shared/types';
+import TemperatureComponent from './Temperature';
 
 let mockUseEventSourceWithRefresh = {
   data: [] as Temperature[],
   refreshData: () => {},
 };
-jest.mock('../../hooks', () => ({
+vi.mock('../../hooks', () => ({
   useEventSourceWithRefresh: () => mockUseEventSourceWithRefresh,
 }));
 describe('Temperature', () => {

@@ -1,31 +1,31 @@
-import 'jest';
+import { cleanup, render } from '@testing-library/react';
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
-import { WeatherSymbol, Forecast } from '../../../shared/types';
+import { vi } from 'vitest';
+import { Forecast, WeatherSymbol } from '../../../shared/types';
 import Weather from './Weather';
 
 // Mocks
-jest.mock('react-svg');
+vi.mock('react-svg');
 
 let mockUseEventSourceWithRefresh = {
   data: [] as Forecast[],
   refreshData: () => {},
 };
-jest.mock('../../hooks', () => ({
+vi.mock('../../hooks', () => ({
   useEventSourceWithRefresh: () => mockUseEventSourceWithRefresh,
 }));
 
-jest.useFakeTimers();
+vi.useFakeTimers();
 
 const SVG_ROOT = '../../../public/svgs';
 
 describe('Weather', () => {
   describe('Models', () => {
     it('has all weather symbol files', () => {
-      Object.keys(WeatherSymbol).forEach(symbol => {
+      Object.keys(WeatherSymbol).forEach(async symbol => {
         const fileName = `${(WeatherSymbol as any)[symbol]}.svg`;
-        expect(require(`${SVG_ROOT}/animated/${fileName}`)).toBeDefined();
-        expect(require(`${SVG_ROOT}/static/${fileName}`)).toBeDefined();
+        expect(await import(`${SVG_ROOT}/animated/${fileName}`)).toBeDefined();
+        expect(await import(`${SVG_ROOT}/static/${fileName}`)).toBeDefined();
       });
     });
   });

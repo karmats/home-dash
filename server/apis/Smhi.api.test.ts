@@ -1,10 +1,10 @@
-import 'jest';
+import { vi } from 'vitest';
 import { WeatherSymbol } from '../../shared/types';
-import { generateSmhiData } from './test/test.data';
 import * as api from './Smhi.api';
+import { generateSmhiData } from './test/test.data';
 
 let mockResponse: Promise<any> = Promise.resolve();
-jest.mock('node-fetch', () => ({
+vi.mock('node-fetch', () => ({
   __esModule: true,
   default: () => mockResponse,
 }));

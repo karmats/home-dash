@@ -1,4 +1,3 @@
-import 'jest';
 import * as util from './Calendar.utils';
 
 describe('Calendar', () => {

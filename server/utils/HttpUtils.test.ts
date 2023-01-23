@@ -1,4 +1,3 @@
-import 'jest';
 import { errorToSseData, heartbeatData, resultToSseData } from './HttpUtils';
 
 describe('HttpUtils', () => {

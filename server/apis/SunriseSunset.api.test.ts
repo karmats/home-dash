@@ -1,9 +1,9 @@
-import 'jest';
-import { genereateSunriseSunsetData } from './test/test.data';
+import { vi } from 'vitest';
 import * as api from './SunriseSunset.api';
+import { genereateSunriseSunsetData } from './test/test.data';
 
 let mockResponse: Promise<any> = Promise.resolve();
-jest.mock('node-fetch', () => ({
+vi.mock('node-fetch', () => ({
   __esModule: true,
   default: () => mockResponse,
 }));

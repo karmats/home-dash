@@ -5,8 +5,8 @@ import api from '../../apis/Api';
 import { useEventSourceWithRefresh } from '../../hooks';
 import './News.css';
 
-// Every 5 second
-const TIME_REFRESH_INTERVAL = 5 * 1000;
+// Every 10 second
+const TIME_REFRESH_INTERVAL = 10 * 1000;
 
 const newsEventSourceConfig = {
   eventSource: api.getLatestNewsEventSource(),
