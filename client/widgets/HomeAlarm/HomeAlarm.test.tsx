@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
 import { HomeAlarmInfo } from '../../../shared/types';
@@ -26,6 +26,12 @@ vi.mock('../../apis/Api', () => ({
     getHomeAlarmStatusEventSource: vi.fn(),
   },
 }));
+vi.mock('react-svg', () => ({
+  __esModule: true,
+  ReactSVG: ({ beforeInjection, ...props }: { beforeInjection: () => void } & React.SVGAttributes<SVGElement>) => (
+    <svg {...props} />
+  ),
+}));
 let mockUseEventSourceWithRefresh = {
   data: { online: true, status: 'unknown', time: 0 } as HomeAlarmInfo,
   refreshData: () => {},
@@ -47,7 +53,7 @@ describe('HomeAlarm', () => {
       expect(indicator).toBeDefined();
     });
 
-    it.skip('renders home alarm status', () => {
+    it('renders home alarm status', () => {
       const alarmData = createAlarmData();
       mockUseEventSourceWithRefresh = {
         ...mockUseEventSourceWithRefresh,
@@ -58,7 +64,7 @@ describe('HomeAlarm', () => {
       expect(getByText('idag kl. 12:25')).toBeDefined();
     });
 
-    it.skip('toggles home alarm status', async () => {
+    it('toggles home alarm status', async () => {
       const alarmData = createAlarmData();
       mockUseEventSourceWithRefresh = {
         ...mockUseEventSourceWithRefresh,
