@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import FormData from 'form-data';
 import fs from 'fs';
 import config from '../config';
@@ -54,25 +53,21 @@ const headers = (cookie: string) => ({
 export const authenticateSectorAlarm = async (): Promise<SectorAlarmMeta> => {
   logger.debug('Authenticating to sector alarm');
   return fetch(`${BASE_URL}/User/Login`, { method: 'GET' }).then(response => {
-    return new Promise<SectorAlarmMeta>((resolve, reject) => {
-      let content = '';
-      if (response.body) {
-        response.body.on('data', data => {
-          content += data;
-        });
-        response.body.on('end', () => {
-          const versionRegex = /<script src="\/Scripts\/main.js\?(v.*)"/g;
-          const cookie = response.headers.get('set-cookie');
-          const versionResult = versionRegex.exec(content);
-          const version = versionResult ? versionResult[1] : null;
-          if (version && cookie) {
-            resolve({ cookie, version });
-          } else {
-            reject('Failed to retrieve session meta.');
-          }
-        });
+    return new Promise<SectorAlarmMeta>(async (resolve, reject) => {
+      let content = await response.text();
+      if (content) {
+        const versionRegex = /<script src="\/Scripts\/main.js\?(v.*)"/g;
+        const cookie = response.headers.get('set-cookie');
+        const versionResult = versionRegex.exec(content);
+        const version = versionResult ? versionResult[1] : null;
+        if (version && cookie) {
+          resolve({ cookie, version });
+        } else {
+          reject('Failed to retrieve session meta.');
+        }
+        // });
       } else {
-        reject('Response did not have a body');
+        reject('Response did not have a text');
       }
     }).then(
       meta =>

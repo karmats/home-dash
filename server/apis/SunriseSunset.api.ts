@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { SunriseSunset } from '../../shared/types';
 
 type SunriseSunsetData = {
