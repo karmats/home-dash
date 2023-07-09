@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { Forecast, WeatherSymbol, SunriseSunset } from '../../shared/types';
 import { getLogger } from '../logger';
 

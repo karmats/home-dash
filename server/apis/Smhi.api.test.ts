@@ -3,11 +3,6 @@ import { WeatherSymbol } from '../../shared/types';
 import * as api from './Smhi.api';
 import { generateSmhiData } from './test/test.data';
 
-let mockResponse: Promise<any> = Promise.resolve();
-vi.mock('node-fetch', () => ({
-  __esModule: true,
-  default: () => mockResponse,
-}));
 const defaultSmhiData = generateSmhiData();
 
 describe('SmhiApi', () => {
@@ -16,7 +11,7 @@ describe('SmhiApi', () => {
     sunset: new Date('2019-02-18T20:00:00Z'),
   };
   beforeEach(() => {
-    mockResponse = Promise.resolve({ json: () => Promise.resolve(defaultSmhiData) });
+    vi.spyOn(global, 'fetch').mockResolvedValue({ json: () => Promise.resolve(defaultSmhiData) } as Response);
   });
 
   it('fetches data and converts to daily forecast', async () => {
@@ -38,7 +33,7 @@ describe('SmhiApi', () => {
     expect(forecast.windDirection).toBe(185);
   });
   it('throws error if something goes wrong', async () => {
-    mockResponse = Promise.reject('Failz');
+    vi.spyOn(global, 'fetch').mockRejectedValueOnce('Failz');
     try {
       await api.getForecasts(11.930191, 57.740614, sunriseSunset);
     } catch (e) {
