@@ -54,7 +54,7 @@ export const authenticateSectorAlarm = async (): Promise<SectorAlarmMeta> => {
   logger.debug('Authenticating to sector alarm');
   return fetch(`${BASE_URL}/User/Login`, { method: 'GET' }).then(response => {
     return new Promise<SectorAlarmMeta>(async (resolve, reject) => {
-      let content = await response.text();
+      const content = await response.text();
       if (content) {
         const versionRegex = /<script src="\/Scripts\/main.js\?(v.*)"/g;
         const cookie = response.headers.get('set-cookie');

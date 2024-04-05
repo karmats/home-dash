@@ -12,9 +12,9 @@ export const SSE_HEADERS = {
   Connection: 'keep-alive',
 };
 
-export const resultToSseData = (result: any) => `data:${JSON.stringify({ result })}\n\n`;
+export const resultToSseData = (result: unknown) => `data:${JSON.stringify({ result })}\n\n`;
 export const heartbeatData = (time: number) => `data:${JSON.stringify({ heartbeat: time })}\n\n`;
-export const errorToSseData = (error: any) => {
+export const errorToSseData = (error: unknown) => {
   let errorResult = error;
   if (error instanceof Error) {
     const { name, message } = error as Error;

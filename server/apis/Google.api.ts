@@ -86,7 +86,7 @@ export const authenticateGoogle = (code: string) => {
 /**
  * Get auth token stored on disc, if any
  */
-const getAuthToken = (): Promise<any> => {
+const getAuthToken = (): Promise<unknown> => {
   return new Promise((resolve, reject) => {
     // Check if we have previously stored a token.
     fs.readFile(TOKEN_PATH, { encoding: 'utf-8' }, (err, token) => {

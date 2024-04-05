@@ -1,5 +1,5 @@
 export type SseData<T> = {
   result?: T;
-  error?: any;
+  error?: unknown;
   heartbeat?: number;
 };

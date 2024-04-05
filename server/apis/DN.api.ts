@@ -1,12 +1,12 @@
 import Parser, { Item } from 'rss-parser';
-import { News, NewsItem } from '../../shared/types';
+import { MediaContent, News, NewsItem } from '../../shared/types';
 import { getLogger } from '../logger';
 
 const BASE_URL = 'https://www.dn.se';
 
 const logger = getLogger('DNApi');
 
-const rssItemToNewsItem = (item: Item & { 'media:content': any }): NewsItem => ({
+const rssItemToNewsItem = (item: Item & { 'media:content': MediaContent }): NewsItem => ({
   content: item.content,
   date: item.isoDate!,
   link: item.link!,
@@ -21,7 +21,7 @@ const rssItemToNewsItem = (item: Item & { 'media:content': any }): NewsItem => (
 });
 
 export const getLatestNews = (): Promise<News> =>
-  new Parser<{ language: string }, { 'media:content': any }>({
+  new Parser<{ language: string }, { 'media:content': MediaContent }>({
     customFields: {
       item: [['media:content', 'media:content']],
     },

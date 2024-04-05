@@ -19,3 +19,7 @@ export interface NewsMedia {
   url: string;
   description: string;
 }
+
+export interface MediaContent {
+  $: { type: string; url: string };
+}
