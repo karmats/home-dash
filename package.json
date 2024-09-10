@@ -5,7 +5,7 @@
   "browserslist": "> 0.25%, not dead",
   "dependencies": {
     "date-fns": "^3.6.0",
-    "express": "^4.19.2",
+    "express": "^4.20.0",
     "express-request-id": "^3.0.0",
     "form-data": "^4.0.0",
     "googleapis": "^134.0.0",
